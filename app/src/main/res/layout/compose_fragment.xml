@@ -46,6 +46,6 @@
         android:text="@string/post_button"
         android:padding="10dp"
         android:layout_margin="10dp"
-        android:background="@color/app_green"/>
+        android:background="@drawable/button_grey"/>
 
 </LinearLayout>

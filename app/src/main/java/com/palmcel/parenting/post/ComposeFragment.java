@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
 
 /**
@@ -83,7 +84,7 @@ public class ComposeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String postMessage = mPostEdit.toString();
-                if (mListener != null) {
+                if (mListener != null && !Strings.isNullOrEmpty(postMessage)) {
                     mListener.onSubmitPost(postMessage);
                 }
             }
