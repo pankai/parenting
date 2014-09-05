@@ -12,4 +12,8 @@ public class HandlerUtil {
     public void runOnUiThread(Runnable runnable) {
        sHandler.post(runnable);
     }
+
+    public static Handler getHandler() {
+        return sHandler;
+    }
 }

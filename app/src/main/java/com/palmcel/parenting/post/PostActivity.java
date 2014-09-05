@@ -2,25 +2,19 @@ package com.palmcel.parenting.post;
 
 import android.app.Activity;
 import android.app.ActionBar;
-import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.Toast;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.model.PostBuilder;
-
-import java.util.concurrent.Future;
 
 public class PostActivity extends Activity implements
         ComposeFragment.OnFragmentInteractionListener {
@@ -79,15 +73,15 @@ public class PostActivity extends Activity implements
         Futures.addCallback(savePostFuture, new FutureCallback() {
             @Override
             public void onSuccess(Object o) {
-                //Toast.makeText(PostActivity.this, "Save post successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PostActivity.this, "Save post successfully", Toast.LENGTH_SHORT).show();
                 Log.d("PostActivity", "Saved post successfully");
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                //Toast.makeText(PostActivity.this, "Failed to save post, " + throwable.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PostActivity.this, "Failed to save post, " + throwable.toString(), Toast.LENGTH_SHORT).show();
                 Log.e("PostActivity", "Failed to save post", throwable);
             }
-        });
+        }, new UiThreadExecutor());
     }
 }
