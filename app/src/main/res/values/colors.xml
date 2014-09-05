@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="transparent">@android:color/transparent</color>
+    <color name="app_green">#45c01a</color>
+    <color name="app_dark_green">#4B6910</color>
+    <color name="tab_text_color">#636363</color>
+    <color name="action_bar_backgroupd">#303537</color>
+    <color name="black">#000000</color>
+    <color name="dark_slate_gray">#2F4F4F</color>
+    <color name="gray_2">#AFAFAF</color>
+    <color name="gray_1">#C0C0C0</color>
+    <color name="light_text_color">#91a1ac</color>
+</resources>

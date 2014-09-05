@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Will be merge into RelativeLayout -->
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <!--Profile image -->
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="@dimen/thumbnail_width"
+        android:layout_height="@dimen/thumbnail_height"
+        android:scaleType="fitCenter"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_profile"
+        />
+
+    <TextView
+        android:id="@+id/user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/row_user_id_font_size"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/row_user_id_margin_left"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/profile_image"/>
+
+    <TextView
+        android:id="@+id/kids_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/row_kids_info_font_size"
+        android:layout_marginLeft="@dimen/row_kids_info_margin_left"
+        android:layout_alignBaseline="@id/user_id"
+        android:layout_toRightOf="@id/user_id"/>
+
+    <TextView
+        android:id="@+id/post_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/row_post_time_font_size"
+        android:textColor="@color/light_text_color"
+        android:layout_alignBaseline="@id/kids_info"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/row_post_message_margin_top"
+        android:textSize="@dimen/row_message_font_size"
+        android:layout_below="@id/user_id"
+        android:textColorLink="@color/app_green"
+        android:layout_alignLeft="@id/user_id"/>
+
+    <!-- Bottom line with comment and like buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/row_comment_button_magin_left"
+        android:layout_alignLeft="@id/user_id"
+        android:layout_below="@id/message">
+      <ImageView
+          android:id="@+id/comment_button"
+          android:layout_width="@dimen/row_comment_button_size"
+          android:layout_height="@dimen/row_comment_button_size"
+          android:scaleType="centerInside"
+          android:src="@drawable/ic_comment_selector"/>
+      <TextView
+          android:id="@+id/comment_count"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="@color/light_text_color"
+          android:textSize="@dimen/row_comment_text_size"
+          android:layout_gravity="center_vertical" />
+      <ToggleButton
+          android:id="@+id/like_button"
+          android:layout_width="@dimen/row_like_button_size"
+          android:layout_height="@dimen/row_like_button_size"
+          android:layout_marginLeft="@dimen/row_like_button_margin_left"
+          android:layout_marginBottom="2dp"
+          android:layout_gravity="center_vertical"
+          android:textOn=""
+          android:textOff=""
+          android:background="@drawable/ic_rating_selector"/>
+      <TextView
+          android:id="@+id/like_count"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="@color/light_text_color"
+          android:textSize="@dimen/row_comment_text_size"
+          android:layout_gravity="center_vertical"
+          android:layout_marginLeft="4dp" />
+    </LinearLayout>
+</merge>

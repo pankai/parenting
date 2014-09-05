@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".HomeActivity" >
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_action_add"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_post">
+        <menu>
+            <item
+                android:id="@+id/post_story"
+                android:icon="@drawable/ic_story"
+                android:title="@string/menu_post_story" />
+            <item
+                android:id="@+id/post_product"
+                android:icon="@drawable/ic_product"
+                android:title="@string/menu_post_product" />
+        </menu>
+    </item>
+</menu>

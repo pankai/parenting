@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Parent Zone</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_feed">Feed</string>
+    <string name="title_explore">Explore</string>
+    <string name="title_products">Products</string>
+    <string name="title_me">Me</string>
+    <string name="empty">No feed found!</string>
+    <string name="menu_post">Post</string>
+    <string name="menu_post_story">Post a Story</string>
+    <string name="menu_post_product">Post a Product</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="post_button">Post</string>
+    <string name="post_edit_hint">What\'s happening?</string>
+    <string name="title_activity_post">PostActivity</string>
+
+</resources>
