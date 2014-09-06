@@ -75,6 +75,7 @@ public class PostActivity extends Activity implements
             public void onSuccess(Object o) {
                 Toast.makeText(PostActivity.this, "Save post successfully", Toast.LENGTH_SHORT).show();
                 Log.d("PostActivity", "Saved post successfully");
+                PostActivity.this.finish();
             }
 
             @Override
