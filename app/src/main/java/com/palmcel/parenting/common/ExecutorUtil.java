@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -30,6 +31,15 @@ public class ExecutorUtil {
      */
     public static ListenableFuture execute(Runnable runnable) {
         return INSTANCE.mExecutorService.submit(runnable);
+    }
+
+    /**
+     * Execute a short callable in a thread.
+     * @param callable
+     * @return
+     */
+    public static <RESULT> ListenableFuture<RESULT> execute(Callable<RESULT> callable) {
+        return INSTANCE.mExecutorService.submit(callable);
     }
 
     /**

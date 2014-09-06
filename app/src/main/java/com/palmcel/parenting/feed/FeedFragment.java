@@ -22,6 +22,8 @@ import com.palmcel.parenting.model.PostType;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -77,6 +79,8 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -155,7 +159,16 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onDetach() {
         super.onDetach();
+        EventBus.getDefault().register(this);
         mListener = null;
+    }
+
+    /**
+     * EventBus event for loading feed.
+     * @param event load feed results
+     */
+    public void onEventMainThread(LoadFeedResultEvent event) {
+
     }
 
     /**
