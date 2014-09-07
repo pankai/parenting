@@ -8,7 +8,10 @@ import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.model.Post;
 
+import java.util.UUID;
+
 import static com.palmcel.parenting.db.DatabaseContract.PostEntry;
+import static com.palmcel.parenting.db.DatabaseContract.FeedEntry;
 
 /**
  * Handler that saves post into db and send post to server
@@ -26,6 +29,7 @@ public class PostHandler {
             @Override
             public void run() {
                 savePostToDb(post);
+                saveFeedPostToDb(post);
             }
         });
     }
@@ -59,5 +63,20 @@ public class PostHandler {
         values.put(PostEntry.COLUMN_TIME_LASTUPDATED, post.timeMsLastUpdated);
 
         db.replaceOrThrow(PostEntry.TABLE_NAME, "", values);
+    }
+
+    /**
+     * Save a post to database feed table
+     * @param post
+     */
+    private void saveFeedPostToDb(Post post) {
+        SQLiteDatabase db = DbHelper.getDb();
+
+        ContentValues values = new ContentValues();
+        values.put(FeedEntry.COLUMN_FEED_ID, "Local." + UUID.randomUUID().toString());
+        values.put(FeedEntry.COLUMN_POST_ID, post.userId);
+        values.put(FeedEntry.COLUMN_TIME_INSERTED, System.currentTimeMillis());
+
+        db.replaceOrThrow(FeedEntry.TABLE_NAME, "", values);
     }
 }
