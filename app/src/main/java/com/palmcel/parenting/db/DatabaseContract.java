@@ -29,7 +29,6 @@ public class DatabaseContract {
         public static final String COLUMN_PUBLICITY = "publicity";
         public static final String COLUMN_IS_ANSWERED = "is_answered";
         public static final String COLUMN_QUESTION_POINTS = "question_points";
-        public static final String COLUMN_IS_PRODUCT = "is_product";
         public static final String COLUMN_LIKES = "likes";
         public static final String COLUMN_COMMENTS = "comments";
         public static final String COLUMN_IS_ANONYMOUS = "is_anonymous";

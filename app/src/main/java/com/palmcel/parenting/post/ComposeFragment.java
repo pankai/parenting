@@ -83,7 +83,7 @@ public class ComposeFragment extends Fragment {
         mPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String postMessage = mPostEdit.toString();
+                String postMessage = mPostEdit.getText().toString();
                 if (mListener != null && !Strings.isNullOrEmpty(postMessage)) {
                     mListener.onSubmitPost(postMessage);
                 }

@@ -5,15 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
+import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.Post;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ListView adapter for a list of posts
+ * ListView adapter for a list of posts in feed
  */
 public class PostListAdapter extends BaseAdapter {
 
@@ -26,7 +26,7 @@ public class PostListAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mLayoutInflater;
 
-    private List<Post> mEntries = new ArrayList<Post>();
+    private List<FeedPost> mEntries = new ArrayList<FeedPost>();
 
     public PostListAdapter(Context context) {
         mContext = context;
@@ -46,7 +46,7 @@ public class PostListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        Post post = mEntries.get(position);
+        FeedPost post = mEntries.get(position);
 
         switch (post.postType) {
             case Picture:
@@ -97,7 +97,7 @@ public class PostListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void updateEntries(List<Post> entries) {
+    public void updateEntries(List<FeedPost> entries) {
         mEntries = entries;
         notifyDataSetChanged();
     }

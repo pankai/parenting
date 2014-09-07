@@ -74,7 +74,7 @@ public class PostHandler {
 
         ContentValues values = new ContentValues();
         values.put(FeedEntry.COLUMN_FEED_ID, "Local." + UUID.randomUUID().toString());
-        values.put(FeedEntry.COLUMN_POST_ID, post.userId);
+        values.put(FeedEntry.COLUMN_POST_ID, post.postId);
         values.put(FeedEntry.COLUMN_TIME_INSERTED, System.currentTimeMillis());
 
         db.replaceOrThrow(FeedEntry.TABLE_NAME, "", values);

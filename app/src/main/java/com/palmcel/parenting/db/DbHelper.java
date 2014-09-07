@@ -34,7 +34,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 PostEntry.COLUMN_PUBLICITY + " TEXT, " +
                 PostEntry.COLUMN_IS_ANSWERED + " INTEGER, " +
                 PostEntry.COLUMN_QUESTION_POINTS + " INTEGER, " +
-                PostEntry.COLUMN_IS_PRODUCT + " INTEGER, " +
                 PostEntry.COLUMN_LIKES + " INTEGER, " +
                 PostEntry.COLUMN_COMMENTS + " INTEGER, " +
                 PostEntry.COLUMN_IS_ANONYMOUS + " INTEGER, " +

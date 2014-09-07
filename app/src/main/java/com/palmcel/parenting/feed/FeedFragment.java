@@ -7,20 +7,16 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.palmcel.parenting.R;
 
 import com.palmcel.parenting.list.PostListAdapter;
-import com.palmcel.parenting.model.Post;
-import com.palmcel.parenting.model.PostBuilder;
-import com.palmcel.parenting.model.PostType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -110,19 +106,6 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         ListView listView = (ListView) getActivity().findViewById(R.id.feedListView);
         listView.setEmptyView(mEmptyViewContainer);
         listView.setAdapter(mAdapter);
-
-        // TODO remove debug code
-        List<Post> posts = new ArrayList<Post>();
-        PostBuilder builder = new PostBuilder();
-        builder.setUserId("pkdebug")
-            .setPostId("mypostid")
-            .setMessage("This is a debug")
-            .setComments(12)
-            .setLikes(86)
-            .setTimeMsCreated(System.currentTimeMillis() - 600000)
-            .setPostType(PostType.Regular);
-        posts.add(builder.build());
-        mAdapter.updateEntries(posts);
     }
 
     private void onCreateSwipeToRefresh(SwipeRefreshLayout refreshLayout) {
@@ -157,6 +140,14 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // Load feed from db. TODO (kpan): don't need to load feed every time in onResume.
+        LoadFeedManager.getInstance().loadFeed();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -173,7 +164,17 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param event load feed results
      */
     public void onEventMainThread(LoadFeedResultEvent event) {
+        Log.d("FeedFragment", "In onEventMainThread");
 
+        LoadFeedResult result = event.getLoadFeedResult();
+
+        if (!result.isSuccess) {
+            Toast.makeText(
+                    mContext, "Failed load feed, " + result.error, Toast.LENGTH_SHORT).show();
+        } else {
+            // Update feed list view
+            mAdapter.updateEntries(result.feedPosts);
+        }
     }
 
     /**
@@ -223,5 +224,4 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         }, 1000);
     }
-
 }

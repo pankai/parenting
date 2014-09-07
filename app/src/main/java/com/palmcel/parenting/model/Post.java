@@ -3,6 +3,8 @@ package com.palmcel.parenting.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import junit.framework.Assert;
+
 /**
  * This is the class for a user post.
  */
@@ -56,6 +58,16 @@ public class Post implements Parcelable {
         timeMsEdited = builder.getTimeMsEdited();
         timeMsCommented = builder.getTimeMsCommented();
         timeMsLastUpdated = builder.getTimeMsLastUpdated();
+
+        assertInstance();
+    }
+
+    private void assertInstance() {
+        Assert.assertNotNull(postId);
+        Assert.assertNotNull(userId);
+        Assert.assertNotNull(postType);
+        Assert.assertNotNull(publicity);
+        Assert.assertNotNull(postStatus);
     }
 
     public static final Parcelable.Creator<Post> CREATOR = new Parcelable.Creator<Post>() {
@@ -75,7 +87,7 @@ public class Post implements Parcelable {
         return 0;
     }
 
-    private Post(Parcel in) {
+    protected Post(Parcel in) {
         postId = in.readString();
         userId = in.readString();
         postType = PostType.valueOf(in.readString());
@@ -96,6 +108,8 @@ public class Post implements Parcelable {
         timeMsEdited = in.readLong();
         timeMsCommented = in.readLong();
         timeMsLastUpdated = in.readLong();
+
+        assertInstance();
     }
 
     @Override

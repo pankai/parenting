@@ -14,6 +14,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.UiThreadExecutor;
+import com.palmcel.parenting.feed.LoadFeedManager;
 import com.palmcel.parenting.model.PostBuilder;
 
 public class PostActivity extends Activity implements
@@ -75,6 +76,10 @@ public class PostActivity extends Activity implements
             public void onSuccess(Object o) {
                 Toast.makeText(PostActivity.this, "Save post successfully", Toast.LENGTH_SHORT).show();
                 Log.d("PostActivity", "Saved post successfully");
+
+                // Reload feed in FeedFragment
+                LoadFeedManager.getInstance().loadFeed();
+
                 PostActivity.this.finish();
             }
 
