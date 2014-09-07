@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -13,12 +12,15 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.feed.LoadFeedManager;
 import com.palmcel.parenting.model.PostBuilder;
 
 public class PostActivity extends Activity implements
         ComposeFragment.OnFragmentInteractionListener {
+
+    private static final String TAG = "PostActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class PostActivity extends Activity implements
      */
     @Override
     public void onSubmitPost(String message) {
+        Log.d(TAG, "In onSubmitPost");
         PostBuilder builder = PostBuilder.newLocalRegularPostBuilder(message);
 
         PostHandler postHandler = new PostHandler();
@@ -75,7 +78,7 @@ public class PostActivity extends Activity implements
             @Override
             public void onSuccess(Object o) {
                 Toast.makeText(PostActivity.this, "Save post successfully", Toast.LENGTH_SHORT).show();
-                Log.d("PostActivity", "Saved post successfully");
+                Log.d(TAG, "Saved post successfully");
 
                 // Reload feed in FeedFragment
                 LoadFeedManager.getInstance().loadFeed();
@@ -86,7 +89,7 @@ public class PostActivity extends Activity implements
             @Override
             public void onFailure(Throwable throwable) {
                 Toast.makeText(PostActivity.this, "Failed to save post, " + throwable.toString(), Toast.LENGTH_SHORT).show();
-                Log.e("PostActivity", "Failed to save post", throwable);
+                Log.e(TAG, "Failed to save post", throwable);
             }
         }, new UiThreadExecutor());
     }

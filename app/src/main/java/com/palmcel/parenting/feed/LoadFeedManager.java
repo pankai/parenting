@@ -2,13 +2,13 @@ package com.palmcel.parenting.feed;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.common.ExecutorUtil;
+import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.FeedPostBuilder;
@@ -26,6 +26,8 @@ import static com.palmcel.parenting.db.DatabaseContract.FeedEntry;
  * Singleton class that loads feed
  */
 public class LoadFeedManager {
+
+    private static final String TAG = "LoadFreeManager";
     private static final int DEFAULT_MAX_FETCH = 20;
 
     private static LoadFeedManager INSTANCE = new LoadFeedManager();
@@ -38,7 +40,10 @@ public class LoadFeedManager {
 
     public void loadFeed(final LoadFeedParams loadFeedParams) {
         if (mLoadFeedFuture != null) {
+            Log.d(TAG, "loadFeed was skipped.");
             return;
+        } else {
+            Log.d(TAG, "In loadFeed");
         }
 
         mLoadFeedFuture = ExecutorUtil.execute(new Callable<LoadFeedResult>() {
@@ -51,7 +56,7 @@ public class LoadFeedManager {
         Futures.addCallback(mLoadFeedFuture, new FutureCallback<LoadFeedResult>() {
             @Override
             public void onSuccess(LoadFeedResult result) {
-                Log.d("LoadFreeManager", "mLoadFeedFuture succeeded");
+                Log.d(TAG, "mLoadFeedFuture succeeded");
                 mLoadFeedFuture = null;
                 EventBus.getDefault().post(new LoadFeedResultEvent(loadFeedParams, result));
             }
@@ -67,7 +72,7 @@ public class LoadFeedManager {
     }
 
     private LoadFeedResult loadFeedFromDb(LoadFeedParams loadFeedParams) {
-        Log.d("LoadFeedManager", "In loadFeedFromDb");
+        Log.d(TAG, "In loadFeedFromDb");
         SQLiteDatabase db = DbHelper.getDb();
 
         String selectFields =

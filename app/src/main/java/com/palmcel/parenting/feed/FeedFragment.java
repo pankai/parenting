@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 
 import com.palmcel.parenting.R;
 
+import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.list.PostListAdapter;
 
 import de.greenrobot.event.EventBus;
@@ -30,6 +30,9 @@ import de.greenrobot.event.EventBus;
  *
  */
 public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+
+    private static final String TAG = "FeedFragment";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -164,7 +167,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param event load feed results
      */
     public void onEventMainThread(LoadFeedResultEvent event) {
-        Log.d("FeedFragment", "In onEventMainThread");
+        Log.d(TAG, "In onEventMainThread");
 
         LoadFeedResult result = event.getLoadFeedResult();
 

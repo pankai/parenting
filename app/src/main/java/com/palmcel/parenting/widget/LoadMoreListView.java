@@ -3,7 +3,6 @@ package com.palmcel.parenting.widget;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -13,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.Log;
 
 /**
  * Load more list view. Follow the code in
