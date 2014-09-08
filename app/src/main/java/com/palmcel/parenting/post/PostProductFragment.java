@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.palmcel.parenting.R;
 
@@ -83,7 +85,16 @@ public class PostProductFragment extends Fragment {
 
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.loadUrl("http://www.amazon.com");
+    }
+
+    private class MyWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -125,4 +136,11 @@ public class PostProductFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    boolean webViewCanGoBack() {
+        return mWebView.canGoBack();
+    }
+
+    void webViewGoBack() {
+        mWebView.goBack();
+    }
 }

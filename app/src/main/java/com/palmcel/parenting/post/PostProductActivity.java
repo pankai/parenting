@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,13 +17,16 @@ import com.palmcel.parenting.R;
 
 public class PostProductActivity extends Activity {
 
+    private PostProductFragment mPostProductFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_product_activity);
         if (savedInstanceState == null) {
+            mPostProductFragment = new PostProductFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PostProductFragment())
+                    .add(R.id.container, mPostProductFragment)
                     .commit();
         }
     }
@@ -51,5 +55,17 @@ public class PostProductActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // Check if the key event was the Back button and if there's history
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && mPostProductFragment.webViewCanGoBack()) {
+            mPostProductFragment.webViewGoBack();
+            return true;
+        }
+        // If it wasn't the Back key or there's no web page history, bubble up to the default
+        // system behavior (probably exit the activity)
+        return super.onKeyDown(keyCode, event);
     }
 }
