@@ -8,9 +8,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.palmcel.parenting.R;
 
@@ -36,6 +38,7 @@ public class PostProductFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private WebView mWebView;
+    private ProgressBar mProgressBar;
 
     /**
      * Use this factory method to create a new instance of
@@ -75,6 +78,7 @@ public class PostProductFragment extends Fragment {
                 (ViewGroup) inflater.inflate(R.layout.post_product_fragment, container, false);
 
         mWebView = (WebView) rootView.findViewById(R.id.webview);
+        mProgressBar = (ProgressBar) rootView.findViewById(R.id.loading_progress);
 
         return rootView;
     }
@@ -86,6 +90,19 @@ public class PostProductFragment extends Fragment {
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new MyWebViewClient());
+
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int progress) {
+                if(progress < 100 && mProgressBar.getVisibility() == ProgressBar.GONE){
+                    mProgressBar.setVisibility(ProgressBar.VISIBLE);
+                }
+                mProgressBar.setProgress(progress);
+                if(progress == 100) {
+                    mProgressBar.setVisibility(ProgressBar.GONE);
+                }
+            }
+        });
+
         mWebView.loadUrl("http://www.amazon.com");
     }
 

@@ -1,8 +1,15 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.palmcel.parenting.post.PostProductFragment">
+    tools:context="com.palmcel.parenting.post.PostProductFragment"
+    android:orientation="vertical">
+
+    <ProgressBar android:id="@+id/loading_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
     <WebView  xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/webview"
@@ -10,4 +17,4 @@
         android:layout_height="fill_parent"
         />
 
-</FrameLayout>
+</LinearLayout>
