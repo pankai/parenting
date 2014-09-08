@@ -15,7 +15,13 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -128,7 +134,7 @@ public class PostProductFragment extends Fragment {
         }
 
         @Override
-        public void onPageFinished(WebView view, String url) {
+        public void onPageFinished(WebView view, final String url) {
             Log.d(TAG, "onPageFinished, " + url);
             /* This call inject JavaScript into the page which just finished loading. */
             mWebView.loadUrl("javascript:HTMLOUT.processHTML(document.documentElement.outerHTML);");
@@ -141,8 +147,22 @@ public class PostProductFragment extends Fragment {
     class MyJavaScriptInterface {
         @JavascriptInterface
         @SuppressWarnings("unused")
-        public void processHTML(String html) {
-            Log.d(TAG, "MyJavaScriptInterface, html=" + html);
+        public void processHTML(final String html) {
+            //Log.d(TAG, "MyJavaScriptInterface, html=" + html);
+            ExecutorUtil.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    Document doc = Jsoup.parse(html);
+                    Elements images = doc.select("img");
+                    for (Element el : images) {
+                        String imageUrl = el.attr("src");
+
+                        Log.d(TAG, "onPageFinished, imageUrl=" + imageUrl);
+                    }
+                }
+            });
+
         }
     }
 
