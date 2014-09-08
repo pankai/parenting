@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"/>
 
-    <WebView  xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.palmcel.parenting.widget.ObservableWebView
         android:id="@+id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
