@@ -70,7 +70,8 @@ public class ComposeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.compose_fragment, container, false);
+        ViewGroup rootView =
+                (ViewGroup) inflater.inflate(R.layout.compose_fragment, container, false);
 
         mPostButton = rootView.findViewById(R.id.post_button);
         mPostEdit = (EditText) rootView.findViewById(R.id.compose_edit);

@@ -7,6 +7,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import com.palmcel.parenting.R;
 
@@ -30,6 +32,8 @@ public class PostProductFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private WebView mWebView;
 
     /**
      * Use this factory method to create a new instance of
@@ -65,7 +69,21 @@ public class PostProductFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.post_product_fragment, container, false);
+        ViewGroup rootView =
+                (ViewGroup) inflater.inflate(R.layout.post_product_fragment, container, false);
+
+        mWebView = (WebView) rootView.findViewById(R.id.webview);
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        WebSettings webSettings = mWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        mWebView.loadUrl("http://www.amazon.com");
     }
 
     // TODO: Rename method, update argument and hook method into UI event
