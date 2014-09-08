@@ -21,6 +21,10 @@
             android:name=".post.PostActivity"
             android:label="@string/title_activity_post" >
         </activity>
+        <activity
+            android:name=".post.PostProductActivity"
+            android:label="@string/title_activity_post_product" >
+        </activity>
     </application>
 
 </manifest>

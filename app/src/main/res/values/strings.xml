@@ -19,5 +19,7 @@
     <string name="post_button">Post</string>
     <string name="post_edit_hint">What\'s happening?</string>
     <string name="title_activity_post">PostActivity</string>
+    <string name="title_activity_post_product">Post a Product</string>
+    <string name="hint_enter_store_website">Enter a store website</string>
 
 </resources>

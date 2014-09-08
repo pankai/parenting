@@ -20,6 +20,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.palmcel.parenting.feed.FeedFragment;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.post.PostActivity;
+import com.palmcel.parenting.post.PostProductActivity;
 
 /* TODO
 * http://square.github.io/picasso/
@@ -113,7 +114,7 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
                 startPostStoryActivity();
                 return true;
             case R.id.post_product:
-                Toast.makeText(this, "Post a product", Toast.LENGTH_SHORT).show();
+                startPostProductActivity();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -124,6 +125,13 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
      */
     private void startPostStoryActivity() {
         startActivity(new Intent(this, PostActivity.class));
+    }
+
+    /**
+     * Start post-a-product activity
+     */
+    private void startPostProductActivity() {
+        startActivity(new Intent(this, PostProductActivity.class));
     }
 
     @Override
