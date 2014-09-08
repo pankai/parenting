@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.widget.ObservableWebView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,7 +48,7 @@ public class PostProductFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private WebView mWebView;
+    private ObservableWebView mWebView;
     private ProgressBar mProgressBar;
 
     /**
@@ -87,7 +88,7 @@ public class PostProductFragment extends Fragment {
         ViewGroup rootView =
                 (ViewGroup) inflater.inflate(R.layout.post_product_fragment, container, false);
 
-        mWebView = (WebView) rootView.findViewById(R.id.webview);
+        mWebView = (ObservableWebView) rootView.findViewById(R.id.webview);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.loading_progress);
 
         return rootView;
