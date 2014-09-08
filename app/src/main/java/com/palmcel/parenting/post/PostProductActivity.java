@@ -22,7 +22,7 @@ public class PostProductActivity extends Activity {
         setContentView(R.layout.post_product_activity);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new PostProductFragment())
                     .commit();
         }
     }
@@ -51,21 +51,5 @@ public class PostProductActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.post_product_fragment, container, false);
-            return rootView;
-        }
     }
 }
