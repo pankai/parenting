@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -15,6 +15,7 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.Log;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +27,9 @@ import com.palmcel.parenting.R;
  *
  */
 public class PostProductFragment extends Fragment {
+
+    private static final String TAG = "PostProductFragment";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -89,21 +93,31 @@ public class PostProductFragment extends Fragment {
 
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        mWebView.setWebViewClient(new MyWebViewClient());
 
-        mWebView.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress) {
-                if(progress < 100 && mProgressBar.getVisibility() == ProgressBar.GONE){
-                    mProgressBar.setVisibility(ProgressBar.VISIBLE);
-                }
-                mProgressBar.setProgress(progress);
-                if(progress == 100) {
-                    mProgressBar.setVisibility(ProgressBar.GONE);
-                }
-            }
-        });
+        // Register a new JavaScript interface called HTMLOUT.
+        mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+
+        mWebView.setWebViewClient(new MyWebViewClient());
+        mWebView.setWebChromeClient(new MyWebChromeClient());
 
         mWebView.loadUrl("http://www.amazon.com");
+    }
+
+    private class MyWebChromeClient extends WebChromeClient {
+        public void onProgressChanged(WebView view, int progress) {
+            if(progress < 100 && mProgressBar.getVisibility() == ProgressBar.GONE){
+                mProgressBar.setVisibility(ProgressBar.VISIBLE);
+            }
+            mProgressBar.setProgress(progress);
+            if(progress == 100) {
+                mProgressBar.setVisibility(ProgressBar.GONE);
+            }
+        }
+
+        @Override
+        public void onReceivedTitle (WebView view, String title) {
+            Log.d(TAG, "onReceivedTitle, " + title);
+        }
     }
 
     private class MyWebViewClient extends WebViewClient {
@@ -111,6 +125,24 @@ public class PostProductFragment extends Fragment {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
             return true;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            Log.d(TAG, "onPageFinished, " + url);
+            /* This call inject JavaScript into the page which just finished loading. */
+            mWebView.loadUrl("javascript:HTMLOUT.processHTML(document.documentElement.outerHTML);");
+        }
+    }
+
+    /* An instance of this class will be registered as a JavaScript interface
+    * See: http://stackoverflow.com/questions/2376471/how-do-i-get-the-web-page-contents-from-a-webview
+    * */
+    class MyJavaScriptInterface {
+        @JavascriptInterface
+        @SuppressWarnings("unused")
+        public void processHTML(String html) {
+            Log.d(TAG, "MyJavaScriptInterface, html=" + html);
         }
     }
 
