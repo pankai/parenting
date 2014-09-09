@@ -28,11 +28,13 @@ public class PostProductActivity extends Activity {
         if (savedInstanceState == null) {
             mPostProductFragment = new PostProductFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, mPostProductFragment)
+                    .add(R.id.container, mPostProductFragment, "R.layout.post_product_fragment")
                     .commit();
+        } else {
+            mPostProductFragment = (PostProductFragment) getFragmentManager().
+                    findFragmentByTag("R.layout.post_product_fragment");
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
