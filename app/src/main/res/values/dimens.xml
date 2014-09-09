@@ -28,4 +28,11 @@
     <dimen name="post_button_margin_bottom">6dp</dimen>
     <dimen name="post_button_padding">6dp</dimen>
     <dimen name="post_panel_padding">10dp</dimen>
+
+    <!-- choose product picture fragment -->
+    <dimen name="caption_text_width">220dp</dimen>
+    <dimen name="caption_text_size">18sp</dimen>
+    <dimen name="caption_margin_bottom">10dp</dimen>
+    <dimen name="column_margin">4dp</dimen>
+    <dimen name="picture_margin_bottom">6dp</dimen>
 </resources>

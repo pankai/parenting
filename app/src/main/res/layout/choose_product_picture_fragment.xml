@@ -1,13 +1,88 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.palmcel.parenting.post.ChooseProductPictureFragment">
+    tools:context="com.palmcel.parenting.post.ChooseProductPictureFragment"
+    >
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+        <TextView
+            android:layout_width="@dimen/caption_text_width"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/caption_text_size"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/choose_picture_for_product"
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/caption_margin_bottom"/>
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- left column -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginRight="@dimen/column_margin">
+
+                <com.palmcel.parenting.widget.SquareForWidthView
+                    android:id="@+id/picture_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="#f0f"
+                    android:layout_marginBottom="@dimen/picture_margin_bottom"
+                    />
+                <com.palmcel.parenting.widget.SquareForWidthView
+                    android:id="@+id/picture_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="#f0f"
+                    android:layout_marginBottom="@dimen/picture_margin_bottom"
+                    />
+                <com.palmcel.parenting.widget.SquareForWidthView
+                    android:id="@+id/picture_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="#f0f"
+                    />
+
+            </LinearLayout>
+
+            <!-- right column -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="4dp">
+                <com.palmcel.parenting.widget.SquareForWidthView
+                    android:id="@+id/picture_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="#f0f"
+                    android:layout_marginBottom="@dimen/picture_margin_bottom"
+                    />
+                <com.palmcel.parenting.widget.SquareForWidthView
+                    android:id="@+id/picture_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="#f0f"
+                    android:layout_marginBottom="@dimen/picture_margin_bottom"
+                    />
+                <com.palmcel.parenting.widget.SquareForWidthView
+                    android:id="@+id/picture_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="#f0f"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
