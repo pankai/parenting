@@ -33,7 +33,8 @@ import org.jsoup.select.Elements;
  * create an instance of this fragment.
  *
  */
-public class PostProductFragment extends Fragment {
+public class PostProductFragment extends Fragment
+        implements ObservableWebView.OnScrollChangedCallback {
 
     private static final String TAG = "PostProductFragment";
 
@@ -50,6 +51,7 @@ public class PostProductFragment extends Fragment {
 
     private ObservableWebView mWebView;
     private ProgressBar mProgressBar;
+    private View mPostButtonPanel;
 
     /**
      * Use this factory method to create a new instance of
@@ -90,7 +92,9 @@ public class PostProductFragment extends Fragment {
 
         mWebView = (ObservableWebView) rootView.findViewById(R.id.webview);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.loading_progress);
+        mPostButtonPanel = (View) rootView.findViewById(R.id.bottom_panel);
 
+        mWebView.setOnScrollChangedCallback(this);
         return rootView;
     }
 
@@ -212,5 +216,19 @@ public class PostProductFragment extends Fragment {
 
     void webViewGoBack() {
         mWebView.goBack();
+    }
+
+    @Override
+    public void onScrollDown() {
+        if (mPostButtonPanel.getVisibility() == View.VISIBLE) {
+            mPostButtonPanel.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onScrollUp() {
+        if (mPostButtonPanel.getVisibility() != View.VISIBLE) {
+            mPostButtonPanel.setVisibility(View.VISIBLE);
+        }
     }
 }
