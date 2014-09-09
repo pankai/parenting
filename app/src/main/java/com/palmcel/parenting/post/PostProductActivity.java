@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,10 +16,12 @@ import android.widget.SearchView;
 
 import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.Log;
 
 public class PostProductActivity extends Activity
         implements PostProductFragment.OnFragmentInteractionListener {
 
+    private static final String TAG = "PostProductActivity";
     private static final String FRAGMENT_STATE_KEY = "FragmentState";
 
     private PostProductFragment mPostProductFragment;
@@ -40,14 +43,16 @@ public class PostProductActivity extends Activity
                     .add(R.id.container, mPostProductFragment,
                             PostProductFragment.class.getName())
                     .commit();
-            mFragmentState = FragmentState.PostProductFragment;
+            changeFragmentState(null, FragmentState.PostProductFragment);
         } else {
             mPostProductFragment = (PostProductFragment) getFragmentManager().
                     findFragmentByTag(PostProductFragment.class.getName());
-            mFragmentState = (FragmentState) savedInstanceState.getSerializable(FRAGMENT_STATE_KEY);
-            if (mFragmentState == null) {
-                mFragmentState = FragmentState.PostProductFragment;
+            FragmentState fragmentState =
+                    (FragmentState) savedInstanceState.getSerializable(FRAGMENT_STATE_KEY);
+            if (fragmentState == null) {
+                fragmentState = FragmentState.PostProductFragment;
             }
+            changeFragmentState(null, fragmentState);
         }
 
         ActionBar actionBar = getActionBar();
@@ -61,6 +66,21 @@ public class PostProductActivity extends Activity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        if (mFragmentState == FragmentState.ChooseProductPictureFragment) {
+            createOptionMenuForChoosePicture(menu);
+            setTitle(getResources().getString(R.string.title_activity_choose_picture));
+        } else {
+            createOptionMenuForPostProduct(menu);
+            setTitle(getResources().getString(R.string.title_activity_post_product));
+        }
+
+        return true;
+    }
+
+    private void createOptionMenuForPostProduct(Menu menu) {
+        Log.d(TAG, "In createOptionMenuForPostProduct");
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.post_product, menu);
 
@@ -89,7 +109,13 @@ public class PostProductActivity extends Activity
                 return true;
             }
         });
-        return true;
+    }
+
+    private void createOptionMenuForChoosePicture(Menu menu) {
+        Log.d(TAG, "In createOptionMenuForChoosePicture");
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.choose_picture, menu);
     }
 
     @Override
@@ -119,7 +145,8 @@ public class PostProductActivity extends Activity
 
         if (mFragmentState == FragmentState.ChooseProductPictureFragment) {
             // Go back to PostProductFragment after clicking back key.
-            mFragmentState = FragmentState.PostProductFragment;
+            changeFragmentState(
+                    FragmentState.ChooseProductPictureFragment, FragmentState.PostProductFragment);
         }
 
         // There's no web page history, bubble up to the default
@@ -138,6 +165,18 @@ public class PostProductActivity extends Activity
             .hide(mPostProductFragment)
             .addToBackStack(mPostProductFragment.getClass().getName())
             .commit();
-        mFragmentState = FragmentState.ChooseProductPictureFragment;
+        changeFragmentState(
+                FragmentState.PostProductFragment,
+                FragmentState.ChooseProductPictureFragment);
+    }
+
+    private void changeFragmentState(@Nullable FragmentState fromState, FragmentState toState) {
+        mFragmentState = toState;
+
+        if (toState == FragmentState.ChooseProductPictureFragment ||
+                fromState == FragmentState.ChooseProductPictureFragment &&
+                toState == FragmentState.PostProductFragment) {
+            invalidateOptionsMenu();
+        }
     }
 }
