@@ -14,6 +14,8 @@ public class Post implements Parcelable {
     public final PostType postType;
     // Post category, e.g. 3m, 5y
     public final String category;
+    // For gender, F or M
+    public final String forGender;
     // Message of the post
     public final String message;
     // Picture url
@@ -42,6 +44,7 @@ public class Post implements Parcelable {
         userId = builder.getUserId();
         postType = builder.getPostType();
         category = builder.getCategory();
+        forGender = builder.getForGender();
         message = builder.getMessage();
         pictureUrl = builder.getPictureUrl();
         externalLinkUrl = builder.getExternalLinkUrl();
@@ -92,6 +95,7 @@ public class Post implements Parcelable {
         userId = in.readString();
         postType = PostType.valueOf(in.readString());
         category = in.readString();
+        forGender = in.readString();
         message = in.readString();
         pictureUrl = in.readString();
         externalLinkUrl = in.readString();
@@ -118,6 +122,7 @@ public class Post implements Parcelable {
         out.writeString(userId);
         out.writeString(postType.name());
         out.writeString(category);
+        out.writeString(forGender);
         out.writeString(message);
         out.writeString(pictureUrl);
         out.writeString(externalLinkUrl);

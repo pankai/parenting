@@ -46,6 +46,7 @@ public class PostHandler {
         values.put(PostEntry.COLUMN_USER_ID, post.userId);
         values.put(PostEntry.COLUMN_POST_TYPE, post.postType.toString());
         values.put(PostEntry.COLUMN_POST_CATEGORY, post.category);
+        values.put(PostEntry.COLUMN_FOR_GENDER, post.forGender);
         values.put(PostEntry.COLUMN_MESSAGE, post.message);
         values.put(PostEntry.COLUMN_PICTURE_URL, post.pictureUrl);
         values.put(PostEntry.COLUMN_EXT_LINK_URL, post.externalLinkUrl);

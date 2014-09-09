@@ -14,6 +14,8 @@ public class PostBuilder {
     private PostType postType;
     // Post category, e.g. 3m, 5y
     private String category;
+    // For gender, M or F
+    private String forGender;
     // Message of the post
     private String message;
     // Picture url
@@ -71,6 +73,15 @@ public class PostBuilder {
 
     public PostBuilder setCategory(String category) {
         this.category = category;
+        return this;
+    }
+
+    public String getForGender() {
+        return forGender;
+    }
+
+    public PostBuilder setForGender(String forGender) {
+        this.forGender = forGender;
         return this;
     }
 
