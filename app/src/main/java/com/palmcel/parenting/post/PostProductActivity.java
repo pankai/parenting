@@ -34,6 +34,9 @@ public class PostProductActivity extends Activity {
             mPostProductFragment = (PostProductFragment) getFragmentManager().
                     findFragmentByTag("R.layout.post_product_fragment");
         }
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -76,6 +79,9 @@ public class PostProductActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
+                return true;
+            case android.R.id.home:
+                this.finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
