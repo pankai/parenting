@@ -16,10 +16,19 @@ import android.widget.SearchView;
 import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
 
-public class PostProductActivity extends Activity {
+public class PostProductActivity extends Activity
+        implements PostProductFragment.OnFragmentInteractionListener {
+
+    private static final String FRAGMENT_STATE_KEY = "FragmentState";
 
     private PostProductFragment mPostProductFragment;
     private SearchView mSearchView;
+    private FragmentState mFragmentState;
+
+    enum FragmentState {
+        PostProductFragment,
+        ChooseProductPictureFragment
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +37,26 @@ public class PostProductActivity extends Activity {
         if (savedInstanceState == null) {
             mPostProductFragment = new PostProductFragment();
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, mPostProductFragment, "R.layout.post_product_fragment")
+                    .add(R.id.container, mPostProductFragment,
+                            PostProductFragment.class.getName())
                     .commit();
+            mFragmentState = FragmentState.PostProductFragment;
         } else {
             mPostProductFragment = (PostProductFragment) getFragmentManager().
-                    findFragmentByTag("R.layout.post_product_fragment");
+                    findFragmentByTag(PostProductFragment.class.getName());
+            mFragmentState = (FragmentState) savedInstanceState.getSerializable(FRAGMENT_STATE_KEY);
+            if (mFragmentState == null) {
+                mFragmentState = FragmentState.PostProductFragment;
+            }
         }
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(FRAGMENT_STATE_KEY, mFragmentState);
     }
 
     @Override
@@ -88,14 +108,36 @@ public class PostProductActivity extends Activity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public void onBackPressed() {
         // Check if the key event was the Back button and if there's history
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && mPostProductFragment.webViewCanGoBack()) {
+        if (mFragmentState == FragmentState.PostProductFragment &&
+                mPostProductFragment != null &&
+                mPostProductFragment.webViewCanGoBack()) {
             mPostProductFragment.webViewGoBack();
-            return true;
+            return;
         }
-        // If it wasn't the Back key or there's no web page history, bubble up to the default
+
+        if (mFragmentState == FragmentState.ChooseProductPictureFragment) {
+            // Go back to PostProductFragment after clicking back key.
+            mFragmentState = FragmentState.PostProductFragment;
+        }
+
+        // There's no web page history, bubble up to the default
         // system behavior (probably exit the activity)
-        return super.onKeyDown(keyCode, event);
+        super.onBackPressed();
+    }
+
+    /**
+     * User clicked Post button in PostProductFragment. We should open ChooseProductPictureFragment.
+     */
+    @Override
+    public void onPostForPictureClicked() {
+        getFragmentManager().beginTransaction()
+            .add(R.id.container, new ChooseProductPictureFragment(),
+                    "R.layout.ChooseProductPictureFragment")
+            .hide(mPostProductFragment)
+            .addToBackStack(mPostProductFragment.getClass().getName())
+            .commit();
+        mFragmentState = FragmentState.ChooseProductPictureFragment;
     }
 }

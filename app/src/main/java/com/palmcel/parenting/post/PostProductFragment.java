@@ -52,6 +52,7 @@ public class PostProductFragment extends Fragment
     private ObservableWebView mWebView;
     private ProgressBar mProgressBar;
     private View mPostButtonPanel;
+    private View mPostButton;
 
     /**
      * Use this factory method to create a new instance of
@@ -93,6 +94,7 @@ public class PostProductFragment extends Fragment
         mWebView = (ObservableWebView) rootView.findViewById(R.id.webview);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.loading_progress);
         mPostButtonPanel = (View) rootView.findViewById(R.id.bottom_panel);
+        mPostButton = rootView.findViewById(R.id.post_button);
 
         mWebView.setOnScrollChangedCallback(this);
         return rootView;
@@ -110,6 +112,15 @@ public class PostProductFragment extends Fragment
 
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setWebChromeClient(new MyWebChromeClient());
+
+        mPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onPostForPictureClicked();
+                }
+            }
+        });
     }
 
     void loadUrl(String url) {
@@ -173,18 +184,11 @@ public class PostProductFragment extends Fragment
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            //mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -208,8 +212,7 @@ public class PostProductFragment extends Fragment
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onPostForPictureClicked();
     }
 
     boolean webViewCanGoBack() {
