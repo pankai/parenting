@@ -110,8 +110,10 @@ public class PostProductFragment extends Fragment
 
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setWebChromeClient(new MyWebChromeClient());
+    }
 
-        mWebView.loadUrl("http://www.amazon.com");
+    void loadUrl(String url) {
+        mWebView.loadUrl(url);
     }
 
     private class MyWebChromeClient extends WebChromeClient {

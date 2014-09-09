@@ -13,11 +13,13 @@ import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.SearchView;
 
+import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
 
 public class PostProductActivity extends Activity {
 
     private PostProductFragment mPostProductFragment;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +40,30 @@ public class PostProductActivity extends Activity {
         getMenuInflater().inflate(R.menu.post_product, menu);
 
         MenuItem searchViewItem = menu.findItem(R.id.menu_search);
-        SearchView searchView = (SearchView) searchViewItem.getActionView();
-        searchView.setIconifiedByDefault(false);
-        searchView.setQueryHint(getResources().getString(R.string.hint_enter_store_website));
+        mSearchView = (SearchView) searchViewItem.getActionView();
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setQueryHint(getResources().getString(R.string.hint_enter_store_website));
+        mSearchView.setQuery("www.amazon.com", false);
 
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (!Strings.isNullOrEmpty(query)) {
+                    if (!query.startsWith("http://")) {
+                        query = "http://" + query;
+                    }
+                    mPostProductFragment.loadUrl(query);
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return true;
+            }
+        });
         return true;
     }
 
@@ -50,9 +72,9 @@ public class PostProductActivity extends Activity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
