@@ -84,6 +84,7 @@
     <orderEntry type="library" exported="" name="support-v4-20.0.0" level="project" />
     <orderEntry type="library" exported="" name="eventbus-2.2.1" level="project" />
     <orderEntry type="library" exported="" name="jsoup-1.7.3" level="project" />
+    <orderEntry type="library" exported="" name="picasso-2.3.4" level="project" />
     <orderEntry type="library" exported="" name="guava-16.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-20.0.0" level="project" />
   </component>

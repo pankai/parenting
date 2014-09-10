@@ -1,15 +1,19 @@
 package com.palmcel.parenting.post;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.google.common.collect.Lists;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.Log;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -27,7 +31,9 @@ public class ChooseProductPictureFragment extends Fragment {
     private static final String TAG = "ChooseProductPictureFragment";
     private static final String ARG_IMAGE_URLS = "imageUrls";
 
+    private Context mContext;
     private ArrayList<String> mImageUrls;
+    private ArrayList<ImageView> mPictureImageViews;
 
     private OnFragmentInteractionListener mListener;
 
@@ -64,7 +70,33 @@ public class ChooseProductPictureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.choose_product_picture_fragment, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(
+                R.layout.choose_product_picture_fragment, container, false);
+
+        mPictureImageViews = Lists.newArrayList();
+        mPictureImageViews.add((ImageView) rootView.findViewById(R.id.picture_1));
+        mPictureImageViews.add((ImageView) rootView.findViewById(R.id.picture_2));
+        mPictureImageViews.add((ImageView) rootView.findViewById(R.id.picture_3));
+        mPictureImageViews.add((ImageView) rootView.findViewById(R.id.picture_4));
+        mPictureImageViews.add((ImageView) rootView.findViewById(R.id.picture_5));
+        mPictureImageViews.add((ImageView) rootView.findViewById(R.id.picture_6));
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        int imageCount = mImageUrls.size();
+        for (int i = 0; i < imageCount; i++) {
+            Picasso.with(mContext).load(mImageUrls.get(i)).into(mPictureImageViews.get(i));
+        }
+
+        int imageViewCount = mPictureImageViews.size();
+        for (int i = imageCount; i < imageViewCount; i++) {
+            mPictureImageViews.get(i).setVisibility(View.GONE);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -77,6 +109,7 @@ public class ChooseProductPictureFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mContext = activity;
         try {
            // mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {

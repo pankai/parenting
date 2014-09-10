@@ -35,21 +35,24 @@
                     android:id="@+id/picture_1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="#f0f"
+                    android:background="@color/gray_1"
+                    android:scaleType="centerInside"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
                 <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_3"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="#f0f"
+                    android:background="@color/gray_1"
+                    android:scaleType="centerInside"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
                 <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_5"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="#f0f"
+                    android:background="@color/gray_1"
+                    android:scaleType="centerInside"
                     />
 
             </LinearLayout>
@@ -65,21 +68,24 @@
                     android:id="@+id/picture_2"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="#f0f"
+                    android:background="@color/gray_1"
+                    android:scaleType="centerInside"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
                 <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_4"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="#f0f"
+                    android:background="@color/gray_1"
+                    android:scaleType="centerInside"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
                 <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_6"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="#f0f"
+                    android:background="@color/gray_1"
+                    android:scaleType="centerInside"
                     />
             </LinearLayout>
 
