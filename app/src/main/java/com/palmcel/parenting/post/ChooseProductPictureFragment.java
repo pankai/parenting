@@ -16,6 +16,7 @@ import com.palmcel.parenting.common.Log;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,7 +91,10 @@ public class ChooseProductPictureFragment extends Fragment {
 
         int imageCount = mImageUrls.size();
         for (int i = 0; i < imageCount; i++) {
-            Picasso.with(mContext).load(mImageUrls.get(i)).into(mPictureImageViews.get(i));
+            Picasso.with(mContext)
+                    .load(mImageUrls.get(i))
+                    .placeholder(R.drawable.ic_wait)
+                    .into(mPictureImageViews.get(i));
         }
 
         int imageViewCount = mPictureImageViews.size();
