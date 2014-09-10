@@ -23,4 +23,5 @@
     <string name="title_activity_choose_picture">Choose a Picture</string>
     <string name="hint_enter_store_website">Enter a store website</string>
     <string name="choose_picture_for_product">Please choose a picture for the product.</string>
+    <string name="progress_loading">Loading ...</string>
 </resources>

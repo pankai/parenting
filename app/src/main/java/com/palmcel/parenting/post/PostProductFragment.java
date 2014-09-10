@@ -1,7 +1,6 @@
 package com.palmcel.parenting.post;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.google.common.collect.Lists;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
@@ -23,6 +23,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -155,8 +159,6 @@ public class PostProductFragment extends Fragment
         @Override
         public void onPageFinished(WebView view, final String url) {
             Log.d(TAG, "onPageFinished, " + url);
-            /* This call inject JavaScript into the page which just finished loading. */
-            mWebView.loadUrl("javascript:HTMLOUT.processHTML(document.documentElement.outerHTML);");
         }
     }
 
@@ -167,21 +169,31 @@ public class PostProductFragment extends Fragment
         @JavascriptInterface
         @SuppressWarnings("unused")
         public void processHTML(final String html) {
-            //Log.d(TAG, "MyJavaScriptInterface, html=" + html);
             ExecutorUtil.execute(new Runnable() {
 
                 @Override
                 public void run() {
                     Document doc = Jsoup.parse(html);
                     Elements images = doc.select("img");
+                    ArrayList<String> urlList = Lists.newArrayList();
+                    int count = 0;
                     for (Element el : images) {
-                        String imageUrl = el.attr("src");
-
-                        Log.d(TAG, "onPageFinished, imageUrl=" + imageUrl);
+                        String imageUrl = el.attr("src").trim();
+                        Log.d(TAG, "processHTML, imageUrl=" + imageUrl);
+                        if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                            // Ignore relative urls
+                            continue;
+                        }
+                        urlList.add(imageUrl);
+                        if (++count == 6) {
+                            break;
+                        }
                     }
+
+                    EventBus.getDefault().post(
+                            new ImageUrlsRetrievalResultEvent(urlList));
                 }
             });
-
         }
     }
 
@@ -236,5 +248,13 @@ public class PostProductFragment extends Fragment
         if (mPostButtonPanel.getVisibility() != View.VISIBLE) {
             mPostButtonPanel.setVisibility(View.VISIBLE);
         }
+    }
+
+    /**
+     * Retrieve urls for the image in the html content of WebView.
+     */
+    public void kickOffImageUrlsRetrieval() {
+        /* This call inject JavaScript into the page which just finished loading. */
+        mWebView.loadUrl("javascript:HTMLOUT.processHTML(document.documentElement.outerHTML);");
     }
 }

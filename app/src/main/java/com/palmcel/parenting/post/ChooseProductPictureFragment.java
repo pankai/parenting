@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.Log;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,14 +23,11 @@ import com.palmcel.parenting.R;
  *
  */
 public class ChooseProductPictureFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String TAG = "ChooseProductPictureFragment";
+    private static final String ARG_IMAGE_URLS = "imageUrls";
+
+    private ArrayList<String> mImageUrls;
 
     private OnFragmentInteractionListener mListener;
 
@@ -35,19 +35,17 @@ public class ChooseProductPictureFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param imageUrls List of image urls for the product
      * @return A new instance of fragment ChooseProductPictureFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ChooseProductPictureFragment newInstance(String param1, String param2) {
+    public static ChooseProductPictureFragment newInstance(ArrayList<String> imageUrls) {
         ChooseProductPictureFragment fragment = new ChooseProductPictureFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putStringArrayList(ARG_IMAGE_URLS, imageUrls);
         fragment.setArguments(args);
         return fragment;
     }
+
     public ChooseProductPictureFragment() {
         // Required empty public constructor
         setRetainInstance(true);
@@ -57,8 +55,8 @@ public class ChooseProductPictureFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mImageUrls = getArguments().getStringArrayList(ARG_IMAGE_URLS);
+            Log.d(TAG, "onCreate, mImageUrls=" + mImageUrls);
         }
     }
 

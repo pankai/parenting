@@ -2,21 +2,18 @@ package com.palmcel.parenting.post;
 
 import android.app.Activity;
 import android.app.ActionBar;
-import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.SearchView;
 
 import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.Log;
+
+import de.greenrobot.event.EventBus;
 
 public class PostProductActivity extends Activity
         implements PostProductFragment.OnFragmentInteractionListener {
@@ -27,6 +24,7 @@ public class PostProductActivity extends Activity
     private PostProductFragment mPostProductFragment;
     private SearchView mSearchView;
     private FragmentState mFragmentState;
+    private ProgressDialog mProgressDialog;
 
     enum FragmentState {
         PostProductFragment,
@@ -57,11 +55,19 @@ public class PostProductActivity extends Activity
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        EventBus.getDefault().register(this);
     }
 
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(FRAGMENT_STATE_KEY, mFragmentState);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -159,15 +165,48 @@ public class PostProductActivity extends Activity
      */
     @Override
     public void onPostForPictureClicked() {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.setMessage(getResources().getString(R.string.progress_loading));
+
+        try {
+            mProgressDialog.show();
+        } catch (Throwable t) {
+            Log.e(TAG, "mProgressDialog.show", t);
+        }
+
+        // kick off image url retrieval from WebView. onEventMainThread will be called
+        // when there is result.
+        mPostProductFragment.kickOffImageUrlsRetrieval();
+    }
+
+    /**
+     * EventBus event for loading feed.
+     * @param event load feed results
+     */
+    public void onEventMainThread(ImageUrlsRetrievalResultEvent event) {
+        Log.d(TAG, "In onEventMainThread for ImageUrlsRetrievalResultEvent");
+
+        // Open ChooseProductPictureFragment fragment
         getFragmentManager().beginTransaction()
-            .add(R.id.container, new ChooseProductPictureFragment(),
-                    "R.layout.ChooseProductPictureFragment")
-            .hide(mPostProductFragment)
-            .addToBackStack(mPostProductFragment.getClass().getName())
-            .commit();
+                .add(R.id.container,
+                     ChooseProductPictureFragment.newInstance(event.imageUrls),
+                     ChooseProductPictureFragment.class.getName())
+                .hide(mPostProductFragment)
+                .addToBackStack(mPostProductFragment.getClass().getName())
+                .commit();
         changeFragmentState(
                 FragmentState.PostProductFragment,
                 FragmentState.ChooseProductPictureFragment);
+
+        if (mProgressDialog != null) {
+            try {
+                mProgressDialog.dismiss();
+            } catch (Throwable t) {
+                Log.e(TAG, "mProgressDialog.dismiss", t);
+            }
+        }
     }
 
     private void changeFragmentState(@Nullable FragmentState fromState, FragmentState toState) {

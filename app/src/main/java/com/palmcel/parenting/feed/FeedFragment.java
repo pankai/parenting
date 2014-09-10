@@ -167,7 +167,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param event load feed results
      */
     public void onEventMainThread(LoadFeedResultEvent event) {
-        Log.d(TAG, "In onEventMainThread");
+        Log.d(TAG, "In onEventMainThread for LoadFeedResultEvent");
 
         LoadFeedResult result = event.getLoadFeedResult();
 
