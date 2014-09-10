@@ -197,7 +197,7 @@ public class PostProductActivity extends Activity
         // Open ChooseProductPictureFragment fragment
         getFragmentManager().beginTransaction()
                 .add(R.id.container,
-                     ChooseProductPictureFragment.newInstance(event.imageUrls),
+                     ChooseProductPictureFragment.newInstance(event.productPageInfo),
                      ChooseProductPictureFragment.class.getName())
                 .hide(mPostProductFragment)
                 .addToBackStack(mPostProductFragment.getClass().getName())
@@ -230,8 +230,9 @@ public class PostProductActivity extends Activity
      * @param productImageUrl the url of the product image url
      */
     @Override
-    public void onChooseProductPicture(String productImageUrl) {
-
+    public void onChooseProductPicture(String productImageUrl, ProductPageInfo productPageInfo) {
+        Log.d(TAG, "In onChooseProductPicture, productImageUrl=" + productImageUrl
+                + ", productPageInfo=" + productPageInfo);
     }
 
 }

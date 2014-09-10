@@ -6,9 +6,9 @@ import java.util.ArrayList;
  * EventBus event for image urls retrieval result
  */
 public class ImageUrlsRetrievalResultEvent {
-    ArrayList<String> imageUrls;
+    ProductPageInfo productPageInfo;
 
-    public ImageUrlsRetrievalResultEvent(ArrayList<String> imageUrls) {
-        this.imageUrls = imageUrls;
+    public ImageUrlsRetrievalResultEvent(ProductPageInfo productPageInfo) {
+        this.productPageInfo = productPageInfo;
     }
 }

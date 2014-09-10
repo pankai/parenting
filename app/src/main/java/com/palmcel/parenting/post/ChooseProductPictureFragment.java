@@ -2,7 +2,6 @@ package com.palmcel.parenting.post;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import com.palmcel.parenting.common.Log;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,10 +28,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ChooseProductPictureFragment extends Fragment {
 
     private static final String TAG = "ChooseProductPictureFragment";
-    private static final String ARG_IMAGE_URLS = "imageUrls";
+    private static final String ARG_PRODUCT_PAGE_INFO = "productPageInfo";
 
     private Context mContext;
-    private ArrayList<String> mImageUrls;
+    private ProductPageInfo mProductPageInfo;
     private ArrayList<ImageView> mPictureImageViews;
 
     private OnFragmentInteractionListener mListener;
@@ -42,13 +40,14 @@ public class ChooseProductPictureFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param imageUrls List of image urls for the product
+     * @param productPageInfo The product page info which includes a list of image urls
+     *                        for the product
      * @return A new instance of fragment ChooseProductPictureFragment.
      */
-    public static ChooseProductPictureFragment newInstance(ArrayList<String> imageUrls) {
+    public static ChooseProductPictureFragment newInstance(ProductPageInfo productPageInfo) {
         ChooseProductPictureFragment fragment = new ChooseProductPictureFragment();
         Bundle args = new Bundle();
-        args.putStringArrayList(ARG_IMAGE_URLS, imageUrls);
+        args.putSerializable(ARG_PRODUCT_PAGE_INFO, productPageInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,8 +61,9 @@ public class ChooseProductPictureFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mImageUrls = getArguments().getStringArrayList(ARG_IMAGE_URLS);
-            Log.d(TAG, "onCreate, mImageUrls=" + mImageUrls);
+            mProductPageInfo =
+                    (ProductPageInfo) getArguments().getSerializable(ARG_PRODUCT_PAGE_INFO);
+            Log.d(TAG, "onCreate, mProductPageInfo=" + mProductPageInfo);
         }
     }
 
@@ -89,9 +89,9 @@ public class ChooseProductPictureFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        int imageCount = mImageUrls.size();
+        int imageCount = mProductPageInfo.productPictureUrls.size();
         for (int i = 0; i < imageCount; i++) {
-            final String imageUrl = mImageUrls.get(i);
+            final String imageUrl = mProductPageInfo.productPictureUrls.get(i);
             ImageView pictureImageView = mPictureImageViews.get(i);
             Picasso.with(mContext)
                     .load(imageUrl)
@@ -102,7 +102,7 @@ public class ChooseProductPictureFragment extends Fragment {
                 @Override
                 public void onClick(View view) {
                     if (mListener != null) {
-                        mListener.onChooseProductPicture(imageUrl);
+                        mListener.onChooseProductPicture(imageUrl, mProductPageInfo);
                     }
                 }
             });
@@ -143,6 +143,7 @@ public class ChooseProductPictureFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        public void onChooseProductPicture(String productPictureUrl);
+        public void onChooseProductPicture(
+                String productPictureUrl, ProductPageInfo productPageInfo);
     }
 }

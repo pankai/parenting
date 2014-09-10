@@ -15,6 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keepclassmembers class com.palmcel.parenting.post.MyJavaScriptInterface {
+   public *;
+}
 -keepclassmembers class ** {
     public void onEvent*(**);
 }

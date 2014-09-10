@@ -1,32 +1,23 @@
 package com.palmcel.parenting.post;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
-import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.widget.ObservableWebView;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,6 +48,9 @@ public class PostProductFragment extends Fragment
     private ProgressBar mProgressBar;
     private View mPostButtonPanel;
     private View mPostButton;
+    private MyJavaScriptInterface mJavaScriptInterface;
+    private String mProductPageUrl;
+    private Context mContext;
 
     /**
      * Use this factory method to create a new instance of
@@ -113,7 +107,8 @@ public class PostProductFragment extends Fragment
         webSettings.setJavaScriptEnabled(true);
 
         // Register a new JavaScript interface called HTMLOUT.
-        mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+        mJavaScriptInterface = new MyJavaScriptInterface();
+        mWebView.addJavascriptInterface(mJavaScriptInterface, "HTMLOUT");
 
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setWebChromeClient(new MyWebChromeClient());
@@ -129,6 +124,7 @@ public class PostProductFragment extends Fragment
     }
 
     void loadUrl(String url) {
+        mProductPageUrl = url;
         mWebView.loadUrl(url);
     }
 
@@ -162,44 +158,10 @@ public class PostProductFragment extends Fragment
         }
     }
 
-    /* An instance of this class will be registered as a JavaScript interface
-    * See: http://stackoverflow.com/questions/2376471/how-do-i-get-the-web-page-contents-from-a-webview
-    * */
-    class MyJavaScriptInterface {
-        @JavascriptInterface
-        @SuppressWarnings("unused")
-        public void processHTML(final String html) {
-            ExecutorUtil.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    Document doc = Jsoup.parse(html);
-                    Elements images = doc.select("img");
-                    ArrayList<String> urlList = Lists.newArrayList();
-                    int count = 0;
-                    for (Element el : images) {
-                        String imageUrl = el.attr("src").trim();
-                        Log.d(TAG, "processHTML, imageUrl=" + imageUrl);
-                        if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                            // Ignore relative urls
-                            continue;
-                        }
-                        urlList.add(imageUrl);
-                        if (++count == 6) {
-                            break;
-                        }
-                    }
-
-                    EventBus.getDefault().post(
-                            new ImageUrlsRetrievalResultEvent(urlList));
-                }
-            });
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mContext = activity;
         try {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
@@ -254,6 +216,11 @@ public class PostProductFragment extends Fragment
      * Retrieve urls for the image in the html content of WebView.
      */
     public void kickOffImageUrlsRetrieval() {
+        if (Strings.isNullOrEmpty(mProductPageUrl)) {
+            Toast.makeText(mContext, R.string.product_url_is_empty, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mJavaScriptInterface.setProductWebPageUrl(mProductPageUrl);
         /* This call inject JavaScript into the page which just finished loading. */
         mWebView.loadUrl("javascript:HTMLOUT.processHTML(document.documentElement.outerHTML);");
     }
