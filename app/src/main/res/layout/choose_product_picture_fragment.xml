@@ -31,21 +31,21 @@
                 android:orientation="vertical"
                 android:layout_marginRight="@dimen/column_margin">
 
-                <com.palmcel.parenting.widget.SquareForWidthView
+                <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:background="#f0f"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
-                <com.palmcel.parenting.widget.SquareForWidthView
+                <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_3"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:background="#f0f"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
-                <com.palmcel.parenting.widget.SquareForWidthView
+                <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_5"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -61,21 +61,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginLeft="4dp">
-                <com.palmcel.parenting.widget.SquareForWidthView
+                <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_2"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:background="#f0f"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
-                <com.palmcel.parenting.widget.SquareForWidthView
+                <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_4"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:background="#f0f"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
-                <com.palmcel.parenting.widget.SquareForWidthView
+                <com.palmcel.parenting.widget.SquareForWidthImageView
                     android:id="@+id/picture_6"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"

@@ -2,21 +2,21 @@ package com.palmcel.parenting.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
+import android.widget.ImageView;
 
 /**
- * Square view. The height is always the same as width.
+ * Square image view. The height is always the same as width.
  */
-public class SquareForWidthView extends View {
-    public SquareForWidthView(Context context) {
+public class SquareForWidthImageView extends ImageView {
+    public SquareForWidthImageView(Context context) {
         super(context);
     }
 
-    public SquareForWidthView(Context context, AttributeSet attrs) {
+    public SquareForWidthImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SquareForWidthView(Context context, AttributeSet attrs, int defStyle) {
+    public SquareForWidthImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
