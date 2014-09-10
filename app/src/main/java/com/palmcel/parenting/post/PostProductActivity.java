@@ -18,7 +18,8 @@ import com.palmcel.parenting.common.Log;
 import de.greenrobot.event.EventBus;
 
 public class PostProductActivity extends Activity
-        implements PostProductFragment.OnFragmentInteractionListener {
+        implements PostProductFragment.OnFragmentInteractionListener,
+            ChooseProductPictureFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "PostProductActivity";
     private static final String FRAGMENT_STATE_KEY = "FragmentState";
@@ -223,4 +224,14 @@ public class PostProductActivity extends Activity
             invalidateOptionsMenu();
         }
     }
+
+    /**
+     * User chose an image in ChooseProductPictureFragment
+     * @param productImageUrl the url of the product image url
+     */
+    @Override
+    public void onChooseProductPicture(String productImageUrl) {
+
+    }
+
 }

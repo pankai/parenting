@@ -35,7 +35,7 @@
                     android:id="@+id/picture_1"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="@color/gray_1"
+                    android:background="@drawable/translucent_button_selector"
                     android:scaleType="centerInside"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
@@ -43,7 +43,7 @@
                     android:id="@+id/picture_3"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="@color/gray_1"
+                    android:background="@drawable/translucent_button_selector"
                     android:scaleType="centerInside"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
@@ -51,7 +51,7 @@
                     android:id="@+id/picture_5"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="@color/gray_1"
+                    android:background="@drawable/translucent_button_selector"
                     android:scaleType="centerInside"
                     />
 
@@ -68,7 +68,7 @@
                     android:id="@+id/picture_2"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="@color/gray_1"
+                    android:background="@drawable/translucent_button_selector"
                     android:scaleType="centerInside"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
@@ -76,7 +76,7 @@
                     android:id="@+id/picture_4"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="@color/gray_1"
+                    android:background="@drawable/translucent_button_selector"
                     android:scaleType="centerInside"
                     android:layout_marginBottom="@dimen/picture_margin_bottom"
                     />
@@ -84,7 +84,7 @@
                     android:id="@+id/picture_6"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="@color/gray_1"
+                    android:background="@drawable/translucent_button_selector"
                     android:scaleType="centerInside"
                     />
             </LinearLayout>

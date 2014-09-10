@@ -91,10 +91,21 @@ public class ChooseProductPictureFragment extends Fragment {
 
         int imageCount = mImageUrls.size();
         for (int i = 0; i < imageCount; i++) {
+            final String imageUrl = mImageUrls.get(i);
+            ImageView pictureImageView = mPictureImageViews.get(i);
             Picasso.with(mContext)
-                    .load(mImageUrls.get(i))
+                    .load(imageUrl)
                     .placeholder(R.drawable.ic_wait)
-                    .into(mPictureImageViews.get(i));
+                    .into(pictureImageView);
+
+            pictureImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mListener != null) {
+                        mListener.onChooseProductPicture(imageUrl);
+                    }
+                }
+            });
         }
 
         int imageViewCount = mPictureImageViews.size();
@@ -103,19 +114,12 @@ public class ChooseProductPictureFragment extends Fragment {
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mContext = activity;
         try {
-           // mListener = (OnFragmentInteractionListener) activity;
+           mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -139,8 +143,6 @@ public class ChooseProductPictureFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onChooseProductPicture(String productPictureUrl);
     }
-
 }
