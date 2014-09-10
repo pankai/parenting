@@ -73,6 +73,7 @@ public class PostProductFragment extends Fragment
     }
     public PostProductFragment() {
         // Required empty public constructor
+        setRetainInstance(true);
     }
 
     @Override

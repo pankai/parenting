@@ -50,6 +50,7 @@ public class ChooseProductPictureFragment extends Fragment {
     }
     public ChooseProductPictureFragment() {
         // Required empty public constructor
+        setRetainInstance(true);
     }
 
     @Override
