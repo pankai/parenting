@@ -3,10 +3,12 @@ package com.palmcel.parenting.post;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
 import com.google.common.base.Strings;
@@ -25,6 +27,7 @@ public class PostProductActivity extends Activity
     private SearchView mSearchView;
     private FragmentState mFragmentState;
     private ProgressDialog mProgressDialog;
+    private InputMethodManager mInputMethodManager;
 
     enum FragmentState {
         PostProductFragment,
@@ -56,6 +59,7 @@ public class PostProductActivity extends Activity
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         EventBus.getDefault().register(this);
+        mInputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     @Override
@@ -105,6 +109,7 @@ public class PostProductActivity extends Activity
                         query = "http://" + query;
                     }
                     mPostProductFragment.loadUrl(query);
+                    mInputMethodManager.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
                 }
 
                 return true;
