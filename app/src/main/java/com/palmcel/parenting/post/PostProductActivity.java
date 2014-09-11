@@ -14,17 +14,20 @@ import android.widget.SearchView;
 import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.model.PostSetting;
 
 import de.greenrobot.event.EventBus;
 
 public class PostProductActivity extends Activity
         implements PostProductFragment.OnFragmentInteractionListener,
-            ChooseProductPictureFragment.OnFragmentInteractionListener {
+            ChooseProductPictureFragment.OnFragmentInteractionListener,
+            ComposeFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "PostProductActivity";
     private static final String FRAGMENT_STATE_KEY = "FragmentState";
 
     private PostProductFragment mPostProductFragment;
+    private ChooseProductPictureFragment mChooseProductPictureFragment;
     private SearchView mSearchView;
     private FragmentState mFragmentState;
     private ProgressDialog mProgressDialog;
@@ -32,7 +35,8 @@ public class PostProductActivity extends Activity
 
     enum FragmentState {
         PostProductFragment,
-        ChooseProductPictureFragment
+        ChooseProductPictureFragment,
+        ComposeFragment
     }
 
     @Override
@@ -49,6 +53,8 @@ public class PostProductActivity extends Activity
         } else {
             mPostProductFragment = (PostProductFragment) getFragmentManager().
                     findFragmentByTag(PostProductFragment.class.getName());
+            mChooseProductPictureFragment = (ChooseProductPictureFragment) getFragmentManager().
+                    findFragmentByTag(ChooseProductPictureFragment.class.getName());
             FragmentState fragmentState =
                     (FragmentState) savedInstanceState.getSerializable(FRAGMENT_STATE_KEY);
             if (fragmentState == null) {
@@ -81,6 +87,9 @@ public class PostProductActivity extends Activity
         if (mFragmentState == FragmentState.ChooseProductPictureFragment) {
             createOptionMenuForChoosePicture(menu);
             setTitle(getResources().getString(R.string.title_activity_choose_picture));
+        } else if (mFragmentState == FragmentState.ComposeFragment) {
+            createOptionMenuForCompose(menu);
+            setTitle(getResources().getString(R.string.title_activity_post_product));
         } else {
             createOptionMenuForPostProduct(menu);
             setTitle(getResources().getString(R.string.title_activity_post_product));
@@ -130,6 +139,13 @@ public class PostProductActivity extends Activity
         getMenuInflater().inflate(R.menu.choose_picture, menu);
     }
 
+    private void createOptionMenuForCompose(Menu menu) {
+        Log.d(TAG, "In createOptionMenuForCompose");
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.compose_product, menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -156,9 +172,16 @@ public class PostProductActivity extends Activity
         }
 
         if (mFragmentState == FragmentState.ChooseProductPictureFragment) {
-            // Go back to PostProductFragment after clicking back key.
+            // Go back to PostProductFragment after clicking back key in
+            // ChooseProductPictureFragment.
             changeFragmentState(
                     FragmentState.ChooseProductPictureFragment, FragmentState.PostProductFragment);
+        } else if (mFragmentState == FragmentState.ComposeFragment) {
+            // Go back to ChooseProductPictureFragment after clicking back key in
+            // ComposeFragment
+            changeFragmentState(
+                    FragmentState.ComposeFragment,
+                    FragmentState.ChooseProductPictureFragment);
         }
 
         // There's no web page history, bubble up to the default
@@ -195,9 +218,11 @@ public class PostProductActivity extends Activity
         Log.d(TAG, "In onEventMainThread for ImageUrlsRetrievalResultEvent");
 
         // Open ChooseProductPictureFragment fragment
+        mChooseProductPictureFragment =
+                ChooseProductPictureFragment.newInstance(event.productPageInfo);
         getFragmentManager().beginTransaction()
                 .add(R.id.container,
-                     ChooseProductPictureFragment.newInstance(event.productPageInfo),
+                     mChooseProductPictureFragment,
                      ChooseProductPictureFragment.class.getName())
                 .hide(mPostProductFragment)
                 .addToBackStack(mPostProductFragment.getClass().getName())
@@ -219,6 +244,7 @@ public class PostProductActivity extends Activity
         mFragmentState = toState;
 
         if (toState == FragmentState.ChooseProductPictureFragment ||
+                toState == FragmentState.ComposeFragment ||
                 fromState == FragmentState.ChooseProductPictureFragment &&
                 toState == FragmentState.PostProductFragment) {
             invalidateOptionsMenu();
@@ -233,6 +259,23 @@ public class PostProductActivity extends Activity
     public void onChooseProductPicture(String productImageUrl, ProductPageInfo productPageInfo) {
         Log.d(TAG, "In onChooseProductPicture, productImageUrl=" + productImageUrl
                 + ", productPageInfo=" + productPageInfo);
+
+        // Open compose fragment
+        getFragmentManager().beginTransaction()
+                .add(R.id.container,
+                        ComposeFragment.newInstance(null, null),
+                        ComposeFragment.class.getName())
+                .hide(mChooseProductPictureFragment)
+                .addToBackStack(mChooseProductPictureFragment.getClass().getName())
+                .commit();
+        changeFragmentState(
+                FragmentState.ChooseProductPictureFragment,
+                FragmentState.ComposeFragment);
+    }
+
+    @Override
+    public void onSubmitPost(String message, PostSetting postSetting) {
+
     }
 
 }

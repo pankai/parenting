@@ -2,7 +2,6 @@ package com.palmcel.parenting.post;
 
 import android.app.Activity;
 import android.app.ActionBar;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,11 +58,6 @@ public class PostActivity extends Activity implements
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     /**
