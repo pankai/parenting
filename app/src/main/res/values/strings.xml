@@ -25,4 +25,5 @@
     <string name="choose_picture_for_product">Please choose a picture for the product.</string>
     <string name="progress_loading">Loading ...</string>
     <string name="product_url_is_empty">Product URL is empty. Please enter a product URL first.</string>
+    <string name="post_setting">Setting for this Post</string>
 </resources>
