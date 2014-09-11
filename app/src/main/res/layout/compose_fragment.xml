@@ -136,6 +136,27 @@
                     android:entries="@array/selection_useful_for"
                     />
             </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/picture_preview_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:visibility="gone">
+                <ImageView
+                    android:id="@+id/remove_picture_button"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="right|top"
+                    android:src="@drawable/close_button_selector"/>
+                <ImageView
+                    android:id="@+id/picture_review"
+                    android:layout_width="128dp"
+                    android:layout_height="128dp"
+                    android:scaleType="centerInside"
+                    />
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 
