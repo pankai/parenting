@@ -37,6 +37,24 @@
     <string name="useful_for_both">Boys and Girls</string>
     <string name="useful_for_boys">Boys Only</string>
     <string name="useful_for_girls">Girls Only</string>
-    <string name="post_setting_useful_from">Useful for Kids from</string>
+    <string name="post_setting_useful_from">Useful for  from</string>
     <string name="post_setting_useful_to">to</string>
+    <string name="na">N/A</string>
+    <string-array name="selection_publicity">
+        <item>@string/publicity_public</item>
+        <item>@string/publicity_followers_only</item>
+        <item>@string/publicity_private</item>
+    </string-array>
+
+    <string-array name="selection_is_anonymous">
+        <item>@string/no</item>
+        <item>@string/yes</item>
+    </string-array>
+
+    <string-array name="selection_useful_for">
+        <item>@string/na</item>
+        <item>@string/useful_for_both</item>
+        <item>@string/useful_for_boys</item>
+        <item>@string/useful_for_girls</item>
+    </string-array>
 </resources>

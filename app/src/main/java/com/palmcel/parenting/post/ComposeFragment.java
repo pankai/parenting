@@ -8,11 +8,13 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ObjectArrays;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.Constants;
 
@@ -88,50 +90,44 @@ public class ComposeFragment extends Fragment {
         mPublicitySpinner = (Spinner) rootView.findViewById(R.id.publicity_sprinner);
         mIsAnonymousSpinner = (Spinner) rootView.findViewById(R.id.is_anonymous_spinner);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter(
-                mContext,
-                android.R.layout.simple_spinner_item,
-                new String[] {getResources().getString(R.string.publicity_public),
-                        getResources().getString(R.string.publicity_followers_only),
-                        getResources().getString(R.string.publicity_private)});
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mPublicitySpinner.setAdapter(adapter);
+        setupPostSettings(rootView);
 
-        adapter = new ArrayAdapter(
-                mContext,
-                android.R.layout.simple_spinner_item,
-                new String[] {getResources().getString(R.string.no),
-                        getResources().getString(R.string.yes)});
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mIsAnonymousSpinner.setAdapter(adapter);
+        return rootView;
+    }
 
-        mUsefulForGenderSpinner = (Spinner) rootView.findViewById(R.id.useful_for_gender_spinner);
-        adapter = new ArrayAdapter(
-                mContext,
-                android.R.layout.simple_spinner_item,
-                new String[] {getResources().getString(R.string.useful_for_both),
-                        getResources().getString(R.string.useful_for_boys),
-                        getResources().getString(R.string.useful_for_girls)});
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mUsefulForGenderSpinner.setAdapter(adapter);
+    /**
+     * Set up post settings (spinners) for this post.
+     * @param rootView
+     */
+    private void setupPostSettings(ViewGroup rootView) {
+        String[] categoriesWithNA = ObjectArrays.concat(getResources().getString(R.string.na),
+                Constants.getPostCategories());
 
         mUsefulForAgeFromSpinner = (Spinner) rootView.findViewById(R.id.useful_from_spinner);
-        adapter = new ArrayAdapter(
+        ArrayAdapter adapter = new ArrayAdapter(
                 mContext,
                 android.R.layout.simple_spinner_item,
-                Constants.getPostCategories());
+                categoriesWithNA);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mUsefulForAgeFromSpinner.setAdapter(adapter);
+        mUsefulForAgeFromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                mUsefulForAgeToSpinner.setSelection(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
 
         mUsefulForAgeToSpinner = (Spinner) rootView.findViewById(R.id.useful_to_spinner);
         adapter = new ArrayAdapter(
                 mContext,
                 android.R.layout.simple_spinner_item,
-                Constants.getPostCategories());
+                categoriesWithNA);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mUsefulForAgeToSpinner.setAdapter(adapter);
-
-        return rootView;
     }
 
     @Override
