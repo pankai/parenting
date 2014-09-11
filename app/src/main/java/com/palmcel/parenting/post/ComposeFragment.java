@@ -1,16 +1,20 @@
 package com.palmcel.parenting.post;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.Constants;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,8 +31,14 @@ public class ComposeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private Context mContext;
     private View mPostButton;
     private EditText mPostEdit;
+    private Spinner mPublicitySpinner;
+    private Spinner mIsAnonymousSpinner;
+    private Spinner mUsefulForGenderSpinner;
+    private Spinner mUsefulForAgeFromSpinner;
+    private Spinner mUsefulForAgeToSpinner;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -75,6 +85,52 @@ public class ComposeFragment extends Fragment {
 
         mPostButton = rootView.findViewById(R.id.post_button);
         mPostEdit = (EditText) rootView.findViewById(R.id.compose_edit);
+        mPublicitySpinner = (Spinner) rootView.findViewById(R.id.publicity_sprinner);
+        mIsAnonymousSpinner = (Spinner) rootView.findViewById(R.id.is_anonymous_spinner);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter(
+                mContext,
+                android.R.layout.simple_spinner_item,
+                new String[] {getResources().getString(R.string.publicity_public),
+                        getResources().getString(R.string.publicity_followers_only),
+                        getResources().getString(R.string.publicity_private)});
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mPublicitySpinner.setAdapter(adapter);
+
+        adapter = new ArrayAdapter(
+                mContext,
+                android.R.layout.simple_spinner_item,
+                new String[] {getResources().getString(R.string.no),
+                        getResources().getString(R.string.yes)});
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mIsAnonymousSpinner.setAdapter(adapter);
+
+        mUsefulForGenderSpinner = (Spinner) rootView.findViewById(R.id.useful_for_gender_spinner);
+        adapter = new ArrayAdapter(
+                mContext,
+                android.R.layout.simple_spinner_item,
+                new String[] {getResources().getString(R.string.useful_for_both),
+                        getResources().getString(R.string.useful_for_boys),
+                        getResources().getString(R.string.useful_for_girls)});
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mUsefulForGenderSpinner.setAdapter(adapter);
+
+        mUsefulForAgeFromSpinner = (Spinner) rootView.findViewById(R.id.useful_from_spinner);
+        adapter = new ArrayAdapter(
+                mContext,
+                android.R.layout.simple_spinner_item,
+                Constants.getPostCategories());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mUsefulForAgeFromSpinner.setAdapter(adapter);
+
+        mUsefulForAgeToSpinner = (Spinner) rootView.findViewById(R.id.useful_to_spinner);
+        adapter = new ArrayAdapter(
+                mContext,
+                android.R.layout.simple_spinner_item,
+                Constants.getPostCategories());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mUsefulForAgeToSpinner.setAdapter(adapter);
+
         return rootView;
     }
 
@@ -102,6 +158,7 @@ public class ComposeFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mContext = activity;
         try {
             mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
