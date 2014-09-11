@@ -2,15 +2,16 @@ package com.palmcel.parenting.post;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.google.common.base.Strings;
@@ -19,6 +20,7 @@ import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.Constants;
 import com.palmcel.parenting.model.PostPublicity;
 import com.palmcel.parenting.model.PostSetting;
+import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,8 +34,8 @@ import com.palmcel.parenting.model.PostSetting;
 public class ComposeFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_IS_PRODUCT = "isProduct";
+    private static final String ARG_PRODUCT_PIC_URL = "productPictureUrl";
 
     private Context mContext;
     private View mPostButton;
@@ -43,27 +45,29 @@ public class ComposeFragment extends Fragment {
     private Spinner mUsefulForGenderSpinner;
     private Spinner mUsefulForAgeFromSpinner;
     private Spinner mUsefulForAgeToSpinner;
+    private View mPicturePreviewLayout;
+    private ImageView mPicturePreviewView;
+    private View mPicturePreviewRemoveButton;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    // Is it composer for product
+    private boolean mIsProduct;
+    // Product picture url if mIsProduct is true.
+    private String mProductPictureUrl;
 
     private OnFragmentInteractionListener mListener;
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param isProduct Is composing for product
+     * @param productPictureUrl url for product image
      * @return A new instance of fragment ComposeFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ComposeFragment newInstance(String param1, String param2) {
+    public static ComposeFragment newInstance(
+            boolean isProduct,
+            @Nullable String productPictureUrl) {
         ComposeFragment fragment = new ComposeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putBoolean(ARG_IS_PRODUCT, isProduct);
+        args.putString(ARG_PRODUCT_PIC_URL, productPictureUrl);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,8 +79,8 @@ public class ComposeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mIsProduct = getArguments().getBoolean(ARG_IS_PRODUCT);
+            mProductPictureUrl = getArguments().getString(ARG_PRODUCT_PIC_URL);
         }
     }
 
@@ -94,6 +98,9 @@ public class ComposeFragment extends Fragment {
         mUsefulForGenderSpinner = (Spinner) rootView.findViewById(R.id.useful_for_gender_spinner);
         mUsefulForAgeFromSpinner = (Spinner) rootView.findViewById(R.id.useful_from_spinner);
         mUsefulForAgeToSpinner = (Spinner) rootView.findViewById(R.id.useful_to_spinner);
+        mPicturePreviewLayout = rootView.findViewById(R.id.picture_preview_layout);
+        mPicturePreviewView = (ImageView) rootView.findViewById(R.id.picture_review);
+        mPicturePreviewRemoveButton = rootView.findViewById(R.id.remove_picture_button);
 
         setupPostSettings(rootView);
 
@@ -147,6 +154,16 @@ public class ComposeFragment extends Fragment {
                 }
             }
         });
+
+        if (mIsProduct && !Strings.isNullOrEmpty(mProductPictureUrl)) {
+            // Show product preview view
+            mPicturePreviewLayout.setVisibility(View.VISIBLE);
+            mPicturePreviewRemoveButton.setVisibility(View.GONE);
+            Picasso.with(mContext)
+                    .load(mProductPictureUrl)
+                    .placeholder(R.drawable.ic_wait)
+                    .into(mPicturePreviewView);
+        }
     }
 
     private PostSetting getPostSettings() {

@@ -144,6 +144,6 @@ public class ChooseProductPictureFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         public void onChooseProductPicture(
-                String productPictureUrl, ProductPageInfo productPageInfo);
+                String chosenProductPictureUrl, ProductPageInfo productPageInfo);
     }
 }

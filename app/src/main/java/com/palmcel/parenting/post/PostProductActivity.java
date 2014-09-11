@@ -25,6 +25,7 @@ public class PostProductActivity extends Activity
 
     private static final String TAG = "PostProductActivity";
     private static final String FRAGMENT_STATE_KEY = "FragmentState";
+    private static final String PRODUCT_PAGE_INFO_KEY = "productPageInfo";
 
     private PostProductFragment mPostProductFragment;
     private ChooseProductPictureFragment mChooseProductPictureFragment;
@@ -32,6 +33,7 @@ public class PostProductActivity extends Activity
     private FragmentState mFragmentState;
     private ProgressDialog mProgressDialog;
     private InputMethodManager mInputMethodManager;
+    private ProductPageInfo mProductPageInfo;
 
     enum FragmentState {
         PostProductFragment,
@@ -55,6 +57,8 @@ public class PostProductActivity extends Activity
                     findFragmentByTag(PostProductFragment.class.getName());
             mChooseProductPictureFragment = (ChooseProductPictureFragment) getFragmentManager().
                     findFragmentByTag(ChooseProductPictureFragment.class.getName());
+            mProductPageInfo =
+                    (ProductPageInfo) savedInstanceState.getSerializable(PRODUCT_PAGE_INFO_KEY);
             FragmentState fragmentState =
                     (FragmentState) savedInstanceState.getSerializable(FRAGMENT_STATE_KEY);
             if (fragmentState == null) {
@@ -73,6 +77,7 @@ public class PostProductActivity extends Activity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(FRAGMENT_STATE_KEY, mFragmentState);
+        outState.putSerializable(PRODUCT_PAGE_INFO_KEY, mProductPageInfo);
     }
 
     @Override
@@ -211,8 +216,8 @@ public class PostProductActivity extends Activity
     }
 
     /**
-     * EventBus event for loading feed.
-     * @param event load feed results
+     * EventBus event for finishing retrieving image from web view.
+     * @param event ImageUrlsRetrievalResultEvent
      */
     public void onEventMainThread(ImageUrlsRetrievalResultEvent event) {
         Log.d(TAG, "In onEventMainThread for ImageUrlsRetrievalResultEvent");
@@ -253,17 +258,21 @@ public class PostProductActivity extends Activity
 
     /**
      * User chose an image in ChooseProductPictureFragment
-     * @param productImageUrl the url of the product image url
+     * @param chosenProductPictureUrl the url of the chosen product image
      */
     @Override
-    public void onChooseProductPicture(String productImageUrl, ProductPageInfo productPageInfo) {
-        Log.d(TAG, "In onChooseProductPicture, productImageUrl=" + productImageUrl
+    public void onChooseProductPicture(
+            String chosenProductPictureUrl,
+            ProductPageInfo productPageInfo) {
+        Log.d(TAG, "In onChooseProductPicture, chosenProductPictureUrl=" + chosenProductPictureUrl
                 + ", productPageInfo=" + productPageInfo);
+
+        mProductPageInfo = productPageInfo;
 
         // Open compose fragment
         getFragmentManager().beginTransaction()
                 .add(R.id.container,
-                        ComposeFragment.newInstance(null, null),
+                        ComposeFragment.newInstance(true, chosenProductPictureUrl),
                         ComposeFragment.class.getName())
                 .hide(mChooseProductPictureFragment)
                 .addToBackStack(mChooseProductPictureFragment.getClass().getName())
