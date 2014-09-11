@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.AppContext;
 import com.palmcel.parenting.common.TimeUtil;
 import com.palmcel.parenting.model.Post;
 
@@ -17,6 +18,7 @@ import com.palmcel.parenting.model.Post;
  */
 public class PostItemView extends RelativeLayout {
 
+    private static String sAnanymousText;
     private ImageView mProfileImageView;
     private TextView mUserIdTextView;
     private TextView mKidsInfoTextView;
@@ -31,6 +33,15 @@ public class PostItemView extends RelativeLayout {
 
     public PostItemView(Context context) {
         this(context, null);
+    }
+
+    private static String getAnonymousText() {
+        if (sAnanymousText == null) {
+            sAnanymousText =
+                    AppContext.getAplicationContext().getResources().getString(R.string.anonymous);
+        }
+
+        return sAnanymousText;
     }
 
     public PostItemView(Context context, AttributeSet attrs) {
@@ -59,7 +70,11 @@ public class PostItemView extends RelativeLayout {
      */
     public PostItemView updatePostItemView(Post post) {
         mPost = post;
-        mUserIdTextView.setText(post.userId);
+        if (post.isAnonymous) {
+            mUserIdTextView.setText(getAnonymousText());
+        } else {
+            mUserIdTextView.setText(post.userId);
+        }
         mMessageTextView.setText(post.message);
         mCommentCountTextView.setText(post.comments > 0 ? "" + post.comments : "");
         mLikeCountTextView.setText(post.likes > 0 ? "" + post.likes : "");

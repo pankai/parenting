@@ -40,6 +40,8 @@
     <string name="post_setting_useful_from">Useful for  from</string>
     <string name="post_setting_useful_to">to</string>
     <string name="na">N/A</string>
+    <string name="anonymous">Anonymous</string>
+
     <string-array name="selection_publicity">
         <item>@string/publicity_public</item>
         <item>@string/publicity_followers_only</item>

@@ -237,15 +237,17 @@ public class PostBuilder {
         return "Local." + UUID.randomUUID().toString();
     }
 
-    public static PostBuilder newLocalRegularPostBuilder(String message) {
+    public static PostBuilder newLocalRegularPostBuilder(String message, PostSetting postSetting) {
         PostBuilder builder = new PostBuilder();
         builder
             .setPostId(genLocalPostId())
             .setUserId(LoggedInUser.getLoggedInUserId())
             .setPostType(PostType.Regular)
-            .setPublicity(PostPublicity.Public)
+            .setPublicity(postSetting.postPublicity)
             .setPostStatus(PostStatus.Regular)
-            .setCategory("3m") //TODO (kpan) fix it
+            .setCategory(postSetting.categoryFrom) //TODO (kpan) only use category from by now
+            .setForGender(postSetting.forGender)
+            .setIsAnonymous(postSetting.isAnonymous)
             .setMessage(message)
             .setTimeMsCreated(System.currentTimeMillis());
 

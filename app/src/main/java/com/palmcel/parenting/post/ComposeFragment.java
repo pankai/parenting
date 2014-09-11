@@ -17,6 +17,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ObjectArrays;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.Constants;
+import com.palmcel.parenting.model.PostPublicity;
+import com.palmcel.parenting.model.PostSetting;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -89,6 +91,9 @@ public class ComposeFragment extends Fragment {
         mPostEdit = (EditText) rootView.findViewById(R.id.compose_edit);
         mPublicitySpinner = (Spinner) rootView.findViewById(R.id.publicity_sprinner);
         mIsAnonymousSpinner = (Spinner) rootView.findViewById(R.id.is_anonymous_spinner);
+        mUsefulForGenderSpinner = (Spinner) rootView.findViewById(R.id.useful_for_gender_spinner);
+        mUsefulForAgeFromSpinner = (Spinner) rootView.findViewById(R.id.useful_from_spinner);
+        mUsefulForAgeToSpinner = (Spinner) rootView.findViewById(R.id.useful_to_spinner);
 
         setupPostSettings(rootView);
 
@@ -138,10 +143,48 @@ public class ComposeFragment extends Fragment {
             public void onClick(View view) {
                 String postMessage = mPostEdit.getText().toString();
                 if (mListener != null && !Strings.isNullOrEmpty(postMessage)) {
-                    mListener.onSubmitPost(postMessage);
+                    mListener.onSubmitPost(postMessage, getPostSettings());
                 }
             }
         });
+    }
+
+    private PostSetting getPostSettings() {
+        PostPublicity postPublicity = PostPublicity.Public;
+        String selectedPublicity = mPublicitySpinner.getSelectedItem().toString();
+        if (getResources().getString(R.string.publicity_followers_only).equals(selectedPublicity)) {
+            postPublicity = PostPublicity.FollowersOnly;
+        } else  if (
+                getResources().getString(R.string.publicity_private).equals(selectedPublicity)) {
+            postPublicity = PostPublicity.Private;
+        }
+
+        String selectedIsAnonymous = mIsAnonymousSpinner.getSelectedItem().toString();
+        boolean isAnonymous = getResources().getString(R.string.yes).equals(selectedIsAnonymous);
+
+        String forGender = null;
+        String selectedForGender = mUsefulForGenderSpinner.getSelectedItem().toString();
+        if (getResources().getString(R.string.useful_for_girls).equals(selectedForGender)) {
+            forGender = Constants.FOR_GENDER_FEMALE;
+        } else if (getResources().getString(R.string.useful_for_boys).equals(selectedForGender)) {
+            forGender = Constants.FOR_GENDER_MALE;
+        }
+
+        String forAgeFrom = null;
+        String selectedForAgeFrom = mUsefulForAgeFromSpinner.getSelectedItem().toString();
+        if (!getResources().getString(R.string.na).equals(selectedForAgeFrom)) {
+            // TODO: i18n consideration for assigning selectedForAgeFrom to forAgeFrom.
+            forAgeFrom = selectedForAgeFrom;
+        }
+
+        String forAgeTo = null;
+        String selectedForAgeTo = mUsefulForAgeToSpinner.getSelectedItem().toString();
+        if (!getResources().getString(R.string.na).equals(selectedForAgeTo)) {
+            // TODO: i18n consideration for assigning selectedForAgeFrom to forAgeFrom.
+            forAgeTo = selectedForAgeTo;
+        }
+
+        return new PostSetting(postPublicity, isAnonymous, forGender, forAgeFrom, forAgeTo);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -182,7 +225,7 @@ public class ComposeFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
-        public void onSubmitPost(String message);
+        public void onSubmitPost(String message, PostSetting postSetting);
     }
 
 }

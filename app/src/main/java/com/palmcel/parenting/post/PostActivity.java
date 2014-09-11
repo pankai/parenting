@@ -16,6 +16,7 @@ import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.feed.LoadFeedManager;
 import com.palmcel.parenting.model.PostBuilder;
+import com.palmcel.parenting.model.PostSetting;
 
 public class PostActivity extends Activity implements
         ComposeFragment.OnFragmentInteractionListener {
@@ -70,9 +71,9 @@ public class PostActivity extends Activity implements
      * @param message the post message
      */
     @Override
-    public void onSubmitPost(String message) {
-        Log.d(TAG, "In onSubmitPost");
-        PostBuilder builder = PostBuilder.newLocalRegularPostBuilder(message);
+    public void onSubmitPost(String message, PostSetting postSetting) {
+        Log.d(TAG, "In onSubmitPost, postSetting=" + postSetting);
+        PostBuilder builder = PostBuilder.newLocalRegularPostBuilder(message, postSetting);
 
         PostHandler postHandler = new PostHandler();
         ListenableFuture savePostFuture = postHandler.savePostToDbOnThread(builder.build());

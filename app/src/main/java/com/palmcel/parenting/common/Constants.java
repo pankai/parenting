@@ -5,6 +5,8 @@ package com.palmcel.parenting.common;
  */
 public class Constants {
     public static String[] sPostCategories;
+    public static String FOR_GENDER_FEMALE = "F";
+    public static String FOR_GENDER_MALE = "M";
 
     public static String[] getPostCategories() {
         if (sPostCategories == null) {
