@@ -10,11 +10,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.common.base.Strings;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.common.UiThreadExecutor;
+import com.palmcel.parenting.feed.LoadFeedManager;
+import com.palmcel.parenting.model.PostBuilder;
 import com.palmcel.parenting.model.PostSetting;
+import com.palmcel.parenting.model.ProductPageInfo;
 
 import de.greenrobot.event.EventBus;
 
@@ -26,6 +34,7 @@ public class PostProductActivity extends Activity
     private static final String TAG = "PostProductActivity";
     private static final String FRAGMENT_STATE_KEY = "FragmentState";
     private static final String PRODUCT_PAGE_INFO_KEY = "productPageInfo";
+    private static final String CHOSEN_PRODUCT_IMG_URL_KEY = "chosenProductImageUrl";
 
     private PostProductFragment mPostProductFragment;
     private ChooseProductPictureFragment mChooseProductPictureFragment;
@@ -34,6 +43,7 @@ public class PostProductActivity extends Activity
     private ProgressDialog mProgressDialog;
     private InputMethodManager mInputMethodManager;
     private ProductPageInfo mProductPageInfo;
+    private String mChosenProductPictureUrl;
 
     enum FragmentState {
         PostProductFragment,
@@ -59,6 +69,7 @@ public class PostProductActivity extends Activity
                     findFragmentByTag(ChooseProductPictureFragment.class.getName());
             mProductPageInfo =
                     (ProductPageInfo) savedInstanceState.getSerializable(PRODUCT_PAGE_INFO_KEY);
+            mChosenProductPictureUrl = savedInstanceState.getString(CHOSEN_PRODUCT_IMG_URL_KEY);
             FragmentState fragmentState =
                     (FragmentState) savedInstanceState.getSerializable(FRAGMENT_STATE_KEY);
             if (fragmentState == null) {
@@ -78,6 +89,7 @@ public class PostProductActivity extends Activity
         super.onSaveInstanceState(outState);
         outState.putSerializable(FRAGMENT_STATE_KEY, mFragmentState);
         outState.putSerializable(PRODUCT_PAGE_INFO_KEY, mProductPageInfo);
+        outState.putString(CHOSEN_PRODUCT_IMG_URL_KEY, mChosenProductPictureUrl);
     }
 
     @Override
@@ -267,6 +279,7 @@ public class PostProductActivity extends Activity
         Log.d(TAG, "In onChooseProductPicture, chosenProductPictureUrl=" + chosenProductPictureUrl
                 + ", productPageInfo=" + productPageInfo);
 
+        mChosenProductPictureUrl = chosenProductPictureUrl;
         mProductPageInfo = productPageInfo;
 
         // Open compose fragment
@@ -284,6 +297,35 @@ public class PostProductActivity extends Activity
 
     @Override
     public void onSubmitPost(String message, PostSetting postSetting) {
+        Log.d(TAG, "In onSubmitPost, postSetting=" + postSetting);
+
+        PostBuilder builder = PostBuilder.newLocalProductPostBuilder(
+                message,
+                postSetting,
+                mProductPageInfo,
+                mChosenProductPictureUrl);
+
+        PostHandler postHandler = new PostHandler();
+        ListenableFuture savePostFuture = postHandler.savePostToDbOnThread(builder.build());
+
+        Futures.addCallback(savePostFuture, new FutureCallback() {
+            @Override
+            public void onSuccess(Object o) {
+                Toast.makeText(PostProductActivity.this, "Save product post successfully", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Saved product post successfully");
+
+                // Reload feed in FeedFragment
+                LoadFeedManager.getInstance().loadFeed();
+
+                PostProductActivity.this.finish();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Toast.makeText(PostProductActivity.this, "Failed to save post, " + throwable.toString(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Failed to save product post", throwable);
+            }
+        }, new UiThreadExecutor());
 
     }
 

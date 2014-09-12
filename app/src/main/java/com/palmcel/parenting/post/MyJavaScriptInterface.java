@@ -5,6 +5,7 @@ import android.webkit.JavascriptInterface;
 import com.google.common.collect.Lists;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.model.ProductPageInfo;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

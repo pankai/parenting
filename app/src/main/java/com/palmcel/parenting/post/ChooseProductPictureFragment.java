@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.google.common.collect.Lists;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.model.ProductPageInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

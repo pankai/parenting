@@ -1,4 +1,4 @@
-package com.palmcel.parenting.post;
+package com.palmcel.parenting.model;
 
 import android.support.annotation.Nullable;
 
@@ -14,10 +14,10 @@ public class ProductPageInfo implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
-    String productPageUrl;
-    String title;
-    String description;
-    List<String> productPictureUrls;
+    public String productPageUrl;
+    public String title;
+    public String description;
+    public List<String> productPictureUrls;
 
     public ProductPageInfo(
             String productPageUrl,

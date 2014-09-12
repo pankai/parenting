@@ -1,6 +1,6 @@
 package com.palmcel.parenting.post;
 
-import java.util.ArrayList;
+import com.palmcel.parenting.model.ProductPageInfo;
 
 /**
  * EventBus event for image urls retrieval result

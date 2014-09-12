@@ -1,5 +1,7 @@
 package com.palmcel.parenting.model;
 
+import android.support.annotation.Nullable;
+
 import com.palmcel.parenting.login.LoggedInUser;
 
 import java.util.UUID;
@@ -250,6 +252,31 @@ public class PostBuilder {
             .setIsAnonymous(postSetting.isAnonymous)
             .setMessage(message)
             .setTimeMsCreated(System.currentTimeMillis());
+
+        return builder;
+    }
+
+    public static PostBuilder newLocalProductPostBuilder(
+            String message,
+            PostSetting postSetting,
+            ProductPageInfo productPageInfo,
+            @Nullable String chosenProductPictureUrl) {
+        PostBuilder builder = new PostBuilder();
+        builder
+                .setPostId(genLocalPostId())
+                .setUserId(LoggedInUser.getLoggedInUserId())
+                .setPostType(PostType.Regular)
+                .setPublicity(postSetting.postPublicity)
+                .setPostStatus(PostStatus.Regular)
+                .setCategory(postSetting.categoryFrom) //TODO (kpan) only use category from by now
+                .setForGender(postSetting.forGender)
+                .setIsAnonymous(postSetting.isAnonymous)
+                .setMessage(message)
+                .setExternalLinkUrl(productPageInfo.productPageUrl)
+                .setExternalLinkCaption(productPageInfo.title)
+                .setExternalLinkSummary(productPageInfo.description)
+                .setExternalLinkImageUrl(chosenProductPictureUrl)
+                .setTimeMsCreated(System.currentTimeMillis());
 
         return builder;
     }
