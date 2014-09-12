@@ -265,7 +265,7 @@ public class PostBuilder {
         builder
                 .setPostId(genLocalPostId())
                 .setUserId(LoggedInUser.getLoggedInUserId())
-                .setPostType(PostType.Regular)
+                .setPostType(PostType.Product)
                 .setPublicity(postSetting.postPublicity)
                 .setPostStatus(PostStatus.Regular)
                 .setCategory(postSetting.categoryFrom) //TODO (kpan) only use category from by now

@@ -148,6 +148,7 @@ public class PostProductFragment extends Fragment
     private class MyWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            mProductPageUrl = url;
             view.loadUrl(url);
             return true;
         }

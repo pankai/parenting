@@ -75,22 +75,24 @@ public class PostListAdapter extends BaseAdapter {
         Post post = mEntries.get(position);
         switch (post.postType) {
             case Regular:
-                return getViewForRegularPost(post, convertView, parent);
+                return getViewForPost(post, convertView, parent);
+            case Product:
+                return getViewForPost(post, convertView, parent);
             default:
                 return null;
         }
     }
 
     /**
-     * Get an item view for regular post
+     * Get an item view for post
      * @param post
      * @param convertView
      * @param parent
      * @return
      */
-    private View getViewForRegularPost(Post post, View convertView, ViewGroup parent) {
+    private View getViewForPost(Post post, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = new PostItemView(mContext);
+            convertView = new PostItemView(mContext, post.postType);
         }
         ((PostItemView)convertView).updatePostItemView(post);
 

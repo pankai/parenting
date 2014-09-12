@@ -52,6 +52,7 @@ public class PostHandler {
         values.put(PostEntry.COLUMN_EXT_LINK_URL, post.externalLinkUrl);
         values.put(PostEntry.COLUMN_EXT_LINK_CAPTION, post.externalLinkCaption);
         values.put(PostEntry.COLUMN_EXT_LINK_SUMMARY, post.externalLinkSummary);
+        values.put(PostEntry.COLUMN_EXT_LINK_IMAGE_URL, post.externalLinkImageUrl);
         values.put(PostEntry.COLUMN_PRODUCT_BAR_CODE, post.productBarCode);
         values.put(PostEntry.COLUMN_PUBLICITY, post.publicity.toString());
         values.put(PostEntry.COLUMN_LIKES, post.likes);
