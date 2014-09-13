@@ -2,25 +2,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.palmcel.parenting.post.PostProductFragment"
         android:orientation="vertical">
+        <com.palmcel.parenting.widget.ObservableWebView
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 
         <ProgressBar android:id="@+id/loading_progress"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginTop="-6dp"
             android:visibility="gone"/>
-
-        <com.palmcel.parenting.widget.ObservableWebView
-            android:id="@+id/webview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            />
-
-    </LinearLayout>
+    </FrameLayout>
     <FrameLayout
         android:id="@+id/bottom_panel"
         android:layout_width="match_parent"
