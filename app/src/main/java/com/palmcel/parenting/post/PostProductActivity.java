@@ -125,7 +125,6 @@ public class PostProductActivity extends Activity
         mSearchView = (SearchView) searchViewItem.getActionView();
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setQueryHint(getResources().getString(R.string.hint_enter_store_website));
-        mSearchView.setQuery("www.amazon.com", false);
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
@@ -225,6 +224,15 @@ public class PostProductActivity extends Activity
         // kick off image url retrieval from WebView. onEventMainThread will be called
         // when there is result.
         mPostProductFragment.kickOffImageUrlsRetrieval();
+    }
+
+    /**
+     * User chose a website url
+     * @param websiteUrl the web site url the user chose
+     */
+    @Override
+    public void onWebsiteUrlSelected(String websiteUrl) {
+        mSearchView.setQuery(websiteUrl, true);
     }
 
     /**

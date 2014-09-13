@@ -10,9 +10,12 @@
         <com.palmcel.parenting.widget.ObservableWebView
             android:id="@+id/webview"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <ListView
+            android:id="@+id/suggested_url_list"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
-
         <ProgressBar android:id="@+id/loading_progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"

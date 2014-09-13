@@ -11,6 +11,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -48,6 +51,7 @@ public class PostProductFragment extends Fragment
     private ProgressBar mProgressBar;
     private View mPostButtonPanel;
     private View mPostButton;
+    private ListView mSuggestedUrlsListView;
     private MyJavaScriptInterface mJavaScriptInterface;
     private String mProductPageUrl;
     private Context mContext;
@@ -94,6 +98,7 @@ public class PostProductFragment extends Fragment
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.loading_progress);
         mPostButtonPanel = (View) rootView.findViewById(R.id.bottom_panel);
         mPostButton = rootView.findViewById(R.id.post_button);
+        mSuggestedUrlsListView = (ListView) rootView.findViewById(R.id.suggested_url_list);
 
         mWebView.setOnScrollChangedCallback(this);
         return rootView;
@@ -121,6 +126,23 @@ public class PostProductFragment extends Fragment
                 }
             }
         });
+
+        final String[] suggestedUrls = new String[] {
+                "www.amazon.com",
+                "www.walmart.com"
+        };
+        ArrayAdapter<String> arrayAdapter =
+            new ArrayAdapter<String>(mContext, android.R.layout.simple_list_item_1, suggestedUrls);
+        mSuggestedUrlsListView.setAdapter(arrayAdapter);
+        mSuggestedUrlsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (mListener != null) {
+                    mListener.onWebsiteUrlSelected(suggestedUrls[i]);
+                }
+
+            }
+        });
     }
 
     void loadUrl(String url) {
@@ -130,6 +152,7 @@ public class PostProductFragment extends Fragment
 
     private class MyWebChromeClient extends WebChromeClient {
         public void onProgressChanged(WebView view, int progress) {
+            mSuggestedUrlsListView.setVisibility(View.INVISIBLE);
             if(progress < 100 && mProgressBar.getVisibility() == ProgressBar.GONE){
                 mProgressBar.setVisibility(ProgressBar.VISIBLE);
             }
@@ -189,6 +212,7 @@ public class PostProductFragment extends Fragment
      */
     public interface OnFragmentInteractionListener {
         public void onPostForPictureClicked();
+        public void onWebsiteUrlSelected(String websiteUrl);
     }
 
     boolean webViewCanGoBack() {
