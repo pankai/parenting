@@ -12,6 +12,9 @@ import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.FeedPostBuilder;
+import com.palmcel.parenting.model.LoadFeedParams;
+import com.palmcel.parenting.model.LoadFeedResult;
+import com.palmcel.parenting.model.LoadFeedResultEvent;
 import com.palmcel.parenting.model.PostPublicity;
 import com.palmcel.parenting.model.PostStatus;
 import com.palmcel.parenting.model.PostType;
@@ -105,7 +108,7 @@ public class LoadFeedManager {
             "  ON " + FeedEntry.TABLE_NAME + "." + FeedEntry.COLUMN_POST_ID +
                   " = " + PostEntry.TABLE_NAME + "." + PostEntry.COLUMN_POST_ID + " " +
             "ORDER BY " + FeedEntry.COLUMN_TIME_INSERTED + " DESC " +
-            "LIMIT " + loadFeedParams.getMaxToFetch();
+            "LIMIT " + loadFeedParams.maxToFetch;
 
         Cursor cursor = db.rawQuery(query, null);
 

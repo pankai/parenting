@@ -1,15 +1,14 @@
-package com.palmcel.parenting.feed;
+package com.palmcel.parenting.model;
 
 import com.google.common.collect.ImmutableList;
-import com.palmcel.parenting.model.FeedPost;
 
 /**
  * Result of loading feed
  */
 public class LoadFeedResult {
-    boolean isSuccess;
-    Throwable error;
-    ImmutableList<FeedPost> feedPosts;
+    public boolean isSuccess;
+    public Throwable error;
+    public ImmutableList<FeedPost> feedPosts;
 
     public LoadFeedResult(boolean isSuccess, Throwable err, ImmutableList<FeedPost> feedPosts) {
         this.isSuccess = isSuccess;

@@ -1,4 +1,4 @@
-package com.palmcel.parenting.feed;
+package com.palmcel.parenting.model;
 
 /**
  * EventBus events for loading feed

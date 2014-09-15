@@ -1,4 +1,4 @@
-package com.palmcel.parenting.post;
+package com.palmcel.parenting.model;
 
 import com.palmcel.parenting.model.ProductPageInfo;
 
@@ -6,7 +6,7 @@ import com.palmcel.parenting.model.ProductPageInfo;
  * EventBus event for image urls retrieval result
  */
 public class ImageUrlsRetrievalResultEvent {
-    ProductPageInfo productPageInfo;
+    public ProductPageInfo productPageInfo;
 
     public ImageUrlsRetrievalResultEvent(ProductPageInfo productPageInfo) {
         this.productPageInfo = productPageInfo;
