@@ -70,8 +70,8 @@ public class PostActivity extends Activity implements
         PostBuilder builder = PostBuilder.newLocalRegularPostBuilder(message, postSetting);
 
         PostHandler postHandler = new PostHandler();
-        ListenableFuture savePostFuture = postHandler.savePostToDbOnThread(builder.build());
-        //ListenableFuture savePostFuture = postHandler.savePostToServerOnThread(builder.build());
+        //ListenableFuture savePostFuture = postHandler.savePostToDbOnThread(builder.build());
+        ListenableFuture savePostFuture = postHandler.savePostToServerOnThread(builder.build());
 
         Futures.addCallback(savePostFuture, new FutureCallback() {
             @Override

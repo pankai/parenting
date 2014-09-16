@@ -10,6 +10,6 @@ import retrofit.http.POST;
  * REST APIs related to post.
  */
 public interface PostService {
-    @POST("/posts/new")
+    @POST("/api/v1/post")
     Response newPost(@Body Post post);
 }

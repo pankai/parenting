@@ -9,6 +9,7 @@ import retrofit.RestAdapter;
  */
 public class PostRestHelper {
     private static PostService sPostService;
+    private static final String ENDPOINT_FROM_GENYMOTION = "http://10.0.3.2:3000";
 
     public static synchronized PostService getPostService() {
         if (sPostService == null) {
@@ -16,7 +17,7 @@ public class PostRestHelper {
                     .setLogLevel(
                             Log.LOGGING_DEBUG ? RestAdapter.LogLevel.FULL :
                                     RestAdapter.LogLevel.NONE)
-                    .setEndpoint("http://localhost")
+                    .setEndpoint(ENDPOINT_FROM_GENYMOTION)
                     .build();
 
             sPostService = restAdapter.create(PostService.class);
