@@ -35,6 +35,8 @@ public class Post implements Parcelable {
     public final PostStatus postStatus;
     public final long timeMsCreated;
     public final long timeMsEdited;
+    // The time the post is created or commented. It will used by the server side to surface a
+    // post in category thread (for category exploration) after a post is commented.
     public final long timeMsCommented;
     // timestamp of last edited or last commented
     public final long timeMsLastUpdated;

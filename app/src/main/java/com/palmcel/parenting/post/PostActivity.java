@@ -71,6 +71,7 @@ public class PostActivity extends Activity implements
 
         PostHandler postHandler = new PostHandler();
         ListenableFuture savePostFuture = postHandler.savePostToDbOnThread(builder.build());
+        //ListenableFuture savePostFuture = postHandler.savePostToServerOnThread(builder.build());
 
         Futures.addCallback(savePostFuture, new FutureCallback() {
             @Override
