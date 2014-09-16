@@ -85,8 +85,7 @@ public class PostHandler {
         values.put(PostEntry.COLUMN_STATUS, post.postStatus.toString());
         values.put(PostEntry.COLUMN_TIME_CREATED, post.timeMsCreated);
         values.put(PostEntry.COLUMN_TIME_EDITED, post.timeMsEdited);
-        values.put(PostEntry.COLUMN_TIME_COMMENTED, post.timeMsCommented);
-        values.put(PostEntry.COLUMN_TIME_LASTUPDATED, post.timeMsLastUpdated);
+        values.put(PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE, post.timeMsChangeToSurface);
 
         db.replaceOrThrow(PostEntry.TABLE_NAME, "", values);
     }

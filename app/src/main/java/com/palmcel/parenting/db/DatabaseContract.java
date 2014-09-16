@@ -33,10 +33,9 @@ public class DatabaseContract {
         public static final String COLUMN_COMMENTS = "comments";
         public static final String COLUMN_IS_ANONYMOUS = "is_anonymous";
         public static final String COLUMN_STATUS = "status";
-        public static final String COLUMN_TIME_CREATED = "time_created";
-        public static final String COLUMN_TIME_EDITED = "time_edited";
-        public static final String COLUMN_TIME_COMMENTED = "time_commented";
-        public static final String COLUMN_TIME_LASTUPDATED = "time_lastupdated";
+        public static final String COLUMN_TIME_CREATED = "time_ms_created";
+        public static final String COLUMN_TIME_EDITED = "time_ms_edited";
+        public static final String COLUMN_TIME_CHANGE_TO_SURFACE = "time_ms_change_to_surface";
     }
 
     /* Inner class that defines the feed table contents */
@@ -44,6 +43,6 @@ public class DatabaseContract {
         public static final String TABLE_NAME = "feed";
         public static final String COLUMN_FEED_ID = "feed_id";
         public static final String COLUMN_POST_ID = "post_id";
-        public static final String COLUMN_TIME_INSERTED = "time_inserted";
+        public static final String COLUMN_TIME_INSERTED = "time_ms_inserted";
     }
 }

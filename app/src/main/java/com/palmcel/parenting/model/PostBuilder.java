@@ -35,9 +35,7 @@ public class PostBuilder {
     private PostStatus postStatus;
     private long timeMsCreated;
     private long timeMsEdited;
-    private long timeMsCommented;
-    // timestamp of last edited or last commented
-    private long timeMsLastUpdated;
+    private long timeMsChangeToSurface;
 
     public PostBuilder() {
     }
@@ -213,21 +211,12 @@ public class PostBuilder {
         return this;
     }
 
-    public long getTimeMsCommented() {
-        return timeMsCommented;
+    public long getTimeMsChangeToSurface() {
+        return timeMsChangeToSurface;
     }
 
-    public PostBuilder setTimeMsCommented(long timeMsCommented) {
-        this.timeMsCommented = timeMsCommented;
-        return this;
-    }
-
-    public long getTimeMsLastUpdated() {
-        return timeMsLastUpdated;
-    }
-
-    public PostBuilder setTimeMsLastUpdated(long timeMsLastUpdated) {
-        this.timeMsLastUpdated = timeMsLastUpdated;
+    public PostBuilder setTimeMsChangeToSurface(long timeMsChangeToSurface) {
+        this.timeMsChangeToSurface = timeMsChangeToSurface;
         return this;
     }
 

@@ -99,8 +99,7 @@ public class LoadFeedManager {
             PostEntry.COLUMN_STATUS + ", " +
             PostEntry.COLUMN_TIME_CREATED + ", " +
             PostEntry.COLUMN_TIME_EDITED + ", " +
-            PostEntry.COLUMN_TIME_COMMENTED + ", " +
-            PostEntry.COLUMN_TIME_LASTUPDATED;
+            PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE;
 
         String query =
             "SELECT " + selectFields + " " +
@@ -142,8 +141,7 @@ public class LoadFeedManager {
             feedPostBuilder.setPostStatus(statusStr == null ? null : PostStatus.valueOf(statusStr));
             feedPostBuilder.setTimeMsCreated(cursor.isNull(18) ? 0 : cursor.getLong(18));
             feedPostBuilder.setTimeMsEdited(cursor.isNull(19) ? 0 : cursor.getLong(19));
-            feedPostBuilder.setTimeMsCommented(cursor.isNull(20) ? 0 : cursor.getLong(20));
-            feedPostBuilder.setTimeMsLastUpdated(cursor.isNull(21) ? 0 : cursor.getLong(21));
+            feedPostBuilder.setTimeMsChangeToSurface(cursor.isNull(20) ? 0 : cursor.getLong(20));
 
             listBuilder.add(feedPostBuilder.build());
         }

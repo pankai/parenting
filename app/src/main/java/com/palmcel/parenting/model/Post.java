@@ -37,9 +37,7 @@ public class Post implements Parcelable {
     public final long timeMsEdited;
     // The time the post is created or commented. It will used by the server side to surface a
     // post in category thread (for category exploration) after a post is commented.
-    public final long timeMsCommented;
-    // timestamp of last edited or last commented
-    public final long timeMsLastUpdated;
+    public final long timeMsChangeToSurface;
 
     public Post(PostBuilder builder) {
         postId = builder.getPostId();
@@ -61,8 +59,7 @@ public class Post implements Parcelable {
         postStatus = builder.getPostStatus();
         timeMsCreated = builder.getTimeMsCreated();
         timeMsEdited = builder.getTimeMsEdited();
-        timeMsCommented = builder.getTimeMsCommented();
-        timeMsLastUpdated = builder.getTimeMsLastUpdated();
+        timeMsChangeToSurface = builder.getTimeMsChangeToSurface();
 
         assertInstance();
     }
@@ -112,8 +109,7 @@ public class Post implements Parcelable {
         postStatus = PostStatus.valueOf(in.readString());
         timeMsCreated = in.readLong();
         timeMsEdited = in.readLong();
-        timeMsCommented = in.readLong();
-        timeMsLastUpdated = in.readLong();
+        timeMsChangeToSurface = in.readLong();
 
         assertInstance();
     }
@@ -139,8 +135,7 @@ public class Post implements Parcelable {
         out.writeString(postStatus.name());
         out.writeLong(timeMsCreated);
         out.writeLong(timeMsEdited);
-        out.writeLong(timeMsCommented);
-        out.writeLong(timeMsLastUpdated);
+        out.writeLong(timeMsChangeToSurface);
     }
 
 }
