@@ -71,6 +71,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
     public FeedFragment() {
         // Required empty public constructor
+        setRetainInstance(true);
     }
 
     @Override
@@ -111,6 +112,9 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         ListView listView = (ListView) getActivity().findViewById(R.id.feedListView);
         listView.setEmptyView(mEmptyViewContainer);
         listView.setAdapter(mAdapter);
+
+        // Load feed from db. TODO (kpan): don't need to load feed every time in onResume.
+        LoadFeedManager.getInstance().loadFeed();
     }
 
     private void onCreateSwipeToRefresh(SwipeRefreshLayout refreshLayout) {
@@ -147,9 +151,6 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResume() {
         super.onResume();
-
-        // Load feed from db. TODO (kpan): don't need to load feed every time in onResume.
-        LoadFeedManager.getInstance().loadFeed();
     }
 
     @Override
