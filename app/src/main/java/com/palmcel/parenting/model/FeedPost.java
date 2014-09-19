@@ -7,12 +7,10 @@ import android.os.Parcelable;
  * This is the class for a user post in feed.
  */
 public class FeedPost extends Post {
-    public final String feedId;
     public final long timeMsInserted;
 
     public FeedPost(FeedPostBuilder builder) {
         super(builder);
-        feedId = builder.getFeedId();
         timeMsInserted = builder.getTimeMsInserted();
     }
 
@@ -35,14 +33,12 @@ public class FeedPost extends Post {
 
     private FeedPost(Parcel in) {
         super(in);
-        feedId = in.readString();
         timeMsInserted = in.readLong();
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
-        out.writeString(feedId);
         out.writeLong(timeMsInserted);
     }
 

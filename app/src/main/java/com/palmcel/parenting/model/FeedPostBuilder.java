@@ -5,19 +5,9 @@ package com.palmcel.parenting.model;
  */
 public class FeedPostBuilder extends PostBuilder {
 
-    private String feedId;
     private long timeMsInserted;
 
     public FeedPostBuilder() {
-    }
-
-    public String getFeedId() {
-        return feedId;
-    }
-
-    public FeedPostBuilder setFeedId(String feedId) {
-        this.feedId = feedId;
-        return this;
     }
 
     public long getTimeMsInserted() {

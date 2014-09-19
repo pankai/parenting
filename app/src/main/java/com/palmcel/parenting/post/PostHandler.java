@@ -9,8 +9,6 @@ import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.model.Post;
 import com.palmcel.parenting.network.PostRestHelper;
 
-import java.util.UUID;
-
 import static com.palmcel.parenting.db.DatabaseContract.PostEntry;
 import static com.palmcel.parenting.db.DatabaseContract.FeedEntry;
 
@@ -52,17 +50,16 @@ public class PostHandler {
 
             @Override
             public void run() {
-                savePostToDb(post);
                 saveFeedPostToDb(post);
             }
         });
     }
 
     /**
-     * Save a post to database
+     * Save a feed post to database
      * @param post
      */
-    private void savePostToDb(Post post) {
+    private void saveFeedPostToDb(Post post) {
         SQLiteDatabase db = DbHelper.getDb();
 
         ContentValues values = new ContentValues();
@@ -86,20 +83,6 @@ public class PostHandler {
         values.put(PostEntry.COLUMN_TIME_CREATED, post.timeMsCreated);
         values.put(PostEntry.COLUMN_TIME_EDITED, post.timeMsEdited);
         values.put(PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE, post.timeMsChangeToSurface);
-
-        db.replaceOrThrow(PostEntry.TABLE_NAME, "", values);
-    }
-
-    /**
-     * Save a post to database feed table
-     * @param post
-     */
-    private void saveFeedPostToDb(Post post) {
-        SQLiteDatabase db = DbHelper.getDb();
-
-        ContentValues values = new ContentValues();
-        values.put(FeedEntry.COLUMN_FEED_ID, "Local." + UUID.randomUUID().toString());
-        values.put(FeedEntry.COLUMN_POST_ID, post.postId);
         values.put(FeedEntry.COLUMN_TIME_INSERTED, System.currentTimeMillis());
 
         db.replaceOrThrow(FeedEntry.TABLE_NAME, "", values);

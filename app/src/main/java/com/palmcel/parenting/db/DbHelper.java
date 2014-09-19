@@ -17,8 +17,8 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "parenting";
 
-    private static final String SQL_CREATE_POST_TABLE =
-            "CREATE TABLE " + PostEntry.TABLE_NAME + " (" +
+    private static final String SQL_CREATE_FEED_POST_TABLE =
+            "CREATE TABLE " + FeedEntry.TABLE_NAME + " (" +
                 PostEntry.COLUMN_POST_ID + " TEXT PRIMARY KEY, " +
                 PostEntry.COLUMN_USER_ID + " TEXT, " +
                 PostEntry.COLUMN_POST_TYPE + " TEXT, " +
@@ -40,20 +40,11 @@ public class DbHelper extends SQLiteOpenHelper {
                 PostEntry.COLUMN_STATUS + " TEXT, " +
                 PostEntry.COLUMN_TIME_CREATED + " INTEGER, " +
                 PostEntry.COLUMN_TIME_EDITED + " INTEGER, " +
-                PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE + " INTEGER " +
-            ")";
-
-    private static final String SQL_DELETE_POST_TABLE =
-            "DROP TABLE IF EXISTS " + PostEntry.TABLE_NAME;
-
-    private static final String SQL_CREATE_FEED_TABLE =
-            "CREATE TABLE " + FeedEntry.TABLE_NAME + " (" +
-                FeedEntry.COLUMN_FEED_ID + " TEXT PRIMARY KEY, " +
-                FeedEntry.COLUMN_POST_ID + " TEXT, " +
+                PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE + " INTEGER, " +
                 FeedEntry.COLUMN_TIME_INSERTED + " INTEGER " +
             ")";
 
-    private static final String SQL_DELETE_FEED_TABLE =
+    private static final String SQL_DELETE_FEED_POST_TABLE =
             "DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME;
 
     private static final String SQL_CREATE_FEED_TABLE_INDEX =
@@ -69,16 +60,14 @@ public class DbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_POST_TABLE);
-        db.execSQL(SQL_CREATE_FEED_TABLE);
+        db.execSQL(SQL_CREATE_FEED_POST_TABLE);
         db.execSQL(SQL_CREATE_FEED_TABLE_INDEX);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
-        db.execSQL(SQL_DELETE_POST_TABLE);
-        db.execSQL(SQL_DELETE_FEED_TABLE);
+        db.execSQL(SQL_DELETE_FEED_POST_TABLE);
         onCreate(db);
     }
 

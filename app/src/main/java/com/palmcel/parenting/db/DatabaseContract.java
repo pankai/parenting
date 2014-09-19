@@ -11,9 +11,8 @@ public class DatabaseContract {
     public DatabaseContract() {
     }
 
-    /* Inner class that defines the post table contents */
+    /* Inner class that defines the post fields */
     public static abstract class PostEntry implements BaseColumns {
-        public static final String TABLE_NAME = "post";
         public static final String COLUMN_POST_ID = "post_id";
         public static final String COLUMN_USER_ID = "user_id";
         public static final String COLUMN_POST_TYPE = "post_type";
@@ -38,11 +37,9 @@ public class DatabaseContract {
         public static final String COLUMN_TIME_CHANGE_TO_SURFACE = "time_ms_change_to_surface";
     }
 
-    /* Inner class that defines the feed table contents */
+    /* Inner class that defines the feed_post table contents in addition to post fields */
     public static abstract class FeedEntry implements BaseColumns {
-        public static final String TABLE_NAME = "feed";
-        public static final String COLUMN_FEED_ID = "feed_id";
-        public static final String COLUMN_POST_ID = "post_id";
+        public static final String TABLE_NAME = "feed_post";
         public static final String COLUMN_TIME_INSERTED = "time_ms_inserted";
     }
 }
