@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.palmcel.parenting.common.DataFreshnessParam;
+import com.palmcel.parenting.common.DataSource;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.db.DbHelper;
@@ -38,7 +40,7 @@ public class LoadFeedManager {
     private ListenableFuture<LoadFeedResult> mLoadFeedFuture;
 
     public void loadFeed() {
-        loadFeed(new LoadFeedParams(0, DEFAULT_MAX_FETCH));
+        loadFeed(new LoadFeedParams(0, DEFAULT_MAX_FETCH, DataFreshnessParam.CACHE_OK));
     }
 
     public void loadFeed(final LoadFeedParams loadFeedParams) {
@@ -49,10 +51,35 @@ public class LoadFeedManager {
             Log.d(TAG, "In loadFeed");
         }
 
+        if (loadFeedParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
+                FeedCache.getInstance().isUpToDate() &&
+                !FeedCache.getInstance().isEmpty()) {
+            LoadFeedResult result = LoadFeedResult.successResult(
+                    FeedCache.getInstance().getCachedFeed(),
+                    DataSource.MEMORY_CACHE);
+            // Update feed listview with memory cache data
+            EventBus.getDefault().post(
+                    new LoadFeedResultEvent(loadFeedParams, result));
+            Log.d(TAG, "Loaded feed from memory cache");
+            return;
+        }
+
         mLoadFeedFuture = ExecutorUtil.execute(new Callable<LoadFeedResult>() {
             @Override
             public LoadFeedResult call() throws Exception {
-                return loadFeedFromDb(loadFeedParams);
+                LoadFeedResult dbResult = loadFeedFromDb(loadFeedParams);
+                // Check db cache is less stale than memory cache
+                FeedCache.getInstance().updateCache(dbResult.feedPosts);
+                if (loadFeedParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
+                        !dbResult.isEmpty()) {
+                    // TODO: check stale of db data
+                    // Update feed listview with db data
+                    Log.d(TAG, "Loaded feed from database");
+                    return dbResult;
+                } else {
+                    // Load from server
+                    return dbResult;
+                }
             }
         });
 
@@ -104,7 +131,7 @@ public class LoadFeedManager {
             "SELECT " + selectFields + " " +
             "FROM " + FeedEntry.TABLE_NAME + " " +
             "ORDER BY " + FeedEntry.COLUMN_TIME_INSERTED + " DESC " +
-            "LIMIT " + loadFeedParams.maxToFetch;
+            "LIMIT " + 100; //TODO
 
         Cursor cursor = db.rawQuery(query, null);
 
@@ -142,7 +169,7 @@ public class LoadFeedManager {
             listBuilder.add(feedPostBuilder.build());
         }
 
-        return LoadFeedResult.successResult(listBuilder.build());
+        return LoadFeedResult.successResult(listBuilder.build(), DataSource.DATABASE);
     }
 
     public static LoadFeedManager getInstance() {
