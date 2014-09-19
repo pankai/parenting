@@ -70,6 +70,7 @@ public class FeedCache {
             } else if (post.timeMsInserted < lastInMemCache.timeMsInserted) {
                 // There is hole between memory cache and feedPosts.
                 Log.e(TAG, "Error, there is a hole between memory cache and feedPosts.");
+                // TODO: delete all data from feed table.
                 return;
             }
         }
