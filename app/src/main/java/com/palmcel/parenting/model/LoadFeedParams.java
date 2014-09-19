@@ -6,15 +6,17 @@ import com.palmcel.parenting.common.DataFreshnessParam;
  * Parameters to load feed
  */
 public class LoadFeedParams {
-    public long sinceTimestampMs;
+    // Fetch post in feed whose insert time is older or equal to
+    // 'priorEqualToTimestampMs'. Ignore it if it is 0.
+    public long priorEqualToTimestampMs;
     public int maxToFetch;
     public DataFreshnessParam dataFreshnessParam;
 
     public LoadFeedParams(
-            long sinceTimestampMs,
+            long priorEqualToTimestampMs,
             int maxToFetch,
             DataFreshnessParam dataFreshnessParam) {
-        this.sinceTimestampMs = sinceTimestampMs;
+        this.priorEqualToTimestampMs = priorEqualToTimestampMs;
         this.maxToFetch = maxToFetch;
         this.dataFreshnessParam = dataFreshnessParam;
     }
