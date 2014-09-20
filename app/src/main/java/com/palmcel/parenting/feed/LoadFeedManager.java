@@ -71,14 +71,21 @@ public class LoadFeedManager {
                 // Check db cache is less stale than memory cache
                 FeedCache.getInstance().updateCache(dbResult.feedPosts);
                 if (loadFeedParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
-                        !dbResult.isEmpty()) {
+                        !dbResult.isEmpty() && false) {
                     // TODO: check stale of db data
                     // Update feed listview with db data
                     Log.d(TAG, "Loaded feed from database");
                     return dbResult;
                 } else {
                     // Load from server
-                    return dbResult;
+                    FeedHandler feedHandler = new FeedHandler();
+                    ImmutableList<FeedPost> feedFromServer = feedHandler.getFeedPostFromServer(
+                            "pkdebug", // TODO
+                            loadFeedParams.maxToFetch,
+                            FeedCache.getInstance().getLargestInsertTime()
+                    );
+                    Log.d(TAG, "Loaded feed from server");
+                    return LoadFeedResult.successResult(feedFromServer, DataSource.SERVER);
                 }
             }
         });

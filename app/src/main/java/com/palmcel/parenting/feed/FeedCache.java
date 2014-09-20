@@ -78,4 +78,16 @@ public class FeedCache {
         mLastUpdatedMs = System.currentTimeMillis();
         mCachedFeed = builder.build();
     }
+
+    /**
+     * @return the largest insert time of post in mCachedFeed or 0 if mCachedFeed is empty.
+     */
+    public long getLargestInsertTime() {
+        ImmutableList<FeedPost> cachedFeed = ImmutableList.copyOf(mCachedFeed);
+        if (cachedFeed.isEmpty()) {
+            return 0;
+        }
+
+        return cachedFeed.get(0).timeMsInserted;
+    }
 }

@@ -3,7 +3,7 @@ package com.palmcel.parenting.model;
 import com.palmcel.parenting.common.DataFreshnessParam;
 
 /**
- * Parameters to load feed
+ * Client side parameters to load feed
  */
 public class LoadFeedParams {
     // Fetch post in feed whose insert time is older or equal to
