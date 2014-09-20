@@ -1,4 +1,4 @@
-package com.palmcel.parenting.feed;
+package com.palmcel.parenting.cache;
 
 import android.text.format.DateUtils;
 
