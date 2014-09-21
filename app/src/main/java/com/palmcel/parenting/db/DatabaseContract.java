@@ -26,7 +26,6 @@ public class DatabaseContract {
         public static final String COLUMN_EXT_LINK_SUMMARY = "external_link_summary";
         public static final String COLUMN_PRODUCT_BAR_CODE = "product_bar_code";
         public static final String COLUMN_PUBLICITY = "publicity";
-        public static final String COLUMN_IS_ANSWERED = "is_answered";
         public static final String COLUMN_QUESTION_POINTS = "question_points";
         public static final String COLUMN_LIKES = "likes";
         public static final String COLUMN_COMMENTS = "comments";
@@ -42,4 +41,26 @@ public class DatabaseContract {
         public static final String TABLE_NAME = "feed_post";
         public static final String COLUMN_TIME_INSERTED = "time_ms_inserted";
     }
+
+    public static String FEED_COLUMNS_STRING =
+            PostEntry.COLUMN_POST_ID + ", " +
+            FeedEntry.COLUMN_TIME_INSERTED + ", " +
+            PostEntry.COLUMN_USER_ID + ", " +
+            PostEntry.COLUMN_POST_TYPE + ", " +
+            PostEntry.COLUMN_POST_CATEGORY + ", " +
+            PostEntry.COLUMN_MESSAGE + ", " +
+            PostEntry.COLUMN_PICTURE_URL + ", " +
+            PostEntry.COLUMN_EXT_LINK_URL + ", " +
+            PostEntry.COLUMN_EXT_LINK_IMAGE_URL + ", " +
+            PostEntry.COLUMN_EXT_LINK_CAPTION + ", " +
+            PostEntry.COLUMN_EXT_LINK_SUMMARY + ", " +
+            PostEntry.COLUMN_PRODUCT_BAR_CODE + ", " +
+            PostEntry.COLUMN_PUBLICITY + ", " +
+            PostEntry.COLUMN_LIKES + ", " +
+            PostEntry.COLUMN_COMMENTS + ", " +
+            PostEntry.COLUMN_IS_ANONYMOUS + ", " +
+            PostEntry.COLUMN_STATUS + ", " +
+            PostEntry.COLUMN_TIME_CREATED + ", " +
+            PostEntry.COLUMN_TIME_EDITED + ", " +
+            PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE;
 }

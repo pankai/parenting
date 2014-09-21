@@ -2,6 +2,7 @@ package com.palmcel.parenting.feed;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
@@ -12,6 +13,7 @@ import com.palmcel.parenting.common.DataFreshnessParam;
 import com.palmcel.parenting.common.DataSource;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.db.DatabaseContract;
 import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.FeedPostBuilder;
@@ -80,12 +82,22 @@ public class LoadFeedManager {
                 } else {
                     // Load from server
                     FeedHandler feedHandler = new FeedHandler();
-                    ImmutableList<FeedPost> feedFromServer = feedHandler.getFeedPostFromServer(
+                    final ImmutableList<FeedPost> feedFromServer =
+                        feedHandler.getFeedPostFromServer(
                             "pkdebug", // TODO
                             loadFeedParams.maxToFetch,
                             FeedCache.getInstance().getLargestInsertTime()
                     );
                     FeedCache.getInstance().updateCacheFromServer(feedFromServer);
+
+                    // Update feed_post table with feedFromServer on a separated thread
+                    ExecutorUtil.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateFeedPostTable(feedFromServer);
+                        }
+                    });
+
                     Log.d(TAG, "Loaded feed from server");
                     return LoadFeedResult.successResult(feedFromServer, DataSource.SERVER);
                 }
@@ -114,27 +126,7 @@ public class LoadFeedManager {
         Log.d(TAG, "In loadFeedFromDb");
         SQLiteDatabase db = DbHelper.getDb();
 
-        String selectFields =
-            PostEntry.COLUMN_POST_ID + ", " +
-            FeedEntry.COLUMN_TIME_INSERTED + ", " +
-            PostEntry.COLUMN_USER_ID + ", " +
-            PostEntry.COLUMN_POST_TYPE + ", " +
-            PostEntry.COLUMN_POST_CATEGORY + ", " +
-            PostEntry.COLUMN_MESSAGE + ", " +
-            PostEntry.COLUMN_PICTURE_URL + ", " +
-            PostEntry.COLUMN_EXT_LINK_URL + ", " +
-            PostEntry.COLUMN_EXT_LINK_IMAGE_URL + ", " +
-            PostEntry.COLUMN_EXT_LINK_CAPTION + ", " +
-            PostEntry.COLUMN_EXT_LINK_SUMMARY + ", " +
-            PostEntry.COLUMN_PRODUCT_BAR_CODE + ", " +
-            PostEntry.COLUMN_PUBLICITY + ", " +
-            PostEntry.COLUMN_LIKES + ", " +
-            PostEntry.COLUMN_COMMENTS + ", " +
-            PostEntry.COLUMN_IS_ANONYMOUS + ", " +
-            PostEntry.COLUMN_STATUS + ", " +
-            PostEntry.COLUMN_TIME_CREATED + ", " +
-            PostEntry.COLUMN_TIME_EDITED + ", " +
-            PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE;
+        String selectFields = DatabaseContract.FEED_COLUMNS_STRING;
 
         String query =
             "SELECT " + selectFields + " " +
@@ -179,6 +171,162 @@ public class LoadFeedManager {
         }
 
         return LoadFeedResult.successResult(listBuilder.build(), DataSource.DATABASE);
+    }
+
+    /**
+     * Update feed_post table with feed loaded from server
+     * @param feedFromServer feed from server. The feed starts from the latest post in the feed. It
+     *                       is not middle portion in the feed.
+     */
+    private void updateFeedPostTable(ImmutableList<FeedPost> feedFromServer) {
+        Log.d(TAG, "In updateFeedPostTable, feedFromServer=" + feedFromServer.size());
+
+        if (feedFromServer.isEmpty()) {
+            return;
+        }
+
+        FeedPost lastInServerFeed = feedFromServer.get(feedFromServer.size() - 1);
+
+        SQLiteDatabase db = DbHelper.getDb();
+        db.beginTransaction();
+
+        try {
+            // Check whether feed_post table contains lastInServerFeed
+            if (feedPostTableContains(lastInServerFeed.postId, lastInServerFeed.timeMsInserted)) {
+                Log.d(TAG, "updateFeedPostTable, feed_post table contains post (" +
+                        lastInServerFeed.postId + ", " + lastInServerFeed.timeMsInserted + ")");
+
+                // Delete posts before lastInServerFeed.timeMsInserted in feed_post table
+                db.delete(
+                        DatabaseContract.FeedEntry.TABLE_NAME,
+                        FeedEntry.COLUMN_TIME_INSERTED + " >= ?",
+                        new String[]{Long.toString(lastInServerFeed.timeMsInserted)}
+                        );
+            } else {
+                Log.d(TAG, "updateFeedPostTable, feed_post table doesn't contain post (" +
+                        lastInServerFeed.postId + ", " + lastInServerFeed.timeMsInserted + ")");
+                // Clear feed_post table
+                db.delete(DatabaseContract.FeedEntry.TABLE_NAME, null, null);
+            }
+
+            // Insert feedFromServer into feed_post table
+            insertIntoFeedPostTable(db, feedFromServer);
+
+            db.setTransactionSuccessful();
+            Log.d(TAG, "updateFeedPostTable succeeded");
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in updateFeedPostTable", ex);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
+     * Insert feed into feed_post table
+     * @param db
+     * @param feedPosts
+     */
+    private void insertIntoFeedPostTable(SQLiteDatabase db, ImmutableList<FeedPost> feedPosts) {
+        Log.d(TAG, "In insertIntoFeedPostTable");
+        String sql =
+            "INSERT INTO " + FeedEntry.TABLE_NAME +
+                    " (" + DatabaseContract.FEED_COLUMNS_STRING + ") " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        SQLiteStatement insert = db.compileStatement(sql);
+
+        for (FeedPost post: feedPosts) {
+            insert.bindString(1, post.postId);
+            insert.bindLong(2, post.timeMsInserted);
+            insert.bindString(3, post.userId);
+            if (post.postType == null) {
+                insert.bindNull(4);
+            } else {
+                insert.bindString(4, post.postType.toString());
+            }
+            if (post.category == null) {
+                insert.bindNull(5);
+            } else {
+                insert.bindString(5, post.category);
+            }
+            if (post.message == null) {
+                insert.bindNull(6);
+            } else {
+                insert.bindString(6, post.message);
+            }
+            if (post.pictureUrl == null) {
+                insert.bindNull(7);
+            } else {
+                insert.bindString(7, post.pictureUrl);
+            }
+            if (post.externalLinkUrl == null) {
+                insert.bindNull(8);
+            } else {
+                insert.bindString(8, post.externalLinkUrl);
+            }
+            if (post.externalLinkImageUrl == null) {
+                insert.bindNull(9);
+            } else {
+                insert.bindString(9, post.externalLinkImageUrl);
+            }
+            if (post.externalLinkCaption == null) {
+                insert.bindNull(10);
+            } else {
+                insert.bindString(10, post.externalLinkCaption);
+            }
+            if (post.externalLinkSummary == null) {
+                insert.bindNull(11);
+            } else {
+                insert.bindString(11, post.externalLinkSummary);
+            }
+            if (post.productBarCode == null) {
+                insert.bindNull(12);
+            } else {
+                insert.bindString(12, post.productBarCode);
+            }
+            if (post.publicity == null) {
+                insert.bindNull(13);
+            } else {
+                insert.bindString(13, post.publicity.toString());
+            }
+            insert.bindLong(14, post.likes);
+            insert.bindLong(14, post.likes);
+            insert.bindLong(15, post.comments);
+            insert.bindLong(16, post.isAnonymous ? 1 : 0);
+            if (post.postStatus == null) {
+                insert.bindNull(17);
+            } else {
+                insert.bindString(17, post.postStatus.toString());
+            }
+            insert.bindLong(18, post.timeMsCreated);
+            insert.bindLong(19, post.timeMsEdited);
+            insert.bindLong(20, post.timeMsChangeToSurface);
+            insert.execute();
+        }
+    }
+
+    /**
+     * @param postId feedPost.postId
+     * @param timeMsInserted, feedPost.timeMsInserted
+     * @return whether feed_post table contains a post with postId and timeMsInserted
+     */
+    private boolean feedPostTableContains(String postId, long timeMsInserted) {
+        String whereClause =
+                PostEntry.COLUMN_POST_ID + "=? AND " + FeedEntry.COLUMN_TIME_INSERTED + "=?";
+        Cursor c = DbHelper.getDb().query(
+                FeedEntry.TABLE_NAME,
+                new String[]{PostEntry.COLUMN_POST_ID},
+                whereClause,
+                new String[]{postId, Long.toString(timeMsInserted)},
+                null,
+                null,
+                null
+        );
+
+        if (c.moveToFirst()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static LoadFeedManager getInstance() {

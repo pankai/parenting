@@ -23,7 +23,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 PostEntry.COLUMN_USER_ID + " TEXT, " +
                 PostEntry.COLUMN_POST_TYPE + " TEXT, " +
                 PostEntry.COLUMN_POST_CATEGORY + " TEXT, " +
-                PostEntry.COLUMN_FOR_GENDER + " INTEGER, " +
+                PostEntry.COLUMN_FOR_GENDER + " TEXT, " +
                 PostEntry.COLUMN_MESSAGE + " TEXT, " +
                 PostEntry.COLUMN_PICTURE_URL + " TEXT, " +
                 PostEntry.COLUMN_EXT_LINK_URL + " TEXT, " +
@@ -32,7 +32,6 @@ public class DbHelper extends SQLiteOpenHelper {
                 PostEntry.COLUMN_EXT_LINK_SUMMARY + " TEXT, " +
                 PostEntry.COLUMN_PRODUCT_BAR_CODE + " TEXT, " +
                 PostEntry.COLUMN_PUBLICITY + " TEXT, " +
-                PostEntry.COLUMN_IS_ANSWERED + " INTEGER, " +
                 PostEntry.COLUMN_QUESTION_POINTS + " INTEGER, " +
                 PostEntry.COLUMN_LIKES + " INTEGER, " +
                 PostEntry.COLUMN_COMMENTS + " INTEGER, " +
