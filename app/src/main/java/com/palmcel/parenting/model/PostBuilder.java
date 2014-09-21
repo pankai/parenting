@@ -235,7 +235,7 @@ public class PostBuilder {
             .setUserId(LoggedInUser.getLoggedInUserId())
             .setPostType(PostType.Regular)
             .setPublicity(postSetting.postPublicity)
-            .setPostStatus(PostStatus.Regular)
+            .setPostStatus(PostStatus.Normal)
             .setCategory(postSetting.categoryFrom) //TODO (kpan) only use category from by now
             .setForGender(postSetting.forGender)
             .setIsAnonymous(postSetting.isAnonymous)
@@ -256,7 +256,7 @@ public class PostBuilder {
                 .setUserId(LoggedInUser.getLoggedInUserId())
                 .setPostType(PostType.Product)
                 .setPublicity(postSetting.postPublicity)
-                .setPostStatus(PostStatus.Regular)
+                .setPostStatus(PostStatus.Normal)
                 .setCategory(postSetting.categoryFrom) //TODO (kpan) only use category from by now
                 .setForGender(postSetting.forGender)
                 .setIsAnonymous(postSetting.isAnonymous)
