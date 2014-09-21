@@ -51,9 +51,10 @@ public class FeedCache {
     public void updateCacheFromDb(ImmutableList<FeedPost> dbFeedPosts) {
         Log.d(TAG, "In updateCacheFromDb, mCachedFeed=" + mCachedFeed.size() +
                 ", dbFeedPosts=" + dbFeedPosts.size());
-        if (mCachedFeed.isEmpty()) {
+        ImmutableList<FeedPost> cachedFeed = ImmutableList.copyOf(mCachedFeed);
+        if (cachedFeed.isEmpty()) {
             mCachedFeed = dbFeedPosts;
-            mLastUpdatedMs = System.currentTimeMillis();
+            mLastUpdatedMs = System.currentTimeMillis(); // TODO: should get the time from dbFeedPosts
             return;
         }
         if (dbFeedPosts.isEmpty()) {
@@ -61,9 +62,9 @@ public class FeedCache {
         }
 
         ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
-        builder.addAll(mCachedFeed);
+        builder.addAll(cachedFeed);
 
-        FeedPost lastInMemCache = mCachedFeed.get(mCachedFeed.size() - 1);
+        FeedPost lastInMemCache = cachedFeed.get(cachedFeed.size() - 1);
 
         boolean hasFoundLast = false;
 
@@ -74,13 +75,13 @@ public class FeedCache {
                 hasFoundLast = true;
             } else if (post.timeMsInserted < lastInMemCache.timeMsInserted) {
                 // There is hole between memory cache and dbFeedPosts.
-                Log.e(TAG, "Error, there is a hole between memory cache and dbFeedPosts.");
+                Log.w(TAG, "Warning, there is a hole between memory cache and dbFeedPosts.");
                 clearFeedPostTableOnThread();
                 return;
             }
         }
 
-        mLastUpdatedMs = System.currentTimeMillis();
+        mLastUpdatedMs = System.currentTimeMillis();  // TODO: should get the time from dbFeedPosts
         mCachedFeed = builder.build();
     }
 
@@ -111,5 +112,48 @@ public class FeedCache {
                 }
             }
         });
+    }
+
+    /**
+     * Update mCachedFeed with feed loaded from server
+     * @param feedFromServer feed from server. The feed starts from the latest post in the feed. It
+     *                       is not middle portion in the feed.
+     */
+    public void updateCacheFromServer(ImmutableList<FeedPost> feedFromServer) {
+        Log.d(TAG, "In updateCacheFromServer, mCachedFeed=" + mCachedFeed.size() +
+                ", feedFromServer=" + feedFromServer.size());
+        ImmutableList<FeedPost> cachedFeed = ImmutableList.copyOf(mCachedFeed);
+        if (cachedFeed.isEmpty()) {
+            mCachedFeed = feedFromServer;
+            mLastUpdatedMs = System.currentTimeMillis();
+            return;
+        }
+        if (feedFromServer.isEmpty()) {
+            return;
+        }
+
+        ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
+        builder.addAll(feedFromServer);
+
+        FeedPost lastInServerFeed = feedFromServer.get(feedFromServer.size() - 1);
+
+        boolean hasFoundLast = false;
+
+        for (FeedPost post: cachedFeed) {
+            if (hasFoundLast) {
+                builder.add(post);
+            } else if (post.timeMsInserted == lastInServerFeed.timeMsInserted) {
+                hasFoundLast = true;
+            } else if (post.timeMsInserted < lastInServerFeed.timeMsInserted) {
+                // There is hole between memory cache and feedFromServer.
+                Log.w(TAG, "Warning, there is a hole between memory cache and feedFromServer.");
+                mLastUpdatedMs = System.currentTimeMillis();
+                mCachedFeed = feedFromServer;
+                return;
+            }
+        }
+
+        mLastUpdatedMs = System.currentTimeMillis();
+        mCachedFeed = builder.build();
     }
 }

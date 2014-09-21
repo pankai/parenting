@@ -85,6 +85,7 @@ public class LoadFeedManager {
                             loadFeedParams.maxToFetch,
                             FeedCache.getInstance().getLargestInsertTime()
                     );
+                    FeedCache.getInstance().updateCacheFromServer(feedFromServer);
                     Log.d(TAG, "Loaded feed from server");
                     return LoadFeedResult.successResult(feedFromServer, DataSource.SERVER);
                 }
