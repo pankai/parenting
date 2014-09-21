@@ -70,7 +70,7 @@ public class LoadFeedManager {
             public LoadFeedResult call() throws Exception {
                 LoadFeedResult dbResult = loadFeedFromDb(loadFeedParams);
                 // Check db cache is less stale than memory cache
-                FeedCache.getInstance().updateCache(dbResult.feedPosts);
+                FeedCache.getInstance().updateCacheFromDb(dbResult.feedPosts);
                 if (loadFeedParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
                         !dbResult.isEmpty() && false) {
                     // TODO: check stale of db data

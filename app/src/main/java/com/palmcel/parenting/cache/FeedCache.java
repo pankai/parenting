@@ -43,19 +43,20 @@ public class FeedCache {
     }
 
     /**
-     * Update memory cache with data from database or server.
-     * Merge mCachedFeed and feedPost into mCacheFeed. There should be no hole in the merge results.
-     * @param feedPosts data from db or server
+     * Update memory cache with data from database.
+     * Merge mCachedFeed and dbFeedPost into mCacheFeed.
+     * There should be no hole in the merge results.
+     * @param dbFeedPosts data from db
      */
-    public void updateCache(ImmutableList<FeedPost> feedPosts) {
-        Log.d(TAG, "In updateCache, mCachedFeed=" + mCachedFeed.size() +
-                ", feedPosts=" + feedPosts.size());
+    public void updateCacheFromDb(ImmutableList<FeedPost> dbFeedPosts) {
+        Log.d(TAG, "In updateCacheFromDb, mCachedFeed=" + mCachedFeed.size() +
+                ", dbFeedPosts=" + dbFeedPosts.size());
         if (mCachedFeed.isEmpty()) {
-            mCachedFeed = feedPosts;
+            mCachedFeed = dbFeedPosts;
             mLastUpdatedMs = System.currentTimeMillis();
             return;
         }
-        if (feedPosts.isEmpty()) {
+        if (dbFeedPosts.isEmpty()) {
             return;
         }
 
@@ -66,14 +67,14 @@ public class FeedCache {
 
         boolean hasFoundLast = false;
 
-        for (FeedPost post: feedPosts) {
+        for (FeedPost post: dbFeedPosts) {
             if (hasFoundLast) {
                 builder.add(post);
             } else if (post.timeMsInserted == lastInMemCache.timeMsInserted) {
                 hasFoundLast = true;
             } else if (post.timeMsInserted < lastInMemCache.timeMsInserted) {
-                // There is hole between memory cache and feedPosts.
-                Log.e(TAG, "Error, there is a hole between memory cache and feedPosts.");
+                // There is hole between memory cache and dbFeedPosts.
+                Log.e(TAG, "Error, there is a hole between memory cache and dbFeedPosts.");
                 clearFeedPostTableOnThread();
                 return;
             }
