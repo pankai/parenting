@@ -46,6 +46,10 @@ public class LoadFeedManager {
         loadFeed(new LoadFeedParams(0, DEFAULT_MAX_FETCH, DataFreshnessParam.CACHE_OK));
     }
 
+    public void loadFeed(DataFreshnessParam dataFreshnessParam) {
+        loadFeed(new LoadFeedParams(0, DEFAULT_MAX_FETCH, dataFreshnessParam));
+    }
+
     public void loadFeed(final LoadFeedParams loadFeedParams) {
         if (mLoadFeedFuture != null) {
             Log.d(TAG, "loadFeed was skipped.");

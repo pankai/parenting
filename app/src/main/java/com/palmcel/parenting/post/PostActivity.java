@@ -11,6 +11,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.DataFreshnessParam;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.feed.LoadFeedManager;
@@ -80,7 +81,7 @@ public class PostActivity extends Activity implements
                 Log.d(TAG, "Saved post successfully");
 
                 // Reload feed in FeedFragment
-                LoadFeedManager.getInstance().loadFeed();
+                LoadFeedManager.getInstance().loadFeed(DataFreshnessParam.CHECK_SERVER);
 
                 PostActivity.this.finish();
             }
