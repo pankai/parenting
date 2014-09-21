@@ -1,9 +1,13 @@
 package com.palmcel.parenting.cache;
 
+import android.database.sqlite.SQLiteException;
 import android.text.format.DateUtils;
 
 import com.google.common.collect.ImmutableList;
+import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.db.DatabaseContract;
+import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.model.FeedPost;
 
 /**
@@ -70,7 +74,7 @@ public class FeedCache {
             } else if (post.timeMsInserted < lastInMemCache.timeMsInserted) {
                 // There is hole between memory cache and feedPosts.
                 Log.e(TAG, "Error, there is a hole between memory cache and feedPosts.");
-                // TODO: delete all data from feed table.
+                clearFeedPostTableOnThread();
                 return;
             }
         }
@@ -89,5 +93,22 @@ public class FeedCache {
         }
 
         return cachedFeed.get(0).timeMsInserted;
+    }
+
+    /**
+     * Clear all rows in feed_post table on a worker thread
+     */
+    private void clearFeedPostTableOnThread() {
+        Log.d(TAG, "In clearFeedPostTableOnThread");
+        ExecutorUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DbHelper.getDb().delete(DatabaseContract.FeedEntry.TABLE_NAME, null, null);
+                } catch (SQLiteException ex) {
+                    Log.e(TAG, "clearFeedPostTable failed.", ex);
+                }
+            }
+        });
     }
 }
