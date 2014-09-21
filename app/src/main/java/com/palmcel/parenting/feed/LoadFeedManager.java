@@ -63,44 +63,47 @@ public class LoadFeedManager {
             // Update feed listview with memory cache data
             EventBus.getDefault().post(
                     new LoadFeedResultEvent(loadFeedParams, result));
-            Log.d(TAG, "Loaded feed from memory cache");
+            Log.d(TAG, "To display feed from memory cache");
             return;
         }
 
         mLoadFeedFuture = ExecutorUtil.execute(new Callable<LoadFeedResult>() {
             @Override
             public LoadFeedResult call() throws Exception {
-                LoadFeedResult dbResult = loadFeedFromDb(loadFeedParams);
-                // Check db cache is less stale than memory cache
-                FeedCache.getInstance().updateCacheFromDb(dbResult.feedPosts);
-                if (loadFeedParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
-                        !dbResult.isEmpty() && false) {
-                    // TODO: check stale of db data
-                    // Update feed listview with db data
-                    Log.d(TAG, "Loaded feed from database");
-                    return dbResult;
-                } else {
-                    // Load from server
-                    FeedHandler feedHandler = new FeedHandler();
-                    final ImmutableList<FeedPost> feedFromServer =
-                        feedHandler.getFeedPostFromServer(
-                            "pkdebug", // TODO
-                            loadFeedParams.maxToFetch,
-                            FeedCache.getInstance().getLargestInsertTime()
-                    );
-                    FeedCache.getInstance().updateCacheFromServer(feedFromServer);
-
-                    // Update feed_post table with feedFromServer on a separated thread
-                    ExecutorUtil.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateFeedPostTable(feedFromServer);
-                        }
-                    });
-
-                    Log.d(TAG, "Loaded feed from server");
-                    return LoadFeedResult.successResult(feedFromServer, DataSource.SERVER);
+                if (FeedCache.getInstance().isEmpty()) {
+                    LoadFeedResult dbResult = loadFeedFromDb(loadFeedParams);
+                    if (!dbResult.isEmpty()) {
+                        FeedCache.getInstance().updateCacheFromDb(dbResult.feedPosts);
+                        // Update feed listview with database data
+                        EventBus.getDefault().post(
+                                new LoadFeedResultEvent(loadFeedParams, dbResult));
+                        Log.d(TAG, "To display feed from db");
+                    }
                 }
+
+                // TODO: maybe add logic to display feed from db for CACHE_OK. Need to check
+                // staleness of db data.
+
+                // Load from server
+                FeedHandler feedHandler = new FeedHandler();
+                final ImmutableList<FeedPost> feedFromServer =
+                        feedHandler.getFeedPostFromServer(
+                                "pkdebug", // TODO
+                                loadFeedParams.maxToFetch,
+                                FeedCache.getInstance().getLargestInsertTime()
+                        );
+                FeedCache.getInstance().updateCacheFromServer(feedFromServer);
+
+                // Update feed_post table with feedFromServer on a separated thread
+                ExecutorUtil.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateFeedPostTable(feedFromServer);
+                    }
+                });
+
+                Log.d(TAG, "To display feed from server");
+                return LoadFeedResult.successResult(feedFromServer, DataSource.SERVER);
             }
         });
 
