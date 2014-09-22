@@ -1,6 +1,7 @@
 package com.palmcel.parenting.model;
 
 import com.google.common.base.MoreObjects;
+import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.DataFreshnessParam;
 
 /**
@@ -13,14 +14,17 @@ public class LoadFeedParams {
     public long timeMsInsertedSince;
     public int maxToFetch;
     public DataFreshnessParam dataFreshnessParam;
+    public DataLoadCause dataLoadCause;
 
     public LoadFeedParams(
             long timeMsInsertedSince,
             int maxToFetch,
-            DataFreshnessParam dataFreshnessParam) {
+            DataFreshnessParam dataFreshnessParam,
+            DataLoadCause dataLoadCause) {
         this.timeMsInsertedSince = timeMsInsertedSince;
         this.maxToFetch = maxToFetch;
         this.dataFreshnessParam = dataFreshnessParam;
+        this.dataLoadCause = dataLoadCause;
     }
 
     @Override
@@ -29,6 +33,7 @@ public class LoadFeedParams {
             .add("timeMsInsertedSince", timeMsInsertedSince)
             .add("maxToFetch", maxToFetch)
             .add("dataFreshnessParam", dataFreshnessParam)
+            .add("dataLoadCause", dataLoadCause)
             .toString();
     }
 }

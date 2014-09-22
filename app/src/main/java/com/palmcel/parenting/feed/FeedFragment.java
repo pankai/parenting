@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 
 import com.palmcel.parenting.R;
 
+import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.list.PostListAdapter;
 import com.palmcel.parenting.model.FeedPost;
@@ -180,6 +180,11 @@ public class FeedFragment extends Fragment
         LoadFeedParams loadFeedParams = event.getLoadFeedParams();
         Log.d(TAG, "In onEventMainThread for LoadFeedResultEvent, " + loadFeedParams);
 
+        if (loadFeedParams.dataLoadCause == DataLoadCause.USER_REQUEST) {
+            mListViewContainer.setRefreshing(false);
+            mEmptyViewContainer.setRefreshing(false);
+        }
+
         if (loadFeedParams.timeMsInsertedSince > 0) {
             // It is load more operation
             mFeedListView.onLoadMoreComplete();
@@ -230,29 +235,8 @@ public class FeedFragment extends Fragment
 
     @Override
     public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        Log.d(TAG, "In onRefresh");
 
-                // Get the last king position
-                int lastKingIndex = mAdapter.getCount() - 1;
-
-                // If there is a king
-                if(lastKingIndex > -1) {
-                    // Remove him
-                    //mAdapter.remove(mAdapter.getItem(lastKingIndex));
-                    mListViewContainer.setRefreshing(false);
-                }else {
-                    // No-one there, add new ones
-                    //mAdapter.addAll(new Vector(Arrays.asList(arr)));
-                    mEmptyViewContainer.setRefreshing(false);
-                }
-
-                // Notify adapters about the kings
-                mAdapter.notifyDataSetChanged();
-
-
-            }
-        }, 1000);
+        LoadFeedManager.getInstance().loadFeedForced();
     }
 }

@@ -9,6 +9,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.cache.FeedCache;
+import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.DataFreshnessParam;
 import com.palmcel.parenting.common.DataSource;
 import com.palmcel.parenting.common.ExecutorUtil;
@@ -43,11 +44,27 @@ public class LoadFeedManager {
     private ListenableFuture<LoadFeedResult> mLoadFeedFuture;
 
     public void loadFeed() {
-        loadFeed(new LoadFeedParams(0, DEFAULT_MAX_FETCH, DataFreshnessParam.CACHE_OK));
+        loadFeed(new LoadFeedParams(
+                0,
+                DEFAULT_MAX_FETCH,
+                DataFreshnessParam.CACHE_OK,
+                DataLoadCause.UNKNOWN));
     }
 
     public void loadFeed(DataFreshnessParam dataFreshnessParam) {
-        loadFeed(new LoadFeedParams(0, DEFAULT_MAX_FETCH, dataFreshnessParam));
+        loadFeed(new LoadFeedParams(
+                0,
+                DEFAULT_MAX_FETCH,
+                dataFreshnessParam,
+                DataLoadCause.UNKNOWN));
+    }
+
+    public void loadFeedForced() {
+        loadFeed(new LoadFeedParams(
+                0,
+                DEFAULT_MAX_FETCH,
+                DataFreshnessParam.CHECK_SERVER,
+                DataLoadCause.USER_REQUEST));
     }
 
     public void loadFeed(final LoadFeedParams loadFeedParams) {
@@ -446,6 +463,7 @@ public class LoadFeedManager {
         loadFeed(new LoadFeedParams(
                 timeMsInsertedSince,
                 DEFAULT_MAX_FETCH,
-                DataFreshnessParam.CHECK_SERVER));
+                DataFreshnessParam.CHECK_SERVER,
+                DataLoadCause.UNKNOWN));
     }
 }
