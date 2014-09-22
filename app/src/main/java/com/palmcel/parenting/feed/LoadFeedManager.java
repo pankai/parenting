@@ -58,6 +58,8 @@ public class LoadFeedManager {
             Log.d(TAG, "In loadFeed");
         }
 
+        final boolean isLoadMore = loadFeedParams.timeMsInsertedSince > 0;
+
         if (loadFeedParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
                 FeedCache.getInstance().isUpToDate() &&
                 !FeedCache.getInstance().isEmpty()) {
@@ -76,7 +78,7 @@ public class LoadFeedManager {
             public LoadFeedResult call() throws Exception {
                 if (FeedCache.getInstance().isEmpty()) {
                     LoadFeedResult dbResult = loadFeedFromDb(loadFeedParams);
-                    if (!dbResult.isEmpty()) {
+                    if (!dbResult.isEmpty() && !isLoadMore) {
                         FeedCache.getInstance().updateCacheFromDb(dbResult.feedPosts);
                         // Update feed listview with database data
                         EventBus.getDefault().post(
@@ -93,21 +95,38 @@ public class LoadFeedManager {
                 final ImmutableList<FeedPost> feedFromServer =
                         feedHandler.getFeedPostFromServer(
                                 "pkdebug", // TODO
+                                loadFeedParams.timeMsInsertedSince,
                                 loadFeedParams.maxToFetch,
                                 FeedCache.getInstance().getLargestInsertTime()
                         );
-                FeedCache.getInstance().updateCacheFromServer(feedFromServer);
 
+                if (loadFeedParams.timeMsInsertedSince == 0) {
+                    FeedCache.getInstance().updateCacheFromServer(feedFromServer);
+                } else {
+                    // Load-more case
+                    FeedCache.getInstance().updateCacheFromServer(
+                            loadFeedParams.timeMsInsertedSince,
+                            feedFromServer);
+                }
                 // Update feed_post table with feedFromServer on a separated thread
                 ExecutorUtil.execute(new Runnable() {
                     @Override
                     public void run() {
-                        updateFeedPostTable(feedFromServer);
+                        if (loadFeedParams.timeMsInsertedSince == 0) {
+                            updateFeedPostTable(feedFromServer);
+                        } else {
+                            // Load-more case
+                            updateFeedPostTable(loadFeedParams.timeMsInsertedSince,feedFromServer);
+                        }
                     }
                 });
 
+                LoadFeedResult result = LoadFeedResult.successResult(
+                        FeedCache.getInstance().getCachedFeed(),
+                        DataSource.SERVER);
+
                 Log.d(TAG, "To display feed from server");
-                return LoadFeedResult.successResult(feedFromServer, DataSource.SERVER);
+                return result;
             }
         });
 
@@ -214,6 +233,78 @@ public class LoadFeedManager {
                         lastInServerFeed.postId + ", " + lastInServerFeed.timeMsInserted + ")");
                 // Clear feed_post table
                 db.delete(DatabaseContract.FeedEntry.TABLE_NAME, null, null);
+            }
+
+            // Insert feedFromServer into feed_post table
+            insertIntoFeedPostTable(db, feedFromServer);
+
+            db.setTransactionSuccessful();
+            Log.d(TAG, "updateFeedPostTable succeeded");
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in updateFeedPostTable", ex);
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+
+    /**
+     * Update feed_post table with the load-more feed from server
+     * @param timeMsInsertedSince the load-more feed is loaded from timeMsInsertedSince and older
+     *                            than it.
+     * @param feedFromServer feed from server sorted by timeMsInserted in DESC order.
+     *                       The feed is a result of load more. That is, it
+     *                       doesn't start with the latest post in the feed at server.
+     */
+    private void updateFeedPostTable(
+            long timeMsInsertedSince,
+            ImmutableList<FeedPost> feedFromServer) {
+        Log.d(TAG, "In updateFeedPostTable for load-more, timeMsInsertedSince=" +
+                timeMsInsertedSince + ", feedFromServer=" + feedFromServer.size());
+
+        if (feedFromServer.isEmpty()) {
+            Log.d(TAG, "updateFeedPostTable for load-more, empty feed from server");
+            return;
+        }
+
+        FeedPost firstInServerFeed = feedFromServer.get(0);
+
+        if (!feedPostTableContains(firstInServerFeed.postId, firstInServerFeed.timeMsInserted)) {
+            Log.d(TAG, "updateFeedPostTable for load-more, feed_post table doesn't contain " +
+                    firstInServerFeed.timeMsInserted);
+            return;
+        }
+
+        FeedPost lastInServerFeed = feedFromServer.get(feedFromServer.size() - 1);
+
+        SQLiteDatabase db = DbHelper.getDb();
+        db.beginTransaction();
+
+        try {
+            // Check whether feed_post table contains lastInServerFeed
+            if (feedPostTableContains(lastInServerFeed.postId, lastInServerFeed.timeMsInserted)) {
+                Log.d(TAG, "updateFeedPostTable for load-more, delete posts from table between " +
+                        firstInServerFeed.timeMsInserted +
+                        " and " + lastInServerFeed.timeMsInserted);
+
+                // Delete posts between firstInServerFeed.timeMsInserted and
+                // lastInServerFeed.timeMsInserted in feed_post table
+                db.delete(
+                        DatabaseContract.FeedEntry.TABLE_NAME,
+                        FeedEntry.COLUMN_TIME_INSERTED + " <= ? AND " +
+                                FeedEntry.COLUMN_TIME_INSERTED + " >= ?",
+                        new String[]{Long.toString(firstInServerFeed.timeMsInserted),
+                                Long.toString(lastInServerFeed.timeMsInserted)}
+                );
+            } else {
+                Log.d(TAG, "updateFeedPostTable for load-more, delete posts from table older than "
+                        + firstInServerFeed.timeMsInserted);
+                // Delete posts order than firstInServerFeed.timeMsInserted in feed_post table.
+                db.delete(
+                        DatabaseContract.FeedEntry.TABLE_NAME,
+                        FeedEntry.COLUMN_TIME_INSERTED + " <= ? ",
+                        new String[]{Long.toString(firstInServerFeed.timeMsInserted)}
+                );
             }
 
             // Insert feedFromServer into feed_post table
@@ -338,5 +429,16 @@ public class LoadFeedManager {
 
     public static LoadFeedManager getInstance() {
         return INSTANCE;
+    }
+
+    /**
+     * Load more feed post whose insert time is equal or less than 'timeMsInsertedSince'
+     * @param timeMsInsertedSince the insert time of the last post in the feed list view
+     */
+    public void loadFeedMore(long timeMsInsertedSince) {
+        loadFeed(new LoadFeedParams(
+                timeMsInsertedSince,
+                DEFAULT_MAX_FETCH,
+                DataFreshnessParam.CHECK_SERVER));
     }
 }

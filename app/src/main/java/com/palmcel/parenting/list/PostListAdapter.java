@@ -1,16 +1,15 @@
 package com.palmcel.parenting.list;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.google.common.collect.ImmutableList;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.Post;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * ListView adapter for a list of posts in feed
@@ -26,7 +25,8 @@ public class PostListAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mLayoutInflater;
 
-    private List<FeedPost> mEntries = new ArrayList<FeedPost>();
+    // FeedPosts are sorted by timeMsInserted in DESC order
+    private ImmutableList<FeedPost> mEntries = ImmutableList.of();
 
     public PostListAdapter(Context context) {
         mContext = context;
@@ -99,8 +99,17 @@ public class PostListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void updateEntries(List<FeedPost> entries) {
+    public void updateEntries(ImmutableList<FeedPost> entries) {
         mEntries = entries;
         notifyDataSetChanged();
+    }
+
+    @Nullable
+    public FeedPost getLastFeedPost() {
+        if (mEntries.isEmpty()) {
+            return null;
+        } else {
+            return mEntries.get(mEntries.size() - 1);
+        }
     }
 }

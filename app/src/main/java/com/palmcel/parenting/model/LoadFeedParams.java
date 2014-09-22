@@ -1,5 +1,6 @@
 package com.palmcel.parenting.model;
 
+import com.google.common.base.MoreObjects;
 import com.palmcel.parenting.common.DataFreshnessParam;
 
 /**
@@ -7,17 +8,27 @@ import com.palmcel.parenting.common.DataFreshnessParam;
  */
 public class LoadFeedParams {
     // Fetch post in feed whose insert time is older or equal to
-    // 'priorEqualToTimestampMs'. Ignore it if it is 0.
-    public long priorEqualToTimestampMs;
+    // 'timeMsInsertedSince'. If it is not 0, it is load more operation; otherwise it is
+    // loading latest feed and just ignore it.
+    public long timeMsInsertedSince;
     public int maxToFetch;
     public DataFreshnessParam dataFreshnessParam;
 
     public LoadFeedParams(
-            long priorEqualToTimestampMs,
+            long timeMsInsertedSince,
             int maxToFetch,
             DataFreshnessParam dataFreshnessParam) {
-        this.priorEqualToTimestampMs = priorEqualToTimestampMs;
+        this.timeMsInsertedSince = timeMsInsertedSince;
         this.maxToFetch = maxToFetch;
         this.dataFreshnessParam = dataFreshnessParam;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("timeMsInsertedSince", timeMsInsertedSince)
+            .add("maxToFetch", maxToFetch)
+            .add("dataFreshnessParam", dataFreshnessParam)
+            .toString();
     }
 }

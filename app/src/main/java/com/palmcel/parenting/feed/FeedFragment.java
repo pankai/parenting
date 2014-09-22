@@ -10,15 +10,17 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.palmcel.parenting.R;
 
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.list.PostListAdapter;
+import com.palmcel.parenting.model.FeedPost;
+import com.palmcel.parenting.model.LoadFeedParams;
 import com.palmcel.parenting.model.LoadFeedResult;
 import com.palmcel.parenting.model.LoadFeedResultEvent;
+import com.palmcel.parenting.widget.LoadMoreListView;
 
 import de.greenrobot.event.EventBus;
 
@@ -31,7 +33,9 @@ import de.greenrobot.event.EventBus;
  * create an instance of this fragment.
  *
  */
-public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class FeedFragment extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener,
+            LoadMoreListView.OnLoadMoreListener {
 
     private static final String TAG = "FeedFragment";
 
@@ -49,6 +53,8 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private SwipeRefreshLayout mListViewContainer;
     private SwipeRefreshLayout mEmptyViewContainer;
     private PostListAdapter mAdapter;
+    private LoadMoreListView mFeedListView;
+
     private Context mContext;
     String[] arr = new String[] {"FEED", "EXPLORE", "PRODUCTS", "2222", "3333"};
 
@@ -109,9 +115,10 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         //mAdapter.addAll(new Vector(Arrays.asList(arr)));
 
         // ListView
-        ListView listView = (ListView) getActivity().findViewById(R.id.feedListView);
-        listView.setEmptyView(mEmptyViewContainer);
-        listView.setAdapter(mAdapter);
+        mFeedListView = (LoadMoreListView) getActivity().findViewById(R.id.feedListView);
+        mFeedListView.setEmptyView(mEmptyViewContainer);
+        mFeedListView.setAdapter(mAdapter);
+        mFeedListView.setOnLoadMoreListener(this);
 
         // Load feed from db. TODO (kpan): don't need to load feed every time in onResume.
         LoadFeedManager.getInstance().loadFeed();
@@ -170,7 +177,13 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
      * @param event load feed results
      */
     public void onEventMainThread(LoadFeedResultEvent event) {
-        Log.d(TAG, "In onEventMainThread for LoadFeedResultEvent");
+        LoadFeedParams loadFeedParams = event.getLoadFeedParams();
+        Log.d(TAG, "In onEventMainThread for LoadFeedResultEvent, " + loadFeedParams);
+
+        if (loadFeedParams.timeMsInsertedSince > 0) {
+            // It is load more operation
+            mFeedListView.onLoadMoreComplete();
+        }
 
         LoadFeedResult result = event.getLoadFeedResult();
 
@@ -181,6 +194,18 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             // Update feed list view
             mAdapter.updateEntries(result.feedPosts);
         }
+    }
+
+    @Override
+    public void onLoadMore() {
+        Log.d(TAG, "In onLoadMore");
+        FeedPost lastPost = mAdapter.getLastFeedPost();
+        if (lastPost == null) {
+            Log.e(TAG, "Error: Got null last post from list view!", new RuntimeException());
+            return;
+        }
+
+        LoadFeedManager.getInstance().loadFeedMore(lastPost.timeMsInserted);
     }
 
     /**

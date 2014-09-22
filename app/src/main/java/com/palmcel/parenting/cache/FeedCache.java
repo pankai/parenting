@@ -34,11 +34,11 @@ public class FeedCache {
         return System.currentTimeMillis() - mLastUpdatedMs < sStaleIntervalMs;
     }
 
-    public ImmutableList<FeedPost> getCachedFeed() {
+    public synchronized ImmutableList<FeedPost> getCachedFeed() {
         return mCachedFeed;
     }
 
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return mCachedFeed.isEmpty();
     }
 
@@ -48,11 +48,10 @@ public class FeedCache {
      * There should be no hole in the merge results.
      * @param dbFeedPosts data from db
      */
-    public void updateCacheFromDb(ImmutableList<FeedPost> dbFeedPosts) {
+    public synchronized void updateCacheFromDb(ImmutableList<FeedPost> dbFeedPosts) {
         Log.d(TAG, "In updateCacheFromDb, mCachedFeed=" + mCachedFeed.size() +
                 ", dbFeedPosts=" + dbFeedPosts.size());
-        ImmutableList<FeedPost> cachedFeed = ImmutableList.copyOf(mCachedFeed);
-        if (cachedFeed.isEmpty()) {
+        if (mCachedFeed.isEmpty()) {
             mCachedFeed = dbFeedPosts;
             mLastUpdatedMs = System.currentTimeMillis(); // TODO: should get the time from dbFeedPosts
             return;
@@ -62,9 +61,9 @@ public class FeedCache {
         }
 
         ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
-        builder.addAll(cachedFeed);
+        builder.addAll(mCachedFeed);
 
-        FeedPost lastInMemCache = cachedFeed.get(cachedFeed.size() - 1);
+        FeedPost lastInMemCache = mCachedFeed.get(mCachedFeed.size() - 1);
 
         boolean hasFoundLast = false;
 
@@ -88,13 +87,12 @@ public class FeedCache {
     /**
      * @return the largest insert time of post in mCachedFeed or 0 if mCachedFeed is empty.
      */
-    public long getLargestInsertTime() {
-        ImmutableList<FeedPost> cachedFeed = ImmutableList.copyOf(mCachedFeed);
-        if (cachedFeed.isEmpty()) {
+    public synchronized long getLargestInsertTime() {
+        if (mCachedFeed.isEmpty()) {
             return 0;
         }
 
-        return cachedFeed.get(0).timeMsInserted;
+        return mCachedFeed.get(0).timeMsInserted;
     }
 
     /**
@@ -115,20 +113,20 @@ public class FeedCache {
     }
 
     /**
-     * Update mCachedFeed with feed loaded from server
+     * Update mCachedFeed with the latest feed loaded from server
      * @param feedFromServer feed from server. The feed starts from the latest post in the feed. It
      *                       is not middle portion in the feed.
      */
-    public void updateCacheFromServer(ImmutableList<FeedPost> feedFromServer) {
+    public synchronized void updateCacheFromServer(ImmutableList<FeedPost> feedFromServer) {
         Log.d(TAG, "In updateCacheFromServer, mCachedFeed=" + mCachedFeed.size() +
                 ", feedFromServer=" + feedFromServer.size());
-        ImmutableList<FeedPost> cachedFeed = ImmutableList.copyOf(mCachedFeed);
-        if (cachedFeed.isEmpty()) {
+        if (mCachedFeed.isEmpty()) {
             mCachedFeed = feedFromServer;
             mLastUpdatedMs = System.currentTimeMillis();
             return;
         }
         if (feedFromServer.isEmpty()) {
+            Log.d(TAG, "updateCacheFromServer, empty feed from server");
             return;
         }
 
@@ -139,7 +137,7 @@ public class FeedCache {
 
         boolean hasFoundLast = false;
 
-        for (FeedPost post: cachedFeed) {
+        for (FeedPost post: mCachedFeed) {
             if (hasFoundLast) {
                 builder.add(post);
             } else if (post.timeMsInserted == lastInServerFeed.timeMsInserted) {
@@ -154,6 +152,53 @@ public class FeedCache {
         }
 
         mLastUpdatedMs = System.currentTimeMillis();
+        mCachedFeed = builder.build();
+    }
+
+    /**
+     * Update mCachedFeed with the load-more feed from server
+     * @param timeMsInsertedSince, the smallest insert time of the feed at client before
+     *                             loading more
+     * @param feedFromServer feed from server. The feed is a result of load more. That is, it
+     *                        doesn't start with the latest post in the feed at server.
+     */
+    public synchronized void updateCacheFromServer(
+            long timeMsInsertedSince,
+            ImmutableList<FeedPost> feedFromServer) {
+        Log.d(TAG, "In updateCacheFromServer for load-more, mCachedFeed=" + mCachedFeed.size() +
+                ", feedFromServer=" + feedFromServer.size() +
+                ", timeMsInsertedSince=" + timeMsInsertedSince);
+        if (mCachedFeed.isEmpty()) {
+            mCachedFeed = feedFromServer;
+            Log.e(TAG, "mCachedFeed became empty after loading more", new RuntimeException());
+            return;
+        }
+        if (feedFromServer.isEmpty()) {
+            Log.d(TAG, "updateCacheFromServer for load-more, empty feed from server");
+            return;
+        }
+
+        FeedPost lastInMemory = mCachedFeed.get(mCachedFeed.size() - 1);
+        FeedPost firstFromServer = feedFromServer.get(0);
+
+        if (timeMsInsertedSince != firstFromServer.timeMsInserted) {
+            Log.e(TAG, "Inconsistent timeMsInsertedSince after loading more, " +
+                    timeMsInsertedSince + " vs " +
+                    firstFromServer.timeMsInserted, new RuntimeException());
+            return;
+        }
+
+        if (lastInMemory.timeMsInserted != firstFromServer.timeMsInserted) {
+            Log.e(TAG, "Unmatched timeMsInsertedSince after loading more, " +
+                    lastInMemory.timeMsInserted + " vs " +
+                    firstFromServer.timeMsInserted, new RuntimeException());
+            return;
+        }
+
+        ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
+        builder.addAll(mCachedFeed.subList(0, mCachedFeed.size() - 1));
+        builder.addAll(feedFromServer);
+
         mCachedFeed = builder.build();
     }
 }

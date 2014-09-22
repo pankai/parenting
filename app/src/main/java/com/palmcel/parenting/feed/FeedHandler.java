@@ -26,27 +26,32 @@ public class FeedHandler {
      */
     public ListenableFuture getFeedFromServerOnThread(
             final String userId,
+            final long timeMsInsertedSince,
             final int maxToFetch,
             final long largestInsertTimeAtClient) {
         return ExecutorUtil.execute(new Runnable() {
 
             @Override
             public void run() {
-                getFeedPostFromServer(userId, maxToFetch, largestInsertTimeAtClient);
+                getFeedPostFromServer(
+                        userId, timeMsInsertedSince, maxToFetch, largestInsertTimeAtClient);
             }
         });
     }
 
     /**
      * Load the latest feed from the server
+     * @return list of feed posts sorted by timeMsInserted in DESC order.
      */
     public ImmutableList<FeedPost> getFeedPostFromServer(
             String userId,
+            long timeMsInsertedSince,
             int maxToFetch,
             long largestInsertTimeAtClient) {
         Log.d(TAG, "In getFeedPostFromServer");
         List<FeedPost> feed = PostRestHelper.getPostService().getFeed(
                 userId,
+                timeMsInsertedSince,
                 maxToFetch,
                 largestInsertTimeAtClient);
 

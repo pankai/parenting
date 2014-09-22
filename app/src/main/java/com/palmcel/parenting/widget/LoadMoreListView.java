@@ -71,20 +71,6 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
 
         addFooterView(mFooterView);
 
-        // TODO: remove
-        mOnLoadMoreListener = new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                Log.d("LoadMoreListView", "In onLoadMore");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        LoadMoreListView.this.onLoadMoreComplete();
-                    }
-                }, 3000);
-            }
-        };
-
         super.setOnScrollListener(this);
     }
 
@@ -149,8 +135,7 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
     public void onScrollStateChanged(AbsListView view, int scrollState) {
 
         //bug fix: listview was not clickable after scroll
-        if ( scrollState == OnScrollListener.SCROLL_STATE_IDLE )
-        {
+        if (scrollState == OnScrollListener.SCROLL_STATE_IDLE ) {
             view.invalidateViews();
         }
 
@@ -173,6 +158,7 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
      * Notify the loading more operation has finished
      */
     public void onLoadMoreComplete() {
+        Log.d(TAG, "In onLoadMoreComplete");
         mIsLoadingMore = false;
         mProgressBarLoadMore.setVisibility(View.GONE);
     }
