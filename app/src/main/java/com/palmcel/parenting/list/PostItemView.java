@@ -1,6 +1,7 @@
 package com.palmcel.parenting.list;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ToggleButton;
 
 import com.google.common.base.Strings;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.comment.CommentActivity;
 import com.palmcel.parenting.common.AppContext;
 import com.palmcel.parenting.common.TimeUtil;
 import com.palmcel.parenting.common.Utils;
@@ -23,7 +25,7 @@ import com.squareup.picasso.Picasso;
  */
 public class PostItemView extends RelativeLayout {
 
-    private static String sAnanymousText;
+    private static String sAnonymousText;
     private ImageView mProfileImageView;
     private TextView mUserIdTextView;
     private TextView mKidsInfoTextView;
@@ -47,12 +49,12 @@ public class PostItemView extends RelativeLayout {
     }
 
     private static String getAnonymousText() {
-        if (sAnanymousText == null) {
-            sAnanymousText =
+        if (sAnonymousText == null) {
+            sAnonymousText =
                     AppContext.getAplicationContext().getResources().getString(R.string.anonymous);
         }
 
-        return sAnanymousText;
+        return sAnonymousText;
     }
 
     public PostItemView(Context context, AttributeSet attrs, PostType postType) {
@@ -83,6 +85,13 @@ public class PostItemView extends RelativeLayout {
             mExternalLinkDomain = (TextView) findViewById(R.id.external_link_domain);
             mExternalLinkPicture = (ImageView) findViewById(R.id.external_link_image);
         }
+
+        mCommentButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mContext.startActivity(new Intent(mContext, CommentActivity.class));
+            }
+        });
     }
 
     /**
