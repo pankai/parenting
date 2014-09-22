@@ -47,17 +47,19 @@ public class FeedCache {
      * Merge mCachedFeed and dbFeedPost into mCacheFeed.
      * There should be no hole in the merge results.
      * @param dbFeedPosts data from db
+     * @return updated feed from cache
      */
-    public synchronized void updateCacheFromDb(ImmutableList<FeedPost> dbFeedPosts) {
+    public synchronized ImmutableList<FeedPost> updateCacheFromDb(
+            ImmutableList<FeedPost> dbFeedPosts) {
         Log.d(TAG, "In updateCacheFromDb, mCachedFeed=" + mCachedFeed.size() +
                 ", dbFeedPosts=" + dbFeedPosts.size());
         if (mCachedFeed.isEmpty()) {
             mCachedFeed = dbFeedPosts;
             mLastUpdatedMs = System.currentTimeMillis(); // TODO: should get the time from dbFeedPosts
-            return;
+            return mCachedFeed;
         }
         if (dbFeedPosts.isEmpty()) {
-            return;
+            return mCachedFeed;
         }
 
         ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
@@ -76,12 +78,14 @@ public class FeedCache {
                 // There is hole between memory cache and dbFeedPosts.
                 Log.w(TAG, "Warning, there is a hole between memory cache and dbFeedPosts.");
                 clearFeedPostTableOnThread();
-                return;
+                return mCachedFeed;
             }
         }
 
         mLastUpdatedMs = System.currentTimeMillis();  // TODO: should get the time from dbFeedPosts
         mCachedFeed = builder.build();
+
+        return mCachedFeed;
     }
 
     /**
@@ -116,18 +120,21 @@ public class FeedCache {
      * Update mCachedFeed with the latest feed loaded from server
      * @param feedFromServer feed from server. The feed starts from the latest post in the feed. It
      *                       is not middle portion in the feed.
+     * @return updated feed from cache
      */
-    public synchronized void updateCacheFromServer(ImmutableList<FeedPost> feedFromServer) {
+    public synchronized ImmutableList<FeedPost> updateCacheFromServer(
+            ImmutableList<FeedPost> feedFromServer) {
         Log.d(TAG, "In updateCacheFromServer, mCachedFeed=" + mCachedFeed.size() +
                 ", feedFromServer=" + feedFromServer.size());
         if (mCachedFeed.isEmpty()) {
             mCachedFeed = feedFromServer;
             mLastUpdatedMs = System.currentTimeMillis();
-            return;
+            return mCachedFeed;
         }
         if (feedFromServer.isEmpty()) {
             Log.d(TAG, "updateCacheFromServer, empty feed from server");
-            return;
+            mCachedFeed = ImmutableList.of();
+            return mCachedFeed;
         }
 
         ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
@@ -147,12 +154,14 @@ public class FeedCache {
                 Log.w(TAG, "Warning, there is a hole between memory cache and feedFromServer.");
                 mLastUpdatedMs = System.currentTimeMillis();
                 mCachedFeed = feedFromServer;
-                return;
+                return mCachedFeed;
             }
         }
 
         mLastUpdatedMs = System.currentTimeMillis();
         mCachedFeed = builder.build();
+
+        return mCachedFeed;
     }
 
     /**
@@ -161,8 +170,9 @@ public class FeedCache {
      *                             loading more
      * @param feedFromServer feed from server. The feed is a result of load more. That is, it
      *                        doesn't start with the latest post in the feed at server.
+     * @return updated feed from cache
      */
-    public synchronized void updateCacheFromServer(
+    public synchronized ImmutableList<FeedPost> updateCacheFromServer(
             long timeMsInsertedSince,
             ImmutableList<FeedPost> feedFromServer) {
         Log.d(TAG, "In updateCacheFromServer for load-more, mCachedFeed=" + mCachedFeed.size() +
@@ -171,11 +181,11 @@ public class FeedCache {
         if (mCachedFeed.isEmpty()) {
             mCachedFeed = feedFromServer;
             Log.e(TAG, "mCachedFeed became empty after loading more", new RuntimeException());
-            return;
+            return mCachedFeed;
         }
         if (feedFromServer.isEmpty()) {
             Log.d(TAG, "updateCacheFromServer for load-more, empty feed from server");
-            return;
+            return mCachedFeed;
         }
 
         FeedPost lastInMemory = mCachedFeed.get(mCachedFeed.size() - 1);
@@ -185,14 +195,14 @@ public class FeedCache {
             Log.e(TAG, "Inconsistent timeMsInsertedSince after loading more, " +
                     timeMsInsertedSince + " vs " +
                     firstFromServer.timeMsInserted, new RuntimeException());
-            return;
+            return mCachedFeed;
         }
 
         if (lastInMemory.timeMsInserted != firstFromServer.timeMsInserted) {
             Log.e(TAG, "Unmatched timeMsInsertedSince after loading more, " +
                     lastInMemory.timeMsInserted + " vs " +
                     firstFromServer.timeMsInserted, new RuntimeException());
-            return;
+            return mCachedFeed;
         }
 
         ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
@@ -200,5 +210,7 @@ public class FeedCache {
         builder.addAll(feedFromServer);
 
         mCachedFeed = builder.build();
+
+        return mCachedFeed;
     }
 }

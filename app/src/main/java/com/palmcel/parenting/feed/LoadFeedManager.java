@@ -77,9 +77,13 @@ public class LoadFeedManager {
             @Override
             public LoadFeedResult call() throws Exception {
                 if (FeedCache.getInstance().isEmpty()) {
-                    LoadFeedResult dbResult = loadFeedFromDb(loadFeedParams);
-                    if (!dbResult.isEmpty() && !isLoadMore) {
-                        FeedCache.getInstance().updateCacheFromDb(dbResult.feedPosts);
+                    ImmutableList<FeedPost> dbFeed = loadFeedFromDb(loadFeedParams);
+                    if (!dbFeed.isEmpty() && !isLoadMore) {
+                        ImmutableList<FeedPost> updatedCachedFeed =
+                                FeedCache.getInstance().updateCacheFromDb(dbFeed);
+
+                        LoadFeedResult dbResult = LoadFeedResult.successResult(
+                                updatedCachedFeed, DataSource.DATABASE);
                         // Update feed listview with database data
                         EventBus.getDefault().post(
                                 new LoadFeedResultEvent(loadFeedParams, dbResult));
@@ -100,11 +104,12 @@ public class LoadFeedManager {
                                 FeedCache.getInstance().getLargestInsertTime()
                         );
 
+                ImmutableList<FeedPost> recentCachedFeed;
                 if (loadFeedParams.timeMsInsertedSince == 0) {
-                    FeedCache.getInstance().updateCacheFromServer(feedFromServer);
+                    recentCachedFeed = FeedCache.getInstance().updateCacheFromServer(feedFromServer);
                 } else {
                     // Load-more case
-                    FeedCache.getInstance().updateCacheFromServer(
+                    recentCachedFeed = FeedCache.getInstance().updateCacheFromServer(
                             loadFeedParams.timeMsInsertedSince,
                             feedFromServer);
                 }
@@ -122,7 +127,7 @@ public class LoadFeedManager {
                 });
 
                 LoadFeedResult result = LoadFeedResult.successResult(
-                        FeedCache.getInstance().getCachedFeed(),
+                        recentCachedFeed,
                         DataSource.SERVER);
 
                 Log.d(TAG, "To display feed from server");
@@ -148,7 +153,7 @@ public class LoadFeedManager {
         });
     }
 
-    private LoadFeedResult loadFeedFromDb(LoadFeedParams loadFeedParams) {
+    private ImmutableList<FeedPost> loadFeedFromDb(LoadFeedParams loadFeedParams) {
         Log.d(TAG, "In loadFeedFromDb");
         SQLiteDatabase db = DbHelper.getDb();
 
@@ -196,24 +201,26 @@ public class LoadFeedManager {
             listBuilder.add(feedPostBuilder.build());
         }
 
-        return LoadFeedResult.successResult(listBuilder.build(), DataSource.DATABASE);
+        return listBuilder.build();
     }
 
     /**
-     * Update feed_post table with feed loaded from server
+     * Update feed_post table with most recent feed loaded from server
      * @param feedFromServer feed from server. The feed starts from the latest post in the feed. It
      *                       is not middle portion in the feed.
      */
     private void updateFeedPostTable(ImmutableList<FeedPost> feedFromServer) {
         Log.d(TAG, "In updateFeedPostTable, feedFromServer=" + feedFromServer.size());
 
+        SQLiteDatabase db = DbHelper.getDb();
         if (feedFromServer.isEmpty()) {
+            // Clear feed_post table
+            db.delete(DatabaseContract.FeedEntry.TABLE_NAME, null, null);
             return;
         }
 
         FeedPost lastInServerFeed = feedFromServer.get(feedFromServer.size() - 1);
 
-        SQLiteDatabase db = DbHelper.getDb();
         db.beginTransaction();
 
         try {
