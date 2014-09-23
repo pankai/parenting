@@ -18,8 +18,8 @@ import com.palmcel.parenting.db.DatabaseContract;
 import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.FeedPostBuilder;
+import com.palmcel.parenting.model.LoadDataResult;
 import com.palmcel.parenting.model.LoadFeedParams;
-import com.palmcel.parenting.model.LoadFeedResult;
 import com.palmcel.parenting.model.LoadFeedResultEvent;
 import com.palmcel.parenting.model.PostPublicity;
 import com.palmcel.parenting.model.PostStatus;
@@ -41,7 +41,7 @@ public class LoadFeedManager {
 
     private static LoadFeedManager INSTANCE = new LoadFeedManager();
 
-    private ListenableFuture<LoadFeedResult> mLoadFeedFuture;
+    private ListenableFuture<LoadDataResult<FeedPost>> mLoadFeedFuture;
 
     public void loadFeed() {
         loadFeed(new LoadFeedParams(
@@ -80,7 +80,7 @@ public class LoadFeedManager {
         if (loadFeedParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
                 FeedCache.getInstance().isUpToDate() &&
                 !FeedCache.getInstance().isEmpty()) {
-            LoadFeedResult result = LoadFeedResult.successResult(
+            LoadDataResult<FeedPost> result = LoadDataResult.successResult(
                     FeedCache.getInstance().getCachedFeed(),
                     DataSource.MEMORY_CACHE);
             // Update feed listview with memory cache data
@@ -90,16 +90,16 @@ public class LoadFeedManager {
             return;
         }
 
-        mLoadFeedFuture = ExecutorUtil.execute(new Callable<LoadFeedResult>() {
+        mLoadFeedFuture = ExecutorUtil.execute(new Callable<LoadDataResult<FeedPost>>() {
             @Override
-            public LoadFeedResult call() throws Exception {
+            public LoadDataResult<FeedPost> call() throws Exception {
                 if (FeedCache.getInstance().isEmpty()) {
                     ImmutableList<FeedPost> dbFeed = loadFeedFromDb(loadFeedParams);
                     if (!dbFeed.isEmpty() && !isLoadMore) {
                         ImmutableList<FeedPost> updatedCachedFeed =
                                 FeedCache.getInstance().updateCacheFromDb(dbFeed);
 
-                        LoadFeedResult dbResult = LoadFeedResult.successResult(
+                        LoadDataResult<FeedPost> dbResult = LoadDataResult.successResult(
                                 updatedCachedFeed, DataSource.DATABASE);
                         // Update feed listview with database data
                         EventBus.getDefault().post(
@@ -143,7 +143,7 @@ public class LoadFeedManager {
                     }
                 });
 
-                LoadFeedResult result = LoadFeedResult.successResult(
+                LoadDataResult<FeedPost> result = LoadDataResult.successResult(
                         recentCachedFeed,
                         DataSource.SERVER);
 
@@ -152,9 +152,9 @@ public class LoadFeedManager {
             }
         });
 
-        Futures.addCallback(mLoadFeedFuture, new FutureCallback<LoadFeedResult>() {
+        Futures.addCallback(mLoadFeedFuture, new FutureCallback<LoadDataResult<FeedPost>>() {
             @Override
-            public void onSuccess(LoadFeedResult result) {
+            public void onSuccess(LoadDataResult<FeedPost> result) {
                 Log.d(TAG, "mLoadFeedFuture succeeded");
                 mLoadFeedFuture = null;
                 EventBus.getDefault().post(new LoadFeedResultEvent(loadFeedParams, result));
@@ -164,7 +164,7 @@ public class LoadFeedManager {
             public void onFailure(Throwable t) {
                 Log.e("LoadFreeManager", "mLoadFeedFuture failed", t);
                 mLoadFeedFuture = null;
-                LoadFeedResult result = LoadFeedResult.errorResult(t);
+                LoadDataResult result = LoadDataResult.errorResult(t);
                 EventBus.getDefault().post(new LoadFeedResultEvent(loadFeedParams, result));
             }
         });

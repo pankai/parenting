@@ -5,9 +5,9 @@ package com.palmcel.parenting.model;
  */
 public class LoadFeedResultEvent {
     private LoadFeedParams mLoadFeedParams;
-    private LoadFeedResult mLoadFeedResult;
+    private LoadDataResult<FeedPost> mLoadFeedResult;
 
-    public LoadFeedResultEvent(LoadFeedParams params, LoadFeedResult result) {
+    public LoadFeedResultEvent(LoadFeedParams params, LoadDataResult<FeedPost> result) {
         mLoadFeedParams = params;
         mLoadFeedResult = result;
     }
@@ -16,7 +16,7 @@ public class LoadFeedResultEvent {
         return mLoadFeedParams;
     }
 
-    public LoadFeedResult getLoadFeedResult() {
+    public LoadDataResult<FeedPost> getLoadFeedResult() {
         return mLoadFeedResult;
     }
 }

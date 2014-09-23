@@ -18,7 +18,7 @@ import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.list.PostListAdapter;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.LoadFeedParams;
-import com.palmcel.parenting.model.LoadFeedResult;
+import com.palmcel.parenting.model.LoadDataResult;
 import com.palmcel.parenting.model.LoadFeedResultEvent;
 import com.palmcel.parenting.widget.LoadMoreListView;
 
@@ -190,14 +190,14 @@ public class FeedFragment extends Fragment
             mFeedListView.onLoadMoreComplete();
         }
 
-        LoadFeedResult result = event.getLoadFeedResult();
+        LoadDataResult<FeedPost> result = event.getLoadFeedResult();
 
         if (!result.isSuccess) {
             Toast.makeText(
                     mContext, "Failed load feed, " + result.error, Toast.LENGTH_SHORT).show();
         } else {
             // Update feed list view
-            mAdapter.updateEntries(result.feedPosts);
+            mAdapter.updateEntries(result.loadedData);
         }
     }
 
