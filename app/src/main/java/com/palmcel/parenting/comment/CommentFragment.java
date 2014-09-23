@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -43,6 +44,7 @@ public class CommentFragment extends Fragment {
     private View mSubmitButton;
     private EditText mCommentEdit;
     private Context mContext;
+    private TextView mHeaderView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -67,6 +69,7 @@ public class CommentFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
     public CommentFragment() {
         // Required empty public constructor
     }
@@ -97,13 +100,24 @@ public class CommentFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        TextView footerTextView = new TextView(mContext);
-        footerTextView.setText(getResources().getString(R.string.comments_load_more));
-        mListView.addHeaderView(footerTextView);
+
+        mHeaderView = (TextView)((LayoutInflater) mContext.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE)).inflate(
+                    R.layout.comment_list_header, null, false);
+        mListView.addHeaderView(mHeaderView);
 
         mAdapter = new CommentListAdapter(mContext);
         mListView.setAdapter(mAdapter);
 
+        mHeaderView.setVisibility(View.INVISIBLE);
+        mHeaderView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mHeaderView.setText(getResources().getString(R.string.comments_loading_more));
+            }
+        });
+
+        getActivity().setProgressBarIndeterminateVisibility(true);
         ArrayList<PostComment> comments = Lists.newArrayList();
 
         long nowTime = System.currentTimeMillis();
