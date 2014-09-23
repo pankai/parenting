@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:background="#60000000"
+        android:visibility="gone"
         android:padding="@dimen/post_panel_padding">
         <Button
             android:id="@+id/post_button"

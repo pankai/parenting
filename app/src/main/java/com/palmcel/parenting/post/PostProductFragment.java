@@ -153,6 +153,7 @@ public class PostProductFragment extends Fragment
     private class MyWebChromeClient extends WebChromeClient {
         public void onProgressChanged(WebView view, int progress) {
             mSuggestedUrlsListView.setVisibility(View.INVISIBLE);
+            mPostButtonPanel.setVisibility(View.VISIBLE);
             if(progress < 100 && mProgressBar.getVisibility() == ProgressBar.GONE){
                 mProgressBar.setVisibility(ProgressBar.VISIBLE);
             }
