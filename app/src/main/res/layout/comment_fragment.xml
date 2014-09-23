@@ -1,13 +1,47 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.palmcel.parenting.comment.CommentFragment">
+    tools:context="com.palmcel.parenting.comment.CommentFragment"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
+        android:id="@+id/commentListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="0dp"
+        android:stackFromBottom="true"
+        android:layout_weight="1"/>
 
-</FrameLayout>
+    <LinearLayout
+        android:id="@+id/composePanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="4dp">
+        <EditText
+            android:id="@+id/comment_edit"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:hint="@string/post_edit_hint"
+            android:background="@null"
+            android:maxHeight="160dp"
+            android:textColor="@color/black"
+            android:inputType="text|textCapSentences|textMultiLine|textAutoCorrect"
+            android:completionThreshold="1"
+            android:padding="@dimen/post_edit_padding"
+            android:imeOptions="actionDone"
+            android:gravity="top|start"/>
+        <Button
+            android:id="@+id/comment_submit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:textSize="14sp"
+            android:text="@string/comment_button_submit"
+            android:background="@color/app_green"
+            android:textColor="@color/white"
+            android:layout_gravity="bottom"/>
+    </LinearLayout>
+</LinearLayout>
