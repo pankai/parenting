@@ -8,6 +8,7 @@ import java.util.List;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.Header;
 import retrofit.http.POST;
 import retrofit.http.Query;
 
@@ -21,7 +22,7 @@ public interface PostService {
      * @return
      */
     @POST("/api/v1/post")
-    Response newPost(@Body Post post);
+    Response newPost(@Header("Authorization") String authorization, @Body Post post);
 
     /**
      * Load feed from server
