@@ -1,6 +1,7 @@
 package com.palmcel.parenting.network;
 
 import com.palmcel.parenting.model.FeedPost;
+import com.palmcel.parenting.model.Post;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface PostService {
      * @return
      */
     @POST("/api/v1/post")
-    Response newPost(@Body NewPostRequest post);
+    Response newPost(@Body Post post);
 
     /**
      * Load feed from server

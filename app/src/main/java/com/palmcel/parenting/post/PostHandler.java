@@ -6,9 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.db.DbHelper;
+import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.Post;
-import com.palmcel.parenting.network.NewPostRequest;
 import com.palmcel.parenting.network.PostRestHelper;
+
+import java.util.List;
 
 import static com.palmcel.parenting.db.DatabaseContract.PostEntry;
 import static com.palmcel.parenting.db.DatabaseContract.FeedEntry;
@@ -38,7 +40,7 @@ public class PostHandler {
      * @param post
      */
     private void savePostToServer(Post post) {
-        PostRestHelper.getPostService().newPost(NewPostRequest.genAddPostRequest(post));
+        PostRestHelper.getPostService().newPost(post);
     }
 
     /**
