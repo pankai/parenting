@@ -214,7 +214,6 @@ public class PostProductActivity extends Activity
     public void onPostForPictureClicked() {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setIndeterminate(true);
-        mProgressDialog.setCancelable(false);
         mProgressDialog.setMessage(getResources().getString(R.string.progress_loading));
 
         try {

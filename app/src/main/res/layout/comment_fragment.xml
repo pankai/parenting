@@ -41,8 +41,6 @@
             android:layout_marginLeft="2dp"
             android:textSize="14sp"
             android:text="@string/comment_button_submit"
-            android:background="@color/app_green"
-            android:textColor="@color/white"
             android:layout_gravity="bottom"/>
     </LinearLayout>
 </LinearLayout>

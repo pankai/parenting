@@ -165,14 +165,13 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="@color/gray_2" />
-    <TextView
+    <Button
         android:id="@+id/post_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="@string/post_button"
         android:padding="10dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/button_grey"/>
+        android:layout_margin="10dp"/>
 
 </LinearLayout>
