@@ -26,6 +26,5 @@ public class LoggedInUser {
         String source = sLoggedInUserId + ":" + sLoggedInUserId; // TODO
         return "Basic " +
                 Base64.encodeToString(source.getBytes(), Base64.URL_SAFE | Base64.NO_WRAP);
-
     }
 }

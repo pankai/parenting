@@ -35,4 +35,7 @@
     <dimen name="caption_margin_bottom">10dp</dimen>
     <dimen name="column_margin">4dp</dimen>
     <dimen name="picture_margin_bottom">6dp</dimen>
+
+    <dimen name="comment_row_thumbnail_width">36dp</dimen>
+
 </resources>

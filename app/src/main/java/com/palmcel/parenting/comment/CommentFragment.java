@@ -13,7 +13,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.login.LoggedInUser;
+import com.palmcel.parenting.model.PostComment;
+import com.palmcel.parenting.model.PostCommentBuilder;
+import com.palmcel.parenting.model.PostStatus;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +39,7 @@ public class CommentFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private ListView mListView;
+    private CommentListAdapter mAdapter;
     private View mSubmitButton;
     private EditText mCommentEdit;
     private Context mContext;
@@ -90,7 +99,38 @@ public class CommentFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         TextView footerTextView = new TextView(mContext);
         footerTextView.setText(getResources().getString(R.string.comments_load_more));
-        mListView.addFooterView(footerTextView);
+        mListView.addHeaderView(footerTextView);
+
+        mAdapter = new CommentListAdapter(mContext);
+        mListView.setAdapter(mAdapter);
+
+        ArrayList<PostComment> comments = Lists.newArrayList();
+
+        long nowTime = System.currentTimeMillis();
+
+        PostCommentBuilder builder = new PostCommentBuilder();
+        builder
+                .setPostUserId(LoggedInUser.getLoggedInUserId())
+                .setCommenterUserId(LoggedInUser.getLoggedInUserId())
+                .setCommentStatus(PostStatus.Normal)
+                .setIsAnonymous(false)
+                .setCommentMessage("comment 2")
+                .setTimeMsCreated(nowTime - 100000);
+
+        comments.add(builder.build());
+
+        builder = new PostCommentBuilder();
+        builder
+                .setPostUserId(LoggedInUser.getLoggedInUserId())
+                .setCommenterUserId(LoggedInUser.getLoggedInUserId())
+                .setCommentStatus(PostStatus.Normal)
+                .setIsAnonymous(false)
+                .setCommentMessage("comment 1")
+                .setTimeMsCreated(nowTime);
+
+        comments.add(builder.build());
+
+        mAdapter.updateEntries(ImmutableList.<PostComment>copyOf(comments));
     }
 
     // TODO: Rename method, update argument and hook method into UI event
