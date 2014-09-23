@@ -2,12 +2,16 @@ package com.palmcel.parenting.comment;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.palmcel.parenting.R;
 
@@ -25,6 +29,11 @@ public class CommentFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private ListView mListView;
+    private View mSubmitButton;
+    private EditText mCommentEdit;
+    private Context mContext;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -66,7 +75,22 @@ public class CommentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.comment_fragment, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(
+                R.layout.comment_fragment, container, false);
+
+        mListView = (ListView) rootView.findViewById(R.id.commentListView);
+        mSubmitButton = rootView.findViewById(R.id.comment_submit_button);
+        mCommentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
+
+        return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        TextView footerTextView = new TextView(mContext);
+        footerTextView.setText(getResources().getString(R.string.comments_load_more));
+        mListView.addFooterView(footerTextView);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -79,6 +103,7 @@ public class CommentFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mContext = activity;
         try {
             //mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {

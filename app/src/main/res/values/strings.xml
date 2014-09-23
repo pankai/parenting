@@ -61,5 +61,6 @@
     <string name="title_activity_comment">Comments</string>
     <string name="comment_edit_hint">Add a comment</string>
     <string name="comment_button_submit">Submit</string>
-
+    <string name="comments_load_more">Load more comments</string>
+    <string name="comments_loading_more">Loading more comments ...</string>
 </resources>
