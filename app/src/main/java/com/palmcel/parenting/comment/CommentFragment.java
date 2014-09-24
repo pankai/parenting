@@ -17,6 +17,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.cache.FeedCache;
 import com.palmcel.parenting.common.DataFreshnessParam;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.common.UiThreadExecutor;
@@ -170,6 +171,11 @@ public class CommentFragment extends Fragment {
                 EventBus.getDefault().post(new CommentsServiceFinishEvent());
             }
         }, new UiThreadExecutor());
+    }
+
+    private void incrementPostCommentCount(String postId) {
+        // Increase postcomment count in cache
+        FeedCache.getInstance().incrementCommentCount(postId);
     }
 
     @Override

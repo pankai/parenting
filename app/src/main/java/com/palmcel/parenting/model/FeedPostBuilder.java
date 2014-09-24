@@ -10,6 +10,32 @@ public class FeedPostBuilder extends PostBuilder {
     public FeedPostBuilder() {
     }
 
+    public FeedPostBuilder from(FeedPost post) {
+        setPostId(post.postId);
+        setUserId(post.userId);
+        setPostType(post.postType);
+        setCategory(post.category);
+        setForGender(post.forGender);
+        setMessage(post.message);
+        setPictureUrl(post.pictureUrl);
+        setExternalLinkImageUrl(post.externalLinkImageUrl);
+        setExternalLinkUrl(post.externalLinkImageUrl);
+        setExternalLinkCaption(post.externalLinkCaption);
+        setExternalLinkSummary(post.externalLinkSummary);
+        setProductBarCode(post.productBarCode);
+        setPublicity(post.publicity);
+        setLikes(post.likes);
+        setComments(post.comments);
+        setIsAnonymous(post.isAnonymous);
+        setPostStatus(post.postStatus);
+        setTimeMsCreated(post.timeMsCreated);
+        setTimeMsEdited(post.timeMsEdited);
+        setTimeMsChangeToSurface(post.timeMsChangeToSurface);
+        setTimeMsInserted(post.timeMsInserted);
+
+        return this;
+    }
+
     public long getTimeMsInserted() {
         return timeMsInserted;
     }

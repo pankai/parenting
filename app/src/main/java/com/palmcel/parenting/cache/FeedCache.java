@@ -9,6 +9,7 @@ import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.db.DatabaseContract;
 import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.model.FeedPost;
+import com.palmcel.parenting.model.FeedPostBuilder;
 
 /**
  * Singleton that caches the feed
@@ -214,5 +215,25 @@ public class FeedCache {
         mCachedFeed = builder.build();
 
         return mCachedFeed;
+    }
+
+    /**
+     * Increase comment count of a post.
+     * @param postId the post id
+     */
+    public synchronized void incrementCommentCount(String postId) {
+        Log.d(TAG, "In incrementCommentCount for " + postId);
+        ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
+        for (FeedPost post: mCachedFeed) {
+            if (!post.postId.equals(postId)) {
+                builder.add(post);
+            } else {
+                FeedPostBuilder feedPostBuilder = new FeedPostBuilder().from(post);
+                feedPostBuilder.setComments(post.comments + 1);
+                builder.add(feedPostBuilder.build());
+            }
+        }
+
+        mCachedFeed = builder.build();
     }
 }
