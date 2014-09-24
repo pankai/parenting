@@ -18,7 +18,7 @@ public class CommentListAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mLayoutInflater;
 
-    // mEntries are sorted by timeMsCreated in DESC order
+    // mEntries are sorted by timeMsCreated in ASC order
     private ImmutableList<PostComment> mEntries = ImmutableList.of();
 
     public CommentListAdapter(Context context) {
@@ -54,7 +54,7 @@ public class CommentListAdapter extends BaseAdapter {
     }
 
     public void updateEntries(ImmutableList<PostComment> entries) {
-        mEntries = entries;
+        mEntries = entries.reverse();
         notifyDataSetChanged();
     }
 

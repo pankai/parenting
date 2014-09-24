@@ -7,11 +7,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.login.LoggedInUser;
-import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.Post;
 import com.palmcel.parenting.network.PostRestHelper;
-
-import java.util.List;
 
 import static com.palmcel.parenting.db.DatabaseContract.PostEntry;
 import static com.palmcel.parenting.db.DatabaseContract.FeedEntry;

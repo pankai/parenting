@@ -336,7 +336,6 @@ public class PostProductActivity extends Activity
                 Log.e(TAG, "Failed to save product post", throwable);
             }
         }, new UiThreadExecutor());
-
     }
 
 }

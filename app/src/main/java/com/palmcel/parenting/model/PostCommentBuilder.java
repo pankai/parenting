@@ -106,14 +106,14 @@ public class PostCommentBuilder {
     }
 
     public static PostCommentBuilder newLocalRegularCommentBuilder(
-            String message,
-            PostSetting postSetting) {
+            String postId, String message) {
         PostCommentBuilder builder = new PostCommentBuilder();
         builder
+            .setPostId(postId)
             .setPostUserId(LoggedInUser.getLoggedInUserId())
             .setCommenterUserId(LoggedInUser.getLoggedInUserId())
             .setCommentStatus(PostStatus.Normal)
-            .setIsAnonymous(postSetting.isAnonymous)
+            .setIsAnonymous(false)
             .setCommentMessage(message)
             .setTimeMsCreated(System.currentTimeMillis());
 

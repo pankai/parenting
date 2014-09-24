@@ -11,7 +11,9 @@ import com.palmcel.parenting.R;
 
 public class CommentActivity extends Activity {
 
+    private static final String TAG = "CommentActivity";
     private String mPostId;
+    private CommentFragment mCommentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +22,14 @@ public class CommentActivity extends Activity {
         mPostId = getIntent().getStringExtra("postId");
         setContentView(R.layout.comment_activity);
         if (savedInstanceState == null) {
+            mCommentFragment = CommentFragment.newInstance(mPostId);
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, CommentFragment.newInstance(mPostId))
+                    .add(R.id.container, mCommentFragment,
+                            CommentFragment.class.getName())
                     .commit();
+        } else {
+            mCommentFragment = (CommentFragment) getFragmentManager().
+                    findFragmentByTag(CommentFragment.class.getName());
         }
 
         ActionBar actionBar = getActionBar();

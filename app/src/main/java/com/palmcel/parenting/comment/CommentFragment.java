@@ -2,7 +2,6 @@ package com.palmcel.parenting.comment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,12 +12,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Strings;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.common.DataFreshnessParam;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.model.LoadCommentsParams;
 import com.palmcel.parenting.model.LoadCommentsResultEvent;
 import com.palmcel.parenting.model.LoadDataResult;
 import com.palmcel.parenting.model.PostComment;
+import com.palmcel.parenting.model.PostCommentBuilder;
 
 import de.greenrobot.event.EventBus;
 
@@ -112,44 +118,52 @@ public class CommentFragment extends Fragment {
             }
         });
 
+        mSubmitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submitComment();
+            }
+        });
         // Load post comments. TODO (kpan): don't need to load feed every time in onResume.
         LoadCommentsManager.getInstance().loadComments(mPostId);
         getActivity().setProgressBarIndeterminateVisibility(true);
-
-//        ArrayList<PostComment> comments = Lists.newArrayList();
-//
-//        long nowTime = System.currentTimeMillis();
-//
-//        PostCommentBuilder builder = new PostCommentBuilder();
-//        builder
-//                .setPostUserId(LoggedInUser.getLoggedInUserId())
-//                .setCommenterUserId(LoggedInUser.getLoggedInUserId())
-//                .setCommentStatus(PostStatus.Normal)
-//                .setIsAnonymous(false)
-//                .setCommentMessage("comment 2")
-//                .setTimeMsCreated(nowTime - 100000);
-//
-//        comments.add(builder.build());
-//
-//        builder = new PostCommentBuilder();
-//        builder
-//                .setPostUserId(LoggedInUser.getLoggedInUserId())
-//                .setCommenterUserId(LoggedInUser.getLoggedInUserId())
-//                .setCommentStatus(PostStatus.Normal)
-//                .setIsAnonymous(false)
-//                .setCommentMessage("comment 1")
-//                .setTimeMsCreated(nowTime);
-//
-//        comments.add(builder.build());
-//
-//        mAdapter.updateEntries(ImmutableList.<PostComment>copyOf(comments));
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    /**
+     * Submit comment to server
+     */
+    private void submitComment() {
+        String commentMessage = mCommentEdit.getText().toString();
+        if (Strings.isNullOrEmpty(commentMessage)) {
+            return;
         }
+
+        PostCommentBuilder builder = PostCommentBuilder.newLocalRegularCommentBuilder(
+                mPostId,
+                commentMessage);
+
+        CommentHandler commentHandler = new CommentHandler();
+        ListenableFuture saveCommentFuture =
+                commentHandler.saveCommentToServerOnThread(builder.build());
+
+        Futures.addCallback(saveCommentFuture, new FutureCallback() {
+            @Override
+            public void onSuccess(Object o) {
+                Log.d(TAG, "Saved post comment successfully");
+
+                // Reload feed in FeedFragment
+                LoadCommentsManager.getInstance().loadComments(
+                        mPostId, DataFreshnessParam.CHECK_SERVER);
+                // Clear comment edit
+                mCommentEdit.setText("");
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Toast.makeText(mContext, "Failed to save comment, " + throwable.toString(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Failed to save post comment", throwable);
+            }
+        }, new UiThreadExecutor());
     }
 
     @Override
@@ -182,8 +196,7 @@ public class CommentFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        //public void onSubmitComment(String postId, String message);
     }
 
     /**

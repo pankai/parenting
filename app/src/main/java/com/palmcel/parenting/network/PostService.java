@@ -41,6 +41,16 @@ public interface PostService {
             @Query("largest_insert_time_at_client") long largestInsertTimeAtClient);
 
     /**
+     * Save a post comment to server.
+     * @param postComment a post comment
+     * @return
+     */
+    @POST("/api/v1/post/comments")
+    Response newComment(
+            @Header("Authorization") String authorization,
+            @Body PostComment postComment);
+
+    /**
      * Load post comments from server
      * @param postId
      * @param timeMsCreatedSince
