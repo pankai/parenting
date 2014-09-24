@@ -65,7 +65,7 @@ public class LoadCommentsManager {
             Log.d(TAG, "loadComments was skipped.");
             return;
         } else {
-            Log.d(TAG, "In loadComments");
+            Log.d(TAG, "In loadComments, loadCommentsParams=" + loadCommentsParams);
         }
 
         ImmutableList<PostComment> cachedComments =

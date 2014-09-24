@@ -2,31 +2,28 @@ package com.palmcel.parenting.comment;
 
 import android.app.Activity;
 import android.app.ActionBar;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.view.Window;
 
 import com.palmcel.parenting.R;
 
 public class CommentActivity extends Activity {
 
+    private String mPostId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        mPostId = getIntent().getStringExtra("postId");
         setContentView(R.layout.comment_activity);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new CommentFragment())
+                    .add(R.id.container, CommentFragment.newInstance(mPostId))
                     .commit();
         }
-
 
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);

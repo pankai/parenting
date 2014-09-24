@@ -89,7 +89,9 @@ public class PostItemView extends RelativeLayout {
         mCommentButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                mContext.startActivity(new Intent(mContext, CommentActivity.class));
+                Intent intent = new Intent(mContext, CommentActivity.class);
+                intent.putExtra("postId", mPost.postId);
+                mContext.startActivity(intent);
             }
         });
     }
