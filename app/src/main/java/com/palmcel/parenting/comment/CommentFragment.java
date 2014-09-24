@@ -146,19 +146,19 @@ public class CommentFragment extends Fragment {
         EventBus.getDefault().post(new CommentsServiceStartEvent());
 
         CommentHandler commentHandler = new CommentHandler();
-        ListenableFuture saveCommentFuture =
+        ListenableFuture<PostComment> saveCommentFuture =
                 commentHandler.saveCommentToServerOnThread(builder.build());
 
-        Futures.addCallback(saveCommentFuture, new FutureCallback() {
+        Futures.addCallback(saveCommentFuture, new FutureCallback<PostComment>() {
             @Override
-            public void onSuccess(Object o) {
-                Log.d(TAG, "Saved post comment successfully");
+            public void onSuccess(PostComment postComment) {
+                Log.d(TAG, "Saved post comment successfully for " + postComment.postId);
 
                 EventBus.getDefault().post(new CommentsServiceFinishEvent());
 
                 // Reload feed in FeedFragment
                 LoadCommentsManager.getInstance().loadComments(
-                        mPostId, DataFreshnessParam.CHECK_SERVER);
+                        postComment.postId, DataFreshnessParam.CHECK_SERVER);
                 // Clear comment edit
                 mCommentEdit.setText("");
             }

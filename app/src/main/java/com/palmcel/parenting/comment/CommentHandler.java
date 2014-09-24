@@ -6,6 +6,8 @@ import com.palmcel.parenting.login.LoggedInUser;
 import com.palmcel.parenting.model.PostComment;
 import com.palmcel.parenting.network.PostRestHelper;
 
+import java.util.concurrent.Callable;
+
 /**
  * Handler that saves post comment to server
  */
@@ -16,12 +18,14 @@ public class CommentHandler {
      * @param postComment
      * @return the listenableFuture for the operation
      */
-    public ListenableFuture saveCommentToServerOnThread(final PostComment postComment) {
-        return ExecutorUtil.execute(new Runnable() {
+    public ListenableFuture<PostComment> saveCommentToServerOnThread(
+            final PostComment postComment) {
+        return ExecutorUtil.execute(new Callable<PostComment>() {
 
             @Override
-            public void run() {
+            public PostComment call() {
                 saveCommentToServer(postComment);
+                return postComment;
             }
         });
     }
