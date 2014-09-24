@@ -20,6 +20,8 @@ import com.palmcel.parenting.R;
 import com.palmcel.parenting.common.DataFreshnessParam;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.common.UiThreadExecutor;
+import com.palmcel.parenting.model.CommentsServiceFinishEvent;
+import com.palmcel.parenting.model.CommentsServiceStartEvent;
 import com.palmcel.parenting.model.LoadCommentsParams;
 import com.palmcel.parenting.model.LoadCommentsResultEvent;
 import com.palmcel.parenting.model.LoadDataResult;
@@ -126,7 +128,6 @@ public class CommentFragment extends Fragment {
         });
         // Load post comments. TODO (kpan): don't need to load feed every time in onResume.
         LoadCommentsManager.getInstance().loadComments(mPostId);
-        getActivity().setProgressBarIndeterminateVisibility(true);
     }
 
     /**
@@ -142,6 +143,8 @@ public class CommentFragment extends Fragment {
                 mPostId,
                 commentMessage);
 
+        EventBus.getDefault().post(new CommentsServiceStartEvent());
+
         CommentHandler commentHandler = new CommentHandler();
         ListenableFuture saveCommentFuture =
                 commentHandler.saveCommentToServerOnThread(builder.build());
@@ -150,6 +153,8 @@ public class CommentFragment extends Fragment {
             @Override
             public void onSuccess(Object o) {
                 Log.d(TAG, "Saved post comment successfully");
+
+                EventBus.getDefault().post(new CommentsServiceFinishEvent());
 
                 // Reload feed in FeedFragment
                 LoadCommentsManager.getInstance().loadComments(
@@ -162,6 +167,7 @@ public class CommentFragment extends Fragment {
             public void onFailure(Throwable throwable) {
                 Toast.makeText(mContext, "Failed to save comment, " + throwable.toString(), Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Failed to save post comment", throwable);
+                EventBus.getDefault().post(new CommentsServiceFinishEvent());
             }
         }, new UiThreadExecutor());
     }
@@ -221,7 +227,18 @@ public class CommentFragment extends Fragment {
             // Update comments list view
             mAdapter.updateEntries(result.loadedData);
         }
+    }
 
+    /**
+     * EventBus event for starting loading comments from server or writing comments to server.
+     */
+    public void onEventMainThread(CommentsServiceStartEvent event) {
+        getActivity().setProgressBarIndeterminateVisibility(true);
+    }
+    /**
+     * EventBus event for finishing loading comments from server or writing comments to server.
+     */
+    public void onEventMainThread(CommentsServiceFinishEvent event) {
         getActivity().setProgressBarIndeterminateVisibility(false);
     }
 }

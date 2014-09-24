@@ -10,6 +10,8 @@ import com.palmcel.parenting.common.DataSource;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.feed.FeedHandler;
+import com.palmcel.parenting.model.CommentsServiceFinishEvent;
+import com.palmcel.parenting.model.CommentsServiceStartEvent;
 import com.palmcel.parenting.model.LoadCommentsParams;
 import com.palmcel.parenting.model.LoadCommentsResultEvent;
 import com.palmcel.parenting.model.LoadDataResult;
@@ -83,6 +85,7 @@ public class LoadCommentsManager {
             return;
         }
 
+        EventBus.getDefault().post(new CommentsServiceStartEvent());
         mLoadCommentsFuture = ExecutorUtil.execute(new Callable<LoadDataResult<PostComment>>() {
             @Override
             public LoadDataResult<PostComment> call() throws Exception {
@@ -125,6 +128,7 @@ public class LoadCommentsManager {
                 Log.d(TAG, "mLoadCommentsFuture succeeded");
                 mLoadCommentsFuture = null;
                 EventBus.getDefault().post(new LoadCommentsResultEvent(loadCommentsParams, result));
+                EventBus.getDefault().post(new CommentsServiceFinishEvent());
             }
 
             @Override
@@ -133,6 +137,7 @@ public class LoadCommentsManager {
                 mLoadCommentsFuture = null;
                 LoadDataResult result = LoadDataResult.errorResult(t);
                 EventBus.getDefault().post(new LoadCommentsResultEvent(loadCommentsParams, result));
+                EventBus.getDefault().post(new CommentsServiceFinishEvent());
             }
         });
     }
