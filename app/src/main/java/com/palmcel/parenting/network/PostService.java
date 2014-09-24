@@ -2,6 +2,7 @@ package com.palmcel.parenting.network;
 
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.Post;
+import com.palmcel.parenting.model.PostComment;
 
 import java.util.List;
 
@@ -38,4 +39,17 @@ public interface PostService {
             @Query("time_ms_inserted_since") long timeMsInsertedSince,
             @Query("max_to_fetch") int maxToFetch,
             @Query("largest_insert_time_at_client") long largestInsertTimeAtClient);
+
+    /**
+     * Load post comments from server
+     * @param postId
+     * @param timeMsCreatedSince
+     * @param maxToFetch
+     * @return post comments from server sorted by timeMsCreated in DESC order.
+     */
+    @GET("/api/v1/post/comments")
+    List<PostComment> getPostComments(
+            @Query("post_id") String postId,
+            @Query("time_ms_created_since") long timeMsCreatedSince,
+            @Query("max_to_fetch") int maxToFetch);
 }

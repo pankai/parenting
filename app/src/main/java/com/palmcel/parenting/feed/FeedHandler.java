@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.model.FeedPost;
+import com.palmcel.parenting.model.PostComment;
 import com.palmcel.parenting.network.PostRestHelper;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class FeedHandler {
     }
 
     /**
-     * Load the latest feed from the server
+     * Load the feed from the server
      * @return list of feed posts sorted by timeMsInserted in DESC order.
      */
     public ImmutableList<FeedPost> getFeedPostFromServer(
@@ -56,5 +57,23 @@ public class FeedHandler {
                 largestInsertTimeAtClient);
 
         return feed == null ? ImmutableList.<FeedPost>of() : ImmutableList.copyOf(feed);
+    }
+
+    /**
+     * Load the comments from the server
+     * @return list of post comments sorted by timeMsCreated in DESC order.
+     * TODO: also need to return the count of comments and likes
+     */
+    public ImmutableList<PostComment> getPostCommentsFromServer(
+            String postId,
+            long timeMsCreatedSince,
+            int maxToFetch) {
+        Log.d(TAG, "In getPostCommentsFromServer");
+        List<PostComment> comments = PostRestHelper.getPostService().getPostComments(
+                postId,
+                timeMsCreatedSince,
+                maxToFetch);
+
+        return comments == null ? ImmutableList.<PostComment>of() : ImmutableList.copyOf(comments);
     }
 }

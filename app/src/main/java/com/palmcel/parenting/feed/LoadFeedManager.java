@@ -36,12 +36,14 @@ import static com.palmcel.parenting.db.DatabaseContract.FeedEntry;
  */
 public class LoadFeedManager {
 
-    private static final String TAG = "LoadFreeManager";
+    private static final String TAG = "LoadFeedManager";
     private static final int DEFAULT_MAX_FETCH = 20;
 
     private static LoadFeedManager INSTANCE = new LoadFeedManager();
 
     private ListenableFuture<LoadDataResult<FeedPost>> mLoadFeedFuture;
+
+    private LoadFeedManager() {}
 
     public void loadFeed() {
         loadFeed(new LoadFeedParams(

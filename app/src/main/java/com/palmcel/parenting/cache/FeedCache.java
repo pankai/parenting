@@ -166,6 +166,8 @@ public class FeedCache {
 
     /**
      * Update mCachedFeed with the load-more feed from server
+     * TODO: timeMsInserted should be unique in a feed. We need to make sure it. Same for comments
+     * of a post.
      * @param timeMsInsertedSince, the smallest insert time of the feed at client before
      *                             loading more
      * @param feedFromServer feed from server. The feed is a result of load more. That is, it
