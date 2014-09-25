@@ -59,11 +59,11 @@ public class CommentListAdapter extends BaseAdapter {
     }
 
     @Nullable
-    public PostComment getLastPostComment() {
+    public PostComment getLatestPostComment() {
         if (mEntries.isEmpty()) {
             return null;
         } else {
-            return mEntries.get(mEntries.size() - 1);
+            return mEntries.get(0);
         }
     }
 }

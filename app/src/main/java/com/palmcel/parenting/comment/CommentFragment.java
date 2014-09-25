@@ -121,7 +121,15 @@ public class CommentFragment extends Fragment {
         mHeaderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mHeaderView.setText(getResources().getString(R.string.comments_loading_more));
+                PostComment latestComment = mAdapter.getLatestPostComment();
+                if (latestComment != null) {
+                    mHeaderView.setText(getResources().getString(R.string.comments_loading_more));
+                    // Load more comments
+                    LoadCommentsManager.getInstance().loadCommentsMore(
+                            mPostId, latestComment.timeMsCreated);
+                } else {
+                    Log.e(TAG, "Empty comment list", new RuntimeException());
+                }
             }
         });
 

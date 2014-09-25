@@ -28,7 +28,7 @@ import de.greenrobot.event.EventBus;
 public class LoadCommentsManager {
 
     private static final String TAG = "LoadCommentsManager";
-    private static final int DEFAULT_MAX_FETCH = 50;
+    private static final int DEFAULT_MAX_FETCH = 20;
 
     private static LoadCommentsManager INSTANCE = new LoadCommentsManager();
 
