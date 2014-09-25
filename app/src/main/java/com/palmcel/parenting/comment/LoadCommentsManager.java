@@ -53,13 +53,13 @@ public class LoadCommentsManager {
                 DataLoadCause.UNKNOWN));
     }
 
-    public void loadCommentsForced(String postId) {
+    public void loadCommentsAfterSubmit(String postId) {
         loadComments(new LoadCommentsParams(
                 postId,
                 0,
                 DEFAULT_MAX_FETCH,
                 DataFreshnessParam.CHECK_SERVER,
-                DataLoadCause.USER_REQUEST));
+                DataLoadCause.AFTER_SUBMIT));
     }
 
     public void loadComments(final LoadCommentsParams loadCommentsParams) {

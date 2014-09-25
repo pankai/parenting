@@ -5,5 +5,6 @@ package com.palmcel.parenting.common;
  */
 public enum DataLoadCause {
     UNKNOWN,
-    USER_REQUEST
+    USER_REQUEST,
+    AFTER_SUBMIT
 }

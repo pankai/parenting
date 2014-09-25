@@ -18,7 +18,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.cache.FeedCache;
-import com.palmcel.parenting.common.DataFreshnessParam;
+import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.common.UiThreadExecutor;
@@ -164,8 +164,7 @@ public class CommentFragment extends Fragment {
                 incrementPostCommentCount(postComment.postId);
 
                 // Reload feed in FeedFragment
-                LoadCommentsManager.getInstance().loadComments(
-                        postComment.postId, DataFreshnessParam.CHECK_SERVER);
+                LoadCommentsManager.getInstance().loadCommentsAfterSubmit(postComment.postId);
                 // Clear comment edit
                 mCommentEdit.setText("");
 
@@ -249,6 +248,17 @@ public class CommentFragment extends Fragment {
         } else {
             // Update comments list view
             mAdapter.updateEntries(result.loadedData);
+
+            if (loadCommentsParams.dataLoadCause == DataLoadCause.AFTER_SUBMIT) {
+                // scroll list view to bottom after submitting a new comment.
+                mListView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Select the last row so it will scroll into view...
+                        mListView.setSelection(mAdapter.getCount() - 1);
+                    }
+                });
+            }
         }
     }
 
