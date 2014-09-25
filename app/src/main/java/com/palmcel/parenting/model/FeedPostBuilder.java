@@ -6,6 +6,7 @@ package com.palmcel.parenting.model;
 public class FeedPostBuilder extends PostBuilder {
 
     private long timeMsInserted;
+    private boolean isLiked;
 
     public FeedPostBuilder() {
     }
@@ -32,6 +33,7 @@ public class FeedPostBuilder extends PostBuilder {
         setTimeMsEdited(post.timeMsEdited);
         setTimeMsChangeToSurface(post.timeMsChangeToSurface);
         setTimeMsInserted(post.timeMsInserted);
+        setIsLiked(post.isLiked);
 
         return this;
     }
@@ -42,6 +44,15 @@ public class FeedPostBuilder extends PostBuilder {
 
     public FeedPostBuilder setTimeMsInserted(long timeMsInserted) {
         this.timeMsInserted = timeMsInserted;
+        return this;
+    }
+
+    public boolean getIsLiked() {
+        return isLiked;
+    }
+
+    public FeedPostBuilder setIsLiked(boolean isLiked) {
+        this.isLiked = isLiked;
         return this;
     }
 

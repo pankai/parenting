@@ -8,10 +8,12 @@ import android.os.Parcelable;
  */
 public class FeedPost extends Post {
     public final long timeMsInserted;
+    public final boolean isLiked;
 
     public FeedPost(FeedPostBuilder builder) {
         super(builder);
         timeMsInserted = builder.getTimeMsInserted();
+        isLiked = builder.getIsLiked();
     }
 
     public static final Creator<FeedPost> CREATOR = new Creator<FeedPost>() {
@@ -34,12 +36,14 @@ public class FeedPost extends Post {
     private FeedPost(Parcel in) {
         super(in);
         timeMsInserted = in.readLong();
+        isLiked = in.readInt() != 0;
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
         out.writeLong(timeMsInserted);
+        out.writeInt(isLiked ? 1 : 0);
     }
 
 }

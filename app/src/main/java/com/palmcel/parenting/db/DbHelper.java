@@ -40,7 +40,8 @@ public class DbHelper extends SQLiteOpenHelper {
                 PostEntry.COLUMN_TIME_CREATED + " INTEGER, " +
                 PostEntry.COLUMN_TIME_EDITED + " INTEGER, " +
                 PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE + " INTEGER, " +
-                FeedEntry.COLUMN_TIME_INSERTED + " INTEGER " +
+                FeedEntry.COLUMN_TIME_INSERTED + " INTEGER, " +
+                FeedEntry.COLUMN_IS_LIKED + " INTEGER " +
             ")";
 
     private static final String SQL_DELETE_FEED_POST_TABLE =

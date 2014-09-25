@@ -150,75 +150,75 @@ public class PostDbHandler {
         String sql =
                 "INSERT INTO " + DatabaseContract.FeedEntry.TABLE_NAME +
                         " (" + DatabaseContract.FEED_COLUMNS_STRING + ") " +
-                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         SQLiteStatement insert = db.compileStatement(sql);
 
         for (FeedPost post: feedPosts) {
             insert.bindString(1, post.postId);
             insert.bindLong(2, post.timeMsInserted);
-            insert.bindString(3, post.userId);
+            insert.bindLong(3, post.isLiked ? 1 : 0);
+            insert.bindString(4, post.userId);
             if (post.postType == null) {
-                insert.bindNull(4);
-            } else {
-                insert.bindString(4, post.postType.toString());
-            }
-            if (post.category == null) {
                 insert.bindNull(5);
             } else {
-                insert.bindString(5, post.category);
+                insert.bindString(5, post.postType.toString());
             }
-            if (post.message == null) {
+            if (post.category == null) {
                 insert.bindNull(6);
             } else {
-                insert.bindString(6, post.message);
+                insert.bindString(6, post.category);
             }
-            if (post.pictureUrl == null) {
+            if (post.message == null) {
                 insert.bindNull(7);
             } else {
-                insert.bindString(7, post.pictureUrl);
+                insert.bindString(7, post.message);
             }
-            if (post.externalLinkUrl == null) {
+            if (post.pictureUrl == null) {
                 insert.bindNull(8);
             } else {
-                insert.bindString(8, post.externalLinkUrl);
+                insert.bindString(8, post.pictureUrl);
             }
-            if (post.externalLinkImageUrl == null) {
+            if (post.externalLinkUrl == null) {
                 insert.bindNull(9);
             } else {
-                insert.bindString(9, post.externalLinkImageUrl);
+                insert.bindString(9, post.externalLinkUrl);
             }
-            if (post.externalLinkCaption == null) {
+            if (post.externalLinkImageUrl == null) {
                 insert.bindNull(10);
             } else {
-                insert.bindString(10, post.externalLinkCaption);
+                insert.bindString(10, post.externalLinkImageUrl);
             }
-            if (post.externalLinkSummary == null) {
+            if (post.externalLinkCaption == null) {
                 insert.bindNull(11);
             } else {
-                insert.bindString(11, post.externalLinkSummary);
+                insert.bindString(11, post.externalLinkCaption);
             }
-            if (post.productBarCode == null) {
+            if (post.externalLinkSummary == null) {
                 insert.bindNull(12);
             } else {
-                insert.bindString(12, post.productBarCode);
+                insert.bindString(12, post.externalLinkSummary);
             }
-            if (post.publicity == null) {
+            if (post.productBarCode == null) {
                 insert.bindNull(13);
             } else {
-                insert.bindString(13, post.publicity.toString());
+                insert.bindString(13, post.productBarCode);
             }
-            insert.bindLong(14, post.likes);
-            insert.bindLong(14, post.likes);
-            insert.bindLong(15, post.comments);
-            insert.bindLong(16, post.isAnonymous ? 1 : 0);
-            if (post.postStatus == null) {
-                insert.bindNull(17);
+            if (post.publicity == null) {
+                insert.bindNull(14);
             } else {
-                insert.bindString(17, post.postStatus.toString());
+                insert.bindString(14, post.publicity.toString());
             }
-            insert.bindLong(18, post.timeMsCreated);
-            insert.bindLong(19, post.timeMsEdited);
-            insert.bindLong(20, post.timeMsChangeToSurface);
+            insert.bindLong(15, post.likes);
+            insert.bindLong(16, post.comments);
+            insert.bindLong(17, post.isAnonymous ? 1 : 0);
+            if (post.postStatus == null) {
+                insert.bindNull(18);
+            } else {
+                insert.bindString(18, post.postStatus.toString());
+            }
+            insert.bindLong(19, post.timeMsCreated);
+            insert.bindLong(20, post.timeMsEdited);
+            insert.bindLong(21, post.timeMsChangeToSurface);
             insert.execute();
         }
     }

@@ -193,29 +193,31 @@ public class LoadFeedManager {
 
             feedPostBuilder.setPostId(cursor.getString(0));
             feedPostBuilder.setTimeMsInserted(cursor.isNull(1) ? 0 : cursor.getLong(1));
-            feedPostBuilder.setUserId(cursor.getString(2));
-            String postTypeStr = cursor.getString(3);
+            feedPostBuilder.setIsLiked(
+                    cursor.isNull(2) || cursor.getInt(2) == 0 ? false : true);
+            feedPostBuilder.setUserId(cursor.getString(3));
+            String postTypeStr = cursor.getString(4);
             feedPostBuilder.setPostType(postTypeStr == null ? null : PostType.valueOf(postTypeStr));
-            feedPostBuilder.setCategory(cursor.getString(4));
-            feedPostBuilder.setMessage(cursor.getString(5));
-            feedPostBuilder.setPictureUrl(cursor.getString(6));
-            feedPostBuilder.setExternalLinkUrl(cursor.getString(7));
-            feedPostBuilder.setExternalLinkImageUrl(cursor.getString(8));
-            feedPostBuilder.setExternalLinkCaption(cursor.getString(9));
-            feedPostBuilder.setExternalLinkSummary(cursor.getString(10));
-            feedPostBuilder.setProductBarCode(cursor.getString(11));
-            String publicityStr = cursor.getString(12);
+            feedPostBuilder.setCategory(cursor.getString(5));
+            feedPostBuilder.setMessage(cursor.getString(6));
+            feedPostBuilder.setPictureUrl(cursor.getString(7));
+            feedPostBuilder.setExternalLinkUrl(cursor.getString(8));
+            feedPostBuilder.setExternalLinkImageUrl(cursor.getString(9));
+            feedPostBuilder.setExternalLinkCaption(cursor.getString(10));
+            feedPostBuilder.setExternalLinkSummary(cursor.getString(11));
+            feedPostBuilder.setProductBarCode(cursor.getString(12));
+            String publicityStr = cursor.getString(13);
             feedPostBuilder.setPublicity(
                     publicityStr == null ? null : PostPublicity.valueOf(publicityStr));
-            feedPostBuilder.setLikes(cursor.isNull(13) ? 0 : cursor.getInt(13));
-            feedPostBuilder.setComments(cursor.isNull(14) ? 0 : cursor.getInt(14));
+            feedPostBuilder.setLikes(cursor.isNull(14) ? 0 : cursor.getInt(14));
+            feedPostBuilder.setComments(cursor.isNull(15) ? 0 : cursor.getInt(15));
             feedPostBuilder.setIsAnonymous(
-                    cursor.isNull(15) || cursor.getInt(15) == 0 ? false : true);
-            String statusStr = cursor.getString(16);
+                    cursor.isNull(16) || cursor.getInt(16) == 0 ? false : true);
+            String statusStr = cursor.getString(17);
             feedPostBuilder.setPostStatus(statusStr == null ? null : PostStatus.valueOf(statusStr));
-            feedPostBuilder.setTimeMsCreated(cursor.isNull(17) ? 0 : cursor.getLong(17));
-            feedPostBuilder.setTimeMsEdited(cursor.isNull(18) ? 0 : cursor.getLong(18));
-            feedPostBuilder.setTimeMsChangeToSurface(cursor.isNull(19) ? 0 : cursor.getLong(19));
+            feedPostBuilder.setTimeMsCreated(cursor.isNull(18) ? 0 : cursor.getLong(18));
+            feedPostBuilder.setTimeMsEdited(cursor.isNull(19) ? 0 : cursor.getLong(19));
+            feedPostBuilder.setTimeMsChangeToSurface(cursor.isNull(20) ? 0 : cursor.getLong(20));
 
             listBuilder.add(feedPostBuilder.build());
         }
