@@ -268,6 +268,25 @@ public class PostDbHandler {
         }
     }
 
+    /**
+     * Increase like count of a post in feed_post table.
+     * @param postId the post id
+     */
+    public void incrementLikeCount(String postId) {
+        Log.d(TAG, "In incrementCommentCount for " + postId);
+
+        try {
+            String sql = "UPDATE " + DatabaseContract.FeedEntry.TABLE_NAME + " " +
+                    "SET " + DatabaseContract.PostEntry.COLUMN_LIKES + " = " +
+                    DatabaseContract.PostEntry.COLUMN_LIKES + " + 1 " +
+                    "WHERE " + DatabaseContract.PostEntry.COLUMN_POST_ID + " = ? ";
+
+            DbHelper.getDb().execSQL(sql, new String[]{postId});
+        } catch (Throwable t) {
+            Log.e(TAG, "Exception in incrementCommentCount", t);
+        }
+    }
+
     public static PostDbHandler getInstance() {
         return INSTANCE;
     }

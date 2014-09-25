@@ -3,6 +3,7 @@ package com.palmcel.parenting.network;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.Post;
 import com.palmcel.parenting.model.PostComment;
+import com.palmcel.parenting.model.PostLike;
 
 import java.util.List;
 
@@ -62,4 +63,14 @@ public interface PostService {
             @Query("post_id") String postId,
             @Query("time_ms_created_since") long timeMsCreatedSince,
             @Query("max_to_fetch") int maxToFetch);
+
+    /**
+     * Like a post and send the like to server.
+     * @param postLike a post like
+     * @return
+     */
+    @POST("/api/v1/post/likes")
+    Response likePost(
+            @Header("Authorization") String authorization,
+            @Body PostLike postLike);
 }
