@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * This is the class for a post comment.
  */
-public class PostComment implements Parcelable {
+public class PostComment implements Parcelable, SortByTimeEntity{
     public final String postId;
     public final String commentId;
     public final String postUserId;
@@ -69,5 +69,10 @@ public class PostComment implements Parcelable {
         out.writeString(commentStatus.name());
         out.writeLong(timeMsCreated);
         out.writeLong(timeMsEdited);
+    }
+
+    @Override
+    public long getSortTimeMs() {
+        return timeMsCreated;
     }
 }

@@ -72,7 +72,7 @@ public class LoadCommentsManager {
         }
 
         ImmutableList<PostComment> cachedComments =
-                CommentsCache.getInstance().getCommentsIfUpToDate(loadCommentsParams.postId);
+                CommentsCache.getInstance().getEntitiesIfUpToDate(loadCommentsParams.postId);
 
         if (loadCommentsParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
                 cachedComments != null) {
@@ -102,13 +102,13 @@ public class LoadCommentsManager {
                 ImmutableList<PostComment> recentCachedComments;
                 if (loadCommentsParams.timeMsCreatedSince == 0) {
                     recentCachedComments =
-                            CommentsCache.getInstance().updateCommentsCacheFromServer(
+                            CommentsCache.getInstance().updateEntitiesCacheFromServer(
                                 loadCommentsParams.postId,
                                 commentsFromServer);
                 } else {
                     // Load-more case
                     recentCachedComments =
-                            CommentsCache.getInstance().updateCommentsCacheFromServer(
+                            CommentsCache.getInstance().updateEntitiesCacheFromServer(
                                 loadCommentsParams.postId,
                                 loadCommentsParams.timeMsCreatedSince,
                                 commentsFromServer);
