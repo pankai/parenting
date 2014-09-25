@@ -21,6 +21,7 @@ import com.palmcel.parenting.cache.FeedCache;
 import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.common.TriState;
 import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.db.PostDbHandler;
 import com.palmcel.parenting.feed.LoadFeedManager;
@@ -259,6 +260,18 @@ public class CommentFragment extends Fragment {
                     }
                 });
             }
+
+            // Update 'load more comments' header view of the list view
+            updateLoadMoreHeadView(result.serverHasMore);
+        }
+    }
+
+    private void updateLoadMoreHeadView(TriState serverHasMore) {
+        if (serverHasMore == TriState.FALSE) {
+            mHeaderView.setVisibility(View.INVISIBLE);
+        } else if (serverHasMore == TriState.TRUE) {
+            mHeaderView.setVisibility(View.VISIBLE);
+            mHeaderView.setText(getResources().getString(R.string.comments_load_more));
         }
     }
 

@@ -17,6 +17,8 @@ import com.palmcel.parenting.model.PostComment;
  */
 public class CommentItemView extends RelativeLayout {
 
+    private static final String TAG = "CommentItemView";
+
     private static String sAnonymousText;
     private ImageView mProfileImageView;
     private TextView mUserIdTextView;

@@ -9,6 +9,7 @@ import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.DataSource;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.common.TriState;
 import com.palmcel.parenting.feed.FeedHandler;
 import com.palmcel.parenting.model.CommentsServiceFinishEvent;
 import com.palmcel.parenting.model.CommentsServiceStartEvent;
@@ -113,9 +114,16 @@ public class LoadCommentsManager {
                                 commentsFromServer);
                 }
 
+
+                TriState severHasMoreComments = TriState.FALSE;
+                if (commentsFromServer.size() == loadCommentsParams.maxToFetch) {
+                    severHasMoreComments = TriState.TRUE;
+                }
+
                 LoadDataResult<PostComment> result = LoadDataResult.successResult(
                         recentCachedComments,
-                        DataSource.SERVER);
+                        DataSource.SERVER,
+                        severHasMoreComments);
 
                 Log.d(TAG, "To display comments from server");
                 return result;
