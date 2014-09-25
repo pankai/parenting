@@ -19,8 +19,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.cache.FeedCache;
 import com.palmcel.parenting.common.DataFreshnessParam;
+import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.common.UiThreadExecutor;
+import com.palmcel.parenting.db.PostDbHandler;
+import com.palmcel.parenting.feed.LoadFeedManager;
 import com.palmcel.parenting.model.CommentsServiceFinishEvent;
 import com.palmcel.parenting.model.CommentsServiceStartEvent;
 import com.palmcel.parenting.model.LoadCommentsParams;
@@ -157,11 +160,17 @@ public class CommentFragment extends Fragment {
 
                 EventBus.getDefault().post(new CommentsServiceFinishEvent());
 
+                // Increase comment count in cache and db
+                incrementPostCommentCount(postComment.postId);
+
                 // Reload feed in FeedFragment
                 LoadCommentsManager.getInstance().loadComments(
                         postComment.postId, DataFreshnessParam.CHECK_SERVER);
                 // Clear comment edit
                 mCommentEdit.setText("");
+
+                // Update feed listview
+                LoadFeedManager.getInstance().loadFeed();
             }
 
             @Override
@@ -173,9 +182,17 @@ public class CommentFragment extends Fragment {
         }, new UiThreadExecutor());
     }
 
-    private void incrementPostCommentCount(String postId) {
-        // Increase postcomment count in cache
+    private void incrementPostCommentCount(final String postId) {
+        // Increase post comment count in cache for postId
         FeedCache.getInstance().incrementCommentCount(postId);
+
+        // Increase post comment count in feed_post table for postId
+        ExecutorUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                PostDbHandler.getInstance().incrementCommentCount(postId);
+            }
+        });
     }
 
     @Override

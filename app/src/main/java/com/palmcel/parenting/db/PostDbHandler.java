@@ -249,6 +249,25 @@ public class PostDbHandler {
         }
     }
 
+    /**
+     * Increase comment count of a post in feed_post table.
+     * @param postId the post id
+     */
+    public void incrementCommentCount(String postId) {
+        Log.d(TAG, "In incrementCommentCount for " + postId);
+
+        try {
+            String sql = "UPDATE " + DatabaseContract.FeedEntry.TABLE_NAME + " " +
+                    "SET " + DatabaseContract.PostEntry.COLUMN_COMMENTS + " = " +
+                    DatabaseContract.PostEntry.COLUMN_COMMENTS + " + 1 " +
+                    "WHERE " + DatabaseContract.PostEntry.COLUMN_POST_ID + " = ? ";
+
+            DbHelper.getDb().execSQL(sql, new String[]{postId});
+        } catch (Throwable t) {
+            Log.e(TAG, "Exception in incrementCommentCount", t);
+        }
+    }
+
     public static PostDbHandler getInstance() {
         return INSTANCE;
     }
