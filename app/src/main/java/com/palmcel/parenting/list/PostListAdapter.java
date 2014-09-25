@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 
 import com.google.common.collect.ImmutableList;
 import com.palmcel.parenting.model.FeedPost;
-import com.palmcel.parenting.model.Post;
 
 /**
  * ListView adapter for a list of posts in feed
@@ -72,7 +71,7 @@ public class PostListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Post post = mEntries.get(position);
+        FeedPost post = mEntries.get(position);
         switch (post.postType) {
             case Regular:
                 return getViewForPost(post, convertView, parent);
@@ -90,7 +89,7 @@ public class PostListAdapter extends BaseAdapter {
      * @param parent
      * @return
      */
-    private View getViewForPost(Post post, View convertView, ViewGroup parent) {
+    private View getViewForPost(FeedPost post, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = new PostItemView(mContext, post.postType);
         }

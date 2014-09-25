@@ -16,7 +16,7 @@ import com.palmcel.parenting.comment.CommentActivity;
 import com.palmcel.parenting.common.AppContext;
 import com.palmcel.parenting.common.TimeUtil;
 import com.palmcel.parenting.common.Utils;
-import com.palmcel.parenting.model.Post;
+import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.PostType;
 import com.squareup.picasso.Picasso;
 
@@ -42,7 +42,7 @@ public class PostItemView extends RelativeLayout {
     private ImageView mExternalLinkPicture;
 
     private Context mContext;
-    private Post mPost;
+    private FeedPost mFeedPost;
 
     public PostItemView(Context context, PostType postType) {
         this(context, null, postType);
@@ -90,8 +90,8 @@ public class PostItemView extends RelativeLayout {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, CommentActivity.class);
-                intent.putExtra("postId", mPost.postId);
-                intent.putExtra("commentCount", mPost.comments);
+                intent.putExtra("postId", mFeedPost.postId);
+                intent.putExtra("commentCount", mFeedPost.comments);
                 mContext.startActivity(intent);
             }
         });
@@ -101,8 +101,8 @@ public class PostItemView extends RelativeLayout {
      * Update PostItemView using post data
      * @param post user post data
      */
-    public PostItemView updatePostItemView(Post post) {
-        mPost = post;
+    public PostItemView updatePostItemView(FeedPost post) {
+        mFeedPost = post;
         if (post.isAnonymous) {
             mUserIdTextView.setText(getAnonymousText());
         } else {
@@ -113,6 +113,7 @@ public class PostItemView extends RelativeLayout {
         mLikeCountTextView.setText(post.likes > 0 ? "" + post.likes : "");
         mPostTimeTextView.setText(
                 post.timeMsCreated > 0 ? TimeUtil.getTimeAgo(post.timeMsCreated) : "");
+        mLikeButton.setChecked(mFeedPost.isLiked);
 
         if (post.postType == PostType.Product) {
             // Update views for external link for product post
