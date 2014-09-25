@@ -18,10 +18,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.cache.FeedCache;
-import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
-import com.palmcel.parenting.common.TriState;
 import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.db.PostDbHandler;
 import com.palmcel.parenting.feed.LoadFeedManager;
@@ -50,6 +48,7 @@ public class CommentFragment extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_POST_ID = "postId";
+    private static final String ARG_COMMENT_COUNT = "commentCount";
 
     private ListView mListView;
     private CommentListAdapter mAdapter;
@@ -59,6 +58,7 @@ public class CommentFragment extends Fragment {
     private TextView mHeaderView;
 
     private String mPostId;
+    private int mCommentCount;
 
     private OnFragmentInteractionListener mListener;
 
@@ -69,10 +69,11 @@ public class CommentFragment extends Fragment {
      * @param postId post id
      * @return A new instance of fragment CommentFragment.
      */
-    public static CommentFragment newInstance(String postId) {
+    public static CommentFragment newInstance(String postId, int commentCount) {
         CommentFragment fragment = new CommentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_POST_ID, postId);
+        args.putInt(ARG_COMMENT_COUNT, commentCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -86,6 +87,7 @@ public class CommentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mPostId = getArguments().getString(ARG_POST_ID);
+            mCommentCount = getArguments().getInt(ARG_COMMENT_COUNT);
         }
 
         EventBus.getDefault().register(this);
@@ -117,7 +119,7 @@ public class CommentFragment extends Fragment {
         mAdapter = new CommentListAdapter(mContext);
         mListView.setAdapter(mAdapter);
 
-        mHeaderView.setVisibility(View.INVISIBLE);
+        mHeaderView.setText("");
         mHeaderView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -191,6 +193,8 @@ public class CommentFragment extends Fragment {
     }
 
     private void incrementPostCommentCount(final String postId) {
+        mCommentCount++;
+
         // Increase post comment count in cache for postId
         FeedCache.getInstance().incrementCommentCount(postId);
 
@@ -258,8 +262,12 @@ public class CommentFragment extends Fragment {
             // Update comments list view
             mAdapter.updateEntries(result.loadedData);
 
-            if (loadCommentsParams.dataLoadCause == DataLoadCause.AFTER_SUBMIT) {
-                // scroll list view to bottom after submitting a new comment.
+            // Update 'load more comments' header view of the list view
+            updateLoadMoreHeadView();
+
+            if (loadCommentsParams.timeMsCreatedSince == 0) {
+                // scroll list view to bottom after submitting a new comment or first open the
+                // fragment. Don't scroll to bottom at load-more case.
                 mListView.post(new Runnable() {
                     @Override
                     public void run() {
@@ -268,18 +276,14 @@ public class CommentFragment extends Fragment {
                     }
                 });
             }
-
-            // Update 'load more comments' header view of the list view
-            updateLoadMoreHeadView(result.serverHasMore);
         }
     }
 
-    private void updateLoadMoreHeadView(TriState serverHasMore) {
-        if (serverHasMore == TriState.FALSE) {
-            mHeaderView.setVisibility(View.INVISIBLE);
-        } else if (serverHasMore == TriState.TRUE) {
-            mHeaderView.setVisibility(View.VISIBLE);
+    private void updateLoadMoreHeadView() {
+        if (mAdapter.getCount() < mCommentCount) {
             mHeaderView.setText(getResources().getString(R.string.comments_load_more));
+        } else {
+            mHeaderView.setText("");
         }
     }
 

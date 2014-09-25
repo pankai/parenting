@@ -12,17 +12,17 @@ import com.palmcel.parenting.R;
 public class CommentActivity extends Activity {
 
     private static final String TAG = "CommentActivity";
-    private String mPostId;
     private CommentFragment mCommentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        mPostId = getIntent().getStringExtra("postId");
+        String postId = getIntent().getStringExtra("postId");
+        int commentCount = getIntent().getIntExtra("commentCount", 0);
         setContentView(R.layout.comment_activity);
         if (savedInstanceState == null) {
-            mCommentFragment = CommentFragment.newInstance(mPostId);
+            mCommentFragment = CommentFragment.newInstance(postId, commentCount);
             getFragmentManager().beginTransaction()
                     .add(R.id.container, mCommentFragment,
                             CommentFragment.class.getName())

@@ -91,6 +91,7 @@ public class PostItemView extends RelativeLayout {
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, CommentActivity.class);
                 intent.putExtra("postId", mPost.postId);
+                intent.putExtra("commentCount", mPost.comments);
                 mContext.startActivity(intent);
             }
         });
