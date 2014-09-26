@@ -25,9 +25,9 @@ import com.palmcel.parenting.db.PostDbHandler;
 import com.palmcel.parenting.feed.LoadFeedManager;
 import com.palmcel.parenting.model.CommentsServiceFinishEvent;
 import com.palmcel.parenting.model.CommentsServiceStartEvent;
-import com.palmcel.parenting.model.LoadCommentsParams;
 import com.palmcel.parenting.model.LoadCommentsResultEvent;
 import com.palmcel.parenting.model.LoadDataResult;
+import com.palmcel.parenting.model.LoadPostDataParams;
 import com.palmcel.parenting.model.PostComment;
 import com.palmcel.parenting.model.PostCommentBuilder;
 
@@ -245,8 +245,8 @@ public class CommentFragment extends Fragment {
      * @param event load comments results
      */
     public void onEventMainThread(LoadCommentsResultEvent event) {
-        LoadCommentsParams loadCommentsParams = event.getLoadCommentsParams();
-        Log.d(TAG, "In onEventMainThread for LoadCommentsResultEvent, " + loadCommentsParams);
+        LoadPostDataParams loadPostDataParams = event.getLoadPostDataParams();
+        Log.d(TAG, "In onEventMainThread for LoadCommentsResultEvent, " + loadPostDataParams);
 
 //        if (loadFeedParams.timeMsInsertedSince > 0) {
 //            // It is load more operation
@@ -265,7 +265,7 @@ public class CommentFragment extends Fragment {
             // Update 'load more comments' header view of the list view
             updateLoadMoreHeadView();
 
-            if (loadCommentsParams.timeMsCreatedSince == 0) {
+            if (loadPostDataParams.timeSince == 0) {
                 // scroll list view to bottom after submitting a new comment or first open the
                 // fragment. Don't scroll to bottom at load-more case.
                 mListView.post(new Runnable() {

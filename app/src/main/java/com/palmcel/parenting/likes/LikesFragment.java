@@ -14,8 +14,8 @@ import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.model.LikesServiceFinishEvent;
 import com.palmcel.parenting.model.LikesServiceStartEvent;
 import com.palmcel.parenting.model.LoadDataResult;
-import com.palmcel.parenting.model.LoadLikesParams;
 import com.palmcel.parenting.model.LoadLikesResultEvent;
+import com.palmcel.parenting.model.LoadPostDataParams;
 import com.palmcel.parenting.model.PostLike;
 import com.palmcel.parenting.widget.LoadMoreListView;
 
@@ -136,10 +136,10 @@ public class LikesFragment extends Fragment implements LoadMoreListView.OnLoadMo
      * @param event load likes results
      */
     public void onEventMainThread(LoadLikesResultEvent event) {
-        LoadLikesParams loadLikesParams = event.getLoadLikesParams();
-        Log.d(TAG, "In onEventMainThread for LoadLikesResultEvent, " + loadLikesParams);
+        LoadPostDataParams loadPostDataParams = event.getLoadPostDataParams();
+        Log.d(TAG, "In onEventMainThread for LoadLikesResultEvent, " + loadPostDataParams);
 
-        if (loadLikesParams.timeMsLikeSince > 0) {
+        if (loadPostDataParams.timeSince > 0) {
             // It is load more operation
             mListView.onLoadMoreComplete();
         }

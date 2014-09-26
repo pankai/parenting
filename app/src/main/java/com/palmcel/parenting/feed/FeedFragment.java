@@ -17,7 +17,7 @@ import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.list.PostListAdapter;
 import com.palmcel.parenting.model.FeedPost;
-import com.palmcel.parenting.model.LoadFeedParams;
+import com.palmcel.parenting.model.LoadDataParams;
 import com.palmcel.parenting.model.LoadDataResult;
 import com.palmcel.parenting.model.LoadFeedResultEvent;
 import com.palmcel.parenting.widget.LoadMoreListView;
@@ -177,15 +177,15 @@ public class FeedFragment extends Fragment
      * @param event load feed results
      */
     public void onEventMainThread(LoadFeedResultEvent event) {
-        LoadFeedParams loadFeedParams = event.getLoadFeedParams();
-        Log.d(TAG, "In onEventMainThread for LoadFeedResultEvent, " + loadFeedParams);
+        LoadDataParams loadDataParams = event.getLoadDataParams();
+        Log.d(TAG, "In onEventMainThread for LoadFeedResultEvent, " + loadDataParams);
 
-        if (loadFeedParams.dataLoadCause == DataLoadCause.USER_REQUEST) {
+        if (loadDataParams.dataLoadCause == DataLoadCause.USER_REQUEST) {
             mListViewContainer.setRefreshing(false);
             mEmptyViewContainer.setRefreshing(false);
         }
 
-        if (loadFeedParams.timeMsInsertedSince > 0) {
+        if (loadDataParams.timeSince > 0) {
             // It is load more operation
             mFeedListView.onLoadMoreComplete();
         }

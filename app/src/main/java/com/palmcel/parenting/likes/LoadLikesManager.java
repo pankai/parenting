@@ -14,8 +14,8 @@ import com.palmcel.parenting.feed.FeedHandler;
 import com.palmcel.parenting.model.LikesServiceFinishEvent;
 import com.palmcel.parenting.model.LikesServiceStartEvent;
 import com.palmcel.parenting.model.LoadDataResult;
-import com.palmcel.parenting.model.LoadLikesParams;
 import com.palmcel.parenting.model.LoadLikesResultEvent;
+import com.palmcel.parenting.model.LoadPostDataParams;
 import com.palmcel.parenting.model.PostLike;
 
 import java.util.concurrent.Callable;
@@ -28,6 +28,7 @@ import de.greenrobot.event.EventBus;
 public class LoadLikesManager {
 
     private static final String TAG = "LoadLikesManager";
+    private static final String LOAD_TAG = "Likes";
     private static final int DEFAULT_MAX_FETCH = 30;
 
     private static LoadLikesManager INSTANCE = new LoadLikesManager();
@@ -37,42 +38,44 @@ public class LoadLikesManager {
     private LoadLikesManager() {}
 
     public void loadLikes(String postId) {
-        loadLikes(new LoadLikesParams(
+        loadLikes(new LoadPostDataParams(
                 postId,
                 0,
                 DEFAULT_MAX_FETCH,
                 DataFreshnessParam.CACHE_OK,
-                DataLoadCause.UNKNOWN));
+                DataLoadCause.UNKNOWN,
+                LOAD_TAG));
     }
 
     public void loadLikes(String postId, DataFreshnessParam dataFreshnessParam) {
-        loadLikes(new LoadLikesParams(
+        loadLikes(new LoadPostDataParams(
                 postId,
                 0,
                 DEFAULT_MAX_FETCH,
                 dataFreshnessParam,
-                DataLoadCause.UNKNOWN));
+                DataLoadCause.UNKNOWN,
+                LOAD_TAG));
     }
 
-    public void loadLikes(final LoadLikesParams loadLikesParams) {
+    public void loadLikes(final LoadPostDataParams loadPostDataParams) {
         if (mLoadLikesFuture != null) {
             Log.d(TAG, "loadLikes was skipped.");
             return;
         } else {
-            Log.d(TAG, "In loadLikes, loadLikesParams=" + loadLikesParams);
+            Log.d(TAG, "In loadLikes, loadLikesParams=" + loadPostDataParams);
         }
 
         ImmutableList<PostLike> cachedLikes =
-                LikesCache.getInstance().getEntitiesIfUpToDate(loadLikesParams.postId);
+                LikesCache.getInstance().getEntitiesIfUpToDate(loadPostDataParams.postId);
 
-        if (loadLikesParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
+        if (loadPostDataParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
                 cachedLikes != null) {
             LoadDataResult<PostLike> result = LoadDataResult.successResult(
                     cachedLikes,
                     DataSource.MEMORY_CACHE);
             // Update likes listview with memory cache data
             EventBus.getDefault().post(
-                    new LoadLikesResultEvent(loadLikesParams, result));
+                    new LoadLikesResultEvent(loadPostDataParams, result));
             Log.d(TAG, "To display likes from memory cache");
             return;
         }
@@ -85,29 +88,29 @@ public class LoadLikesManager {
                 FeedHandler feedHandler = new FeedHandler();
                 final ImmutableList<PostLike> likesFromServer =
                         feedHandler.getPostLikesFromServer(
-                                loadLikesParams.postId,
-                                loadLikesParams.timeMsLikeSince,
-                                loadLikesParams.maxToFetch
+                                loadPostDataParams.postId,
+                                loadPostDataParams.timeSince,
+                                loadPostDataParams.maxToFetch
                         );
 
                 ImmutableList<PostLike> recentCachedLikes;
-                if (loadLikesParams.timeMsLikeSince == 0) {
+                if (loadPostDataParams.timeSince == 0) {
                     recentCachedLikes =
                             LikesCache.getInstance().updateEntitiesCacheFromServer(
-                                    loadLikesParams.postId,
+                                    loadPostDataParams.postId,
                                     likesFromServer);
                 } else {
                     // Load-more case
                     recentCachedLikes =
                             LikesCache.getInstance().updateEntitiesCacheFromServer(
-                                    loadLikesParams.postId,
-                                    loadLikesParams.timeMsLikeSince,
+                                    loadPostDataParams.postId,
+                                    loadPostDataParams.timeSince,
                                     likesFromServer);
                 }
 
 
                 TriState severHasMoreLikes = TriState.FALSE;
-                if (likesFromServer.size() == loadLikesParams.maxToFetch) {
+                if (likesFromServer.size() == loadPostDataParams.maxToFetch) {
                     severHasMoreLikes = TriState.TRUE;
                 }
 
@@ -126,7 +129,7 @@ public class LoadLikesManager {
             public void onSuccess(LoadDataResult<PostLike> result) {
                 Log.d(TAG, "mLoadLikesFuture succeeded");
                 mLoadLikesFuture = null;
-                EventBus.getDefault().post(new LoadLikesResultEvent(loadLikesParams, result));
+                EventBus.getDefault().post(new LoadLikesResultEvent(loadPostDataParams, result));
                 EventBus.getDefault().post(new LikesServiceFinishEvent());
             }
 
@@ -135,7 +138,7 @@ public class LoadLikesManager {
                 Log.e(TAG, "mLoadLikesFuture failed", t);
                 mLoadLikesFuture = null;
                 LoadDataResult result = LoadDataResult.errorResult(t);
-                EventBus.getDefault().post(new LoadLikesResultEvent(loadLikesParams, result));
+                EventBus.getDefault().post(new LoadLikesResultEvent(loadPostDataParams, result));
                 EventBus.getDefault().post(new LikesServiceFinishEvent());
             }
         });
@@ -149,11 +152,12 @@ public class LoadLikesManager {
      * @param timeMsLikeSince the like time of the last like in the likes list view
      */
     public void loadLikesMore(String postId, long timeMsLikeSince) {
-        loadLikes(new LoadLikesParams(
+        loadLikes(new LoadPostDataParams(
                 postId,
                 timeMsLikeSince,
                 DEFAULT_MAX_FETCH,
                 DataFreshnessParam.CHECK_SERVER,
-                DataLoadCause.UNKNOWN));
+                DataLoadCause.UNKNOWN,
+                LOAD_TAG));
     }
 }

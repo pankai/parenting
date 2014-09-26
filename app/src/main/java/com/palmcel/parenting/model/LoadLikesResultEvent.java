@@ -4,16 +4,16 @@ package com.palmcel.parenting.model;
  * EventBus events for loading post likes
  */
 public class LoadLikesResultEvent {
-    private LoadLikesParams mLoadLikesParams;
+    private LoadPostDataParams mLoadPostDataParams;
     private LoadDataResult<PostLike> mLoadLikesResult;
 
-    public LoadLikesResultEvent(LoadLikesParams params, LoadDataResult<PostLike> result) {
-        mLoadLikesParams = params;
+    public LoadLikesResultEvent(LoadPostDataParams params, LoadDataResult<PostLike> result) {
+        mLoadPostDataParams = params;
         mLoadLikesResult = result;
     }
 
-    public LoadLikesParams getLoadLikesParams() {
-        return mLoadLikesParams;
+    public LoadPostDataParams getLoadPostDataParams() {
+        return mLoadPostDataParams;
     }
 
     public LoadDataResult<PostLike> getLoadLikesResult() {

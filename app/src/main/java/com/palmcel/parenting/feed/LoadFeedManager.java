@@ -18,8 +18,8 @@ import com.palmcel.parenting.db.DbHelper;
 import com.palmcel.parenting.db.PostDbHandler;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.FeedPostBuilder;
+import com.palmcel.parenting.model.LoadDataParams;
 import com.palmcel.parenting.model.LoadDataResult;
-import com.palmcel.parenting.model.LoadFeedParams;
 import com.palmcel.parenting.model.LoadFeedResultEvent;
 import com.palmcel.parenting.model.PostPublicity;
 import com.palmcel.parenting.model.PostStatus;
@@ -36,6 +36,7 @@ import static com.palmcel.parenting.db.DatabaseContract.FeedEntry;
 public class LoadFeedManager {
 
     private static final String TAG = "LoadFeedManager";
+    private static final String LOAD_TAG = "Feed";
     private static final int DEFAULT_MAX_FETCH = 20;
 
     private static LoadFeedManager INSTANCE = new LoadFeedManager();
@@ -45,30 +46,33 @@ public class LoadFeedManager {
     private LoadFeedManager() {}
 
     public void loadFeed() {
-        loadFeed(new LoadFeedParams(
+        loadFeed(new LoadDataParams(
                 0,
                 DEFAULT_MAX_FETCH,
                 DataFreshnessParam.CACHE_OK,
-                DataLoadCause.UNKNOWN));
+                DataLoadCause.UNKNOWN,
+                LOAD_TAG));
     }
 
     public void loadFeed(DataFreshnessParam dataFreshnessParam) {
-        loadFeed(new LoadFeedParams(
+        loadFeed(new LoadDataParams(
                 0,
                 DEFAULT_MAX_FETCH,
                 dataFreshnessParam,
-                DataLoadCause.UNKNOWN));
+                DataLoadCause.UNKNOWN,
+                LOAD_TAG));
     }
 
     public void loadFeedForced() {
-        loadFeed(new LoadFeedParams(
+        loadFeed(new LoadDataParams(
                 0,
                 DEFAULT_MAX_FETCH,
                 DataFreshnessParam.CHECK_SERVER,
-                DataLoadCause.USER_REQUEST));
+                DataLoadCause.USER_REQUEST,
+                LOAD_TAG));
     }
 
-    public void loadFeed(final LoadFeedParams loadFeedParams) {
+    public void loadFeed(final LoadDataParams loadDataParams) {
         if (mLoadFeedFuture != null) {
             Log.d(TAG, "loadFeed was skipped.");
             return;
@@ -76,9 +80,9 @@ public class LoadFeedManager {
             Log.d(TAG, "In loadFeed");
         }
 
-        final boolean isLoadMore = loadFeedParams.timeMsInsertedSince > 0;
+        final boolean isLoadMore = loadDataParams.timeSince > 0;
 
-        if (loadFeedParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
+        if (loadDataParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
                 FeedCache.getInstance().isUpToDate() &&
                 !FeedCache.getInstance().isEmpty()) {
             LoadDataResult<FeedPost> result = LoadDataResult.successResult(
@@ -86,7 +90,7 @@ public class LoadFeedManager {
                     DataSource.MEMORY_CACHE);
             // Update feed listview with memory cache data
             EventBus.getDefault().post(
-                    new LoadFeedResultEvent(loadFeedParams, result));
+                    new LoadFeedResultEvent(loadDataParams, result));
             Log.d(TAG, "To display feed from memory cache");
             return;
         }
@@ -95,7 +99,7 @@ public class LoadFeedManager {
             @Override
             public LoadDataResult<FeedPost> call() throws Exception {
                 if (FeedCache.getInstance().isEmpty()) {
-                    ImmutableList<FeedPost> dbFeed = loadFeedFromDb(loadFeedParams);
+                    ImmutableList<FeedPost> dbFeed = loadFeedFromDb(loadDataParams);
                     if (!dbFeed.isEmpty() && !isLoadMore) {
                         ImmutableList<FeedPost> updatedCachedFeed =
                                 FeedCache.getInstance().updateCacheFromDb(dbFeed);
@@ -104,7 +108,7 @@ public class LoadFeedManager {
                                 updatedCachedFeed, DataSource.DATABASE);
                         // Update feed listview with database data
                         EventBus.getDefault().post(
-                                new LoadFeedResultEvent(loadFeedParams, dbResult));
+                                new LoadFeedResultEvent(loadDataParams, dbResult));
                         Log.d(TAG, "To display feed from db");
                     }
                 }
@@ -117,30 +121,30 @@ public class LoadFeedManager {
                 final ImmutableList<FeedPost> feedFromServer =
                         feedHandler.getFeedPostFromServer(
                                 "pkdebug", // TODO
-                                loadFeedParams.timeMsInsertedSince,
-                                loadFeedParams.maxToFetch,
+                                loadDataParams.timeSince,
+                                loadDataParams.maxToFetch,
                                 FeedCache.getInstance().getLargestInsertTime()
                         );
 
                 ImmutableList<FeedPost> recentCachedFeed;
-                if (loadFeedParams.timeMsInsertedSince == 0) {
+                if (loadDataParams.timeSince == 0) {
                     recentCachedFeed = FeedCache.getInstance().updateCacheFromServer(feedFromServer);
                 } else {
                     // Load-more case
                     recentCachedFeed = FeedCache.getInstance().updateCacheFromServer(
-                            loadFeedParams.timeMsInsertedSince,
+                            loadDataParams.timeSince,
                             feedFromServer);
                 }
                 // Update feed_post table with feedFromServer on a separated thread
                 ExecutorUtil.execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (loadFeedParams.timeMsInsertedSince == 0) {
+                        if (loadDataParams.timeSince == 0) {
                             PostDbHandler.getInstance().updateFeedPostTable(feedFromServer);
                         } else {
                             // Load-more case
                             PostDbHandler.getInstance().updateFeedPostTable(
-                                    loadFeedParams.timeMsInsertedSince,feedFromServer);
+                                    loadDataParams.timeSince,feedFromServer);
                         }
                     }
                 });
@@ -159,7 +163,7 @@ public class LoadFeedManager {
             public void onSuccess(LoadDataResult<FeedPost> result) {
                 Log.d(TAG, "mLoadFeedFuture succeeded");
                 mLoadFeedFuture = null;
-                EventBus.getDefault().post(new LoadFeedResultEvent(loadFeedParams, result));
+                EventBus.getDefault().post(new LoadFeedResultEvent(loadDataParams, result));
             }
 
             @Override
@@ -167,12 +171,12 @@ public class LoadFeedManager {
                 Log.e("LoadFreeManager", "mLoadFeedFuture failed", t);
                 mLoadFeedFuture = null;
                 LoadDataResult result = LoadDataResult.errorResult(t);
-                EventBus.getDefault().post(new LoadFeedResultEvent(loadFeedParams, result));
+                EventBus.getDefault().post(new LoadFeedResultEvent(loadDataParams, result));
             }
         });
     }
 
-    private ImmutableList<FeedPost> loadFeedFromDb(LoadFeedParams loadFeedParams) {
+    private ImmutableList<FeedPost> loadFeedFromDb(LoadDataParams loadDataParams) {
         Log.d(TAG, "In loadFeedFromDb");
         SQLiteDatabase db = DbHelper.getDb();
 
@@ -234,10 +238,11 @@ public class LoadFeedManager {
      * @param timeMsInsertedSince the insert time of the last post in the feed list view
      */
     public void loadFeedMore(long timeMsInsertedSince) {
-        loadFeed(new LoadFeedParams(
+        loadFeed(new LoadDataParams(
                 timeMsInsertedSince,
                 DEFAULT_MAX_FETCH,
                 DataFreshnessParam.CHECK_SERVER,
-                DataLoadCause.UNKNOWN));
+                DataLoadCause.UNKNOWN,
+                LOAD_TAG));
     }
 }

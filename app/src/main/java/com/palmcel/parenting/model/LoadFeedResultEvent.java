@@ -4,16 +4,16 @@ package com.palmcel.parenting.model;
  * EventBus events for loading feed
  */
 public class LoadFeedResultEvent {
-    private LoadFeedParams mLoadFeedParams;
+    private LoadDataParams mLoadDataParams;
     private LoadDataResult<FeedPost> mLoadFeedResult;
 
-    public LoadFeedResultEvent(LoadFeedParams params, LoadDataResult<FeedPost> result) {
-        mLoadFeedParams = params;
+    public LoadFeedResultEvent(LoadDataParams params, LoadDataResult<FeedPost> result) {
+        mLoadDataParams = params;
         mLoadFeedResult = result;
     }
 
-    public LoadFeedParams getLoadFeedParams() {
-        return mLoadFeedParams;
+    public LoadDataParams getLoadDataParams() {
+        return mLoadDataParams;
     }
 
     public LoadDataResult<FeedPost> getLoadFeedResult() {
