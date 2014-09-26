@@ -39,6 +39,11 @@ public class PostItemView extends RelativeLayout {
     private static final String TAG = "PostItemView";
 
     private static String sAnonymousText;
+    private static String sCommentsText;
+    private static String sCommentText;
+    private static String sLikesText;
+    private static String sLikeText;
+
     private ImageView mProfileImageView;
     private TextView mUserIdTextView;
     private TextView mKidsInfoTextView;
@@ -77,6 +82,46 @@ public class PostItemView extends RelativeLayout {
         }
 
         return sAnonymousText;
+    }
+
+    private static String getLikesText() {
+        if (sLikesText == null) {
+            sLikesText =
+                    AppContext.getAplicationContext().getResources().getString(
+                            R.string.count_likes);
+        }
+
+        return sLikesText;
+    }
+
+    private static String getLikeText() {
+        if (sLikeText == null) {
+            sLikeText =
+                    AppContext.getAplicationContext().getResources().getString(
+                            R.string.count_like);
+        }
+
+        return sLikeText;
+    }
+
+    private static String getCommentsText() {
+        if (sCommentsText == null) {
+            sCommentsText =
+                    AppContext.getAplicationContext().getResources().getString(
+                            R.string.count_comments);
+        }
+
+        return sCommentsText;
+    }
+
+    private static String getCommentText() {
+        if (sCommentText == null) {
+            sCommentText =
+                    AppContext.getAplicationContext().getResources().getString(
+                            R.string.count_comment);
+        }
+
+        return sCommentText;
     }
 
     public PostItemView(Context context, AttributeSet attrs, PostType postType) {
@@ -185,8 +230,8 @@ public class PostItemView extends RelativeLayout {
             mUserIdTextView.setText(post.userId);
         }
         mMessageTextView.setText(post.message);
-        mCommentCountTextView.setText(post.comments > 0 ? "" + post.comments : "");
-        mLikeCountTextView.setText(post.likes > 0 ? "" + post.likes : "");
+        updateCommentCountTextView(post.comments);
+        updateLikeCountTextView(post.likes);
         mPostTimeTextView.setText(
                 post.timeMsCreated > 0 ? TimeUtil.getTimeAgo(post.timeMsCreated) : "");
         mLikeButton.setChecked(mFeedPost.isLiked);
@@ -231,5 +276,25 @@ public class PostItemView extends RelativeLayout {
         }
 
         return this;
+    }
+
+    private void updateCommentCountTextView(int commentCount) {
+        if (commentCount == 0) {
+            mCommentCountTextView.setText("");
+        } else if (commentCount == 1) {
+            mCommentCountTextView.setText("1 " + getCommentText());
+        } else {
+            mCommentCountTextView.setText(commentCount + " " + getCommentsText());
+        }
+    }
+
+    private void updateLikeCountTextView(int likeCount) {
+        if (likeCount == 0) {
+            mLikeCountTextView.setText("");
+        } else if (likeCount == 1) {
+            mLikeCountTextView.setText("1 " + getLikeText());
+        } else {
+            mCommentCountTextView.setText(likeCount + " " + getLikesText());
+        }
     }
 }

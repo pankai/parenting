@@ -106,14 +106,8 @@
           android:layout_width="@dimen/row_comment_button_size"
           android:layout_height="@dimen/row_comment_button_size"
           android:scaleType="centerInside"
+          android:layout_gravity="center_vertical"
           android:src="@drawable/ic_comment_selector"/>
-      <TextView
-          android:id="@+id/comment_count"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textColor="@color/light_text_color"
-          android:textSize="@dimen/row_comment_text_size"
-          android:layout_gravity="center_vertical" />
       <ToggleButton
           android:id="@+id/like_button"
           android:layout_width="@dimen/row_like_button_size"
@@ -125,12 +119,20 @@
           android:textOff=""
           android:background="@drawable/ic_rating_selector"/>
       <TextView
+          android:id="@+id/comment_count"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textColor="@color/light_text_color"
+          android:textSize="@dimen/row_comment_text_size"
+          android:layout_marginLeft="@dimen/row_like_button_margin_left"
+          android:layout_gravity="center_vertical" />
+      <TextView
           android:id="@+id/like_count"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:textColor="@color/light_text_color"
           android:textSize="@dimen/row_comment_text_size"
-          android:layout_gravity="center_vertical"
-          android:layout_marginLeft="4dp" />
+          android:layout_marginLeft="@dimen/row_like_button_margin_left"
+          android:layout_gravity="center_vertical" />
     </LinearLayout>
 </merge>

@@ -63,4 +63,8 @@
     <string name="comment_button_submit">Submit</string>
     <string name="comments_load_more">Load more comments</string>
     <string name="comments_loading_more">Loading more comments ...</string>
+    <string name="count_comments">comments</string>
+    <string name="count_likes">likes</string>
+    <string name="count_comment">comment</string>
+    <string name="count_like">like</string>
 </resources>
