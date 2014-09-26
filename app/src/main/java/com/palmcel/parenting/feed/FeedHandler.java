@@ -6,6 +6,7 @@ import com.palmcel.parenting.common.ExecutorUtil;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.PostComment;
+import com.palmcel.parenting.model.PostLike;
 import com.palmcel.parenting.network.PostRestHelper;
 
 import java.util.List;
@@ -75,5 +76,22 @@ public class FeedHandler {
                 maxToFetch);
 
         return comments == null ? ImmutableList.<PostComment>of() : ImmutableList.copyOf(comments);
+    }
+
+    /**
+     * Load the likes from the server
+     * @return list of post likes sorted by timeMsCreated in DESC order.
+     */
+    public ImmutableList<PostLike> getPostLikesFromServer(
+            String postId,
+            long timeMsLikeSince,
+            int maxToFetch) {
+        Log.d(TAG, "In getPostLikesFromServer");
+        List<PostLike> likes = PostRestHelper.getPostService().getPostLikes(
+                postId,
+                timeMsLikeSince,
+                maxToFetch);
+
+        return likes == null ? ImmutableList.<PostLike>of() : ImmutableList.copyOf(likes);
     }
 }

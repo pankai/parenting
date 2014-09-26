@@ -207,6 +207,7 @@ public class FeedFragment extends Fragment
         FeedPost lastPost = mAdapter.getLastFeedPost();
         if (lastPost == null) {
             Log.e(TAG, "Error: Got null last post from list view!", new RuntimeException());
+            mFeedListView.onLoadMoreComplete();
             return;
         }
 

@@ -25,6 +25,7 @@ import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.common.Utils;
 import com.palmcel.parenting.db.PostDbHandler;
 import com.palmcel.parenting.feed.LikeHandler;
+import com.palmcel.parenting.likes.LikesActivity;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.PostLike;
 import com.palmcel.parenting.model.PostLikeBuilder;
@@ -156,10 +157,14 @@ public class PostItemView extends RelativeLayout {
         mCommentButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, CommentActivity.class);
-                intent.putExtra("postId", mFeedPost.postId);
-                intent.putExtra("commentCount", mFeedPost.comments);
-                mContext.startActivity(intent);
+                openCommentActivity();
+            }
+        });
+
+        mCommentCountTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openCommentActivity();
             }
         });
 
@@ -172,6 +177,22 @@ public class PostItemView extends RelativeLayout {
                 submitLikeChangeToServer(mFeedPost.postId, isLiked);
             }
         });
+
+        mLikeCountTextView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, LikesActivity.class);
+                intent.putExtra("postId", mFeedPost.postId);
+                mContext.startActivity(intent);
+            }
+        });
+    }
+
+    private void openCommentActivity() {
+        Intent intent = new Intent(mContext, CommentActivity.class);
+        intent.putExtra("postId", mFeedPost.postId);
+        intent.putExtra("commentCount", mFeedPost.comments);
+        mContext.startActivity(intent);
     }
 
     private void changeLikeCountOnUi(String postId, boolean isLiked) {

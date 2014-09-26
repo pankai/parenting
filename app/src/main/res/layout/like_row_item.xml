@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Will be merge into LikeItemView, which is RelativeLayout -->
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <!--Profile image -->
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="@dimen/comment_row_thumbnail_width"
+        android:layout_height="@dimen/comment_row_thumbnail_width"
+        android:scaleType="fitCenter"
+        android:layout_centerInParent="true"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_profile"
+        />
+
+    <TextView
+        android:id="@+id/user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/row_user_id_font_size"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/row_user_id_margin_left"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/profile_image"/>
+
+    <Button
+        android:id="@+id/follow_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@color/white"
+        android:text="@string/follow"
+        android:layout_centerInParent="true"
+        android:layout_alignParentRight="true"/>
+</merge>

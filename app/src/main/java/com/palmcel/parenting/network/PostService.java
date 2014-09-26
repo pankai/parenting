@@ -73,4 +73,17 @@ public interface PostService {
     Response likePost(
             @Header("Authorization") String authorization,
             @Body PostLike postLike);
+
+    /**
+     * Load post likes from server
+     * @param postId
+     * @param timeMsLikeSince
+     * @param maxToFetch
+     * @return post likes from server sorted by timeMsLike in DESC order.
+     */
+    @GET("/api/v1/post/likes")
+    List<PostLike> getPostLikes(
+            @Query("post_id") String postId,
+            @Query("time_ms_like_since") long timeMsLikeSince,
+            @Query("max_to_fetch") int maxToFetch);
 }

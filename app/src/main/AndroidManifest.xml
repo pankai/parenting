@@ -31,6 +31,10 @@
             android:name=".comment.CommentActivity"
             android:label="@string/title_activity_comment" >
         </activity>
+        <activity
+            android:name=".likes.LikesActivity"
+            android:label="@string/title_activity_likes" >
+        </activity>
     </application>
 
 </manifest>
