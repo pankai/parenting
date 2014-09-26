@@ -127,7 +127,7 @@ public class PostItemView extends RelativeLayout {
                 submitLikeChangeToServer(mFeedPost.postId, isLiked);
             }
         });
-}
+    }
 
     private void changeLikeCountOnUi(String postId, boolean isLiked) {
         if (mLikeChangeListener != null) {

@@ -65,7 +65,7 @@ public interface PostService {
             @Query("max_to_fetch") int maxToFetch);
 
     /**
-     * Like a post and send the like to server.
+     * Like or unlike a post and send the like change to server.
      * @param postLike a post like
      * @return
      */

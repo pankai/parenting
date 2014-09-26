@@ -34,10 +34,8 @@ public class LikeHandler {
      * @param postLike
      */
     private void saveLikeChangeToServer(PostLike postLike) {
-        if (postLike.isLiked) {
-            PostRestHelper.getPostService().likePost(
-                    LoggedInUser.genUserAuthentication(),
-                    postLike);
-        }
+        PostRestHelper.getPostService().likePost(
+                LoggedInUser.genUserAuthentication(),
+                postLike);
     }
 }
