@@ -269,21 +269,24 @@ public class PostDbHandler {
     }
 
     /**
-     * Increase like count of a post in feed_post table.
+     * Increase or decrease like count of a post and isLiked in feed_post table.
      * @param postId the post id
      */
-    public void incrementLikeCount(String postId) {
-        Log.d(TAG, "In incrementCommentCount for " + postId);
+    public void changeLikeCountAndIsLiked(String postId, boolean isLiked) {
+        Log.d(TAG, "In changeLikeCount for " + postId + ", isLiked=" + isLiked);
 
+        String delta = isLiked ? " + 1 " : " - 1 ";
         try {
             String sql = "UPDATE " + DatabaseContract.FeedEntry.TABLE_NAME + " " +
                     "SET " + DatabaseContract.PostEntry.COLUMN_LIKES + " = " +
-                    DatabaseContract.PostEntry.COLUMN_LIKES + " + 1 " +
+                    DatabaseContract.PostEntry.COLUMN_LIKES + delta + ", " +
+                    DatabaseContract.FeedEntry.COLUMN_IS_LIKED + " = " +
+                    (isLiked ? 1 : 0) + " " +
                     "WHERE " + DatabaseContract.PostEntry.COLUMN_POST_ID + " = ? ";
 
             DbHelper.getDb().execSQL(sql, new String[]{postId});
         } catch (Throwable t) {
-            Log.e(TAG, "Exception in incrementCommentCount", t);
+            Log.e(TAG, "Exception in changeLikeCount", t);
         }
     }
 

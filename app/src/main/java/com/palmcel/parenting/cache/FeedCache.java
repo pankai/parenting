@@ -238,18 +238,19 @@ public class FeedCache {
     }
 
     /**
-     * Increase like count of a post.
+     * Increase or decrease like count of a post and isLiked.
      * @param postId the post id
      */
-    public synchronized void incrementLikeCount(String postId) {
-        Log.d(TAG, "In incrementLikeCount for " + postId);
+    public synchronized void changeLikeCountAndIsLiked(String postId, boolean isLiked) {
+        Log.d(TAG, "In changeLikeCount for " + postId + ", isLiked=" + isLiked);
         ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
         for (FeedPost post: mCachedFeed) {
             if (!post.postId.equals(postId)) {
                 builder.add(post);
             } else {
                 FeedPostBuilder feedPostBuilder = new FeedPostBuilder().from(post);
-                feedPostBuilder.setLikes(post.likes + 1);
+                feedPostBuilder.setLikes(post.likes + (isLiked ? 1 : -1));
+                feedPostBuilder.setIsLiked(isLiked);
                 builder.add(feedPostBuilder.build());
             }
         }

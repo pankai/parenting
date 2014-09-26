@@ -10,6 +10,7 @@ public class PostLikeBuilder {
     private String postId;
     private String likerUserId;
     private long timeMsLike;
+    private boolean isLiked;
 
     public PostLikeBuilder() {
     }
@@ -32,6 +33,15 @@ public class PostLikeBuilder {
         return this;
     }
 
+    public boolean getIsLiked() {
+        return isLiked;
+    }
+
+    public PostLikeBuilder setIsLiked(boolean isLiked) {
+        this.isLiked = isLiked;
+        return this;
+    }
+
     public long getTimeMsLike() {
         return timeMsLike;
     }
@@ -46,12 +56,12 @@ public class PostLikeBuilder {
     }
 
     public static PostLikeBuilder newLocalLikeBuilder(
-            String postId) {
+            String postId, boolean isLiked) {
         PostLikeBuilder builder = new PostLikeBuilder();
         builder
             .setPostId(postId)
             .setLikerUserId(LoggedInUser.getLoggedInUserId())
-            .setTimeMsLike(System.currentTimeMillis());
+            .setIsLiked(isLiked);
 
         return builder;
     }

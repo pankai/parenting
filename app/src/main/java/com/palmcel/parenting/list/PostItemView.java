@@ -11,12 +11,23 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.google.common.base.Strings;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.R;
+import com.palmcel.parenting.cache.FeedCache;
 import com.palmcel.parenting.comment.CommentActivity;
 import com.palmcel.parenting.common.AppContext;
+import com.palmcel.parenting.common.ExecutorUtil;
+import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.common.TimeUtil;
+import com.palmcel.parenting.common.UiThreadExecutor;
 import com.palmcel.parenting.common.Utils;
+import com.palmcel.parenting.db.PostDbHandler;
+import com.palmcel.parenting.feed.LikeHandler;
 import com.palmcel.parenting.model.FeedPost;
+import com.palmcel.parenting.model.PostLike;
+import com.palmcel.parenting.model.PostLikeBuilder;
 import com.palmcel.parenting.model.PostType;
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +35,8 @@ import com.squareup.picasso.Picasso;
  * A item view of a post in the post list view.
  */
 public class PostItemView extends RelativeLayout {
+
+    private static final String TAG = "PostItemView";
 
     private static String sAnonymousText;
     private ImageView mProfileImageView;
@@ -43,9 +56,18 @@ public class PostItemView extends RelativeLayout {
 
     private Context mContext;
     private FeedPost mFeedPost;
+    private LikeChangeListener mLikeChangeListener;
+
+    public interface LikeChangeListener {
+        public void onLikeChanged(String postId, boolean isLiked);
+    }
 
     public PostItemView(Context context, PostType postType) {
         this(context, null, postType);
+    }
+
+    public void setLikeChangeListener(LikeChangeListener listener) {
+        mLikeChangeListener = listener;
     }
 
     private static String getAnonymousText() {
@@ -93,6 +115,60 @@ public class PostItemView extends RelativeLayout {
                 intent.putExtra("postId", mFeedPost.postId);
                 intent.putExtra("commentCount", mFeedPost.comments);
                 mContext.startActivity(intent);
+            }
+        });
+
+        mLikeButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean isLiked = mLikeButton.isChecked();
+                changeLikeCountAndIsLikedInCacheAndDb(mFeedPost.postId, isLiked);
+                changeLikeCountOnUi(mFeedPost.postId, isLiked);
+                submitLikeChangeToServer(mFeedPost.postId, isLiked);
+            }
+        });
+}
+
+    private void changeLikeCountOnUi(String postId, boolean isLiked) {
+        if (mLikeChangeListener != null) {
+            mLikeChangeListener.onLikeChanged(postId, isLiked);
+        }
+    }
+
+    private void submitLikeChangeToServer(String postId, boolean isLiked) {
+        Log.d(TAG, "submitLikeChangeToServer, postId=" + postId + ", isLiked=" + isLiked);
+        PostLikeBuilder builder = PostLikeBuilder.newLocalLikeBuilder(
+                postId, isLiked);
+
+        ListenableFuture<PostLike> saveLikeChangeFuture =
+                new LikeHandler().saveLikeChangeToServerOnThread(builder.build());
+
+        Futures.addCallback(saveLikeChangeFuture, new FutureCallback<PostLike>() {
+            @Override
+            public void onSuccess(PostLike postLike) {
+                Log.d(TAG, "Saved like change successfully for " + postLike.postId);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Log.e(TAG, "Failed to save like change", throwable);
+            }
+        }, new UiThreadExecutor());
+    }
+
+    /**
+     * Change the like count in memory cache and db
+     * @param postId
+     * @param isLiked
+     */
+    private void changeLikeCountAndIsLikedInCacheAndDb(
+            final String postId,
+            final boolean isLiked) {
+        FeedCache.getInstance().changeLikeCountAndIsLiked(postId, isLiked);
+        ExecutorUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                PostDbHandler.getInstance().changeLikeCountAndIsLiked(postId, isLiked);
             }
         });
     }

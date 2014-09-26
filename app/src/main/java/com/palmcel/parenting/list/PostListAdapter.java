@@ -8,12 +8,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.google.common.collect.ImmutableList;
+import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.model.FeedPost;
+import com.palmcel.parenting.model.FeedPostBuilder;
 
 /**
  * ListView adapter for a list of posts in feed
  */
-public class PostListAdapter extends BaseAdapter {
+public class PostListAdapter extends BaseAdapter implements PostItemView.LikeChangeListener {
+
+    private static final String TAG = "PostListAdapter";
 
     private static final int VIEW_TYPE_REGULAR = 0;
     private static final int VIEW_TYPE_PICTURE = 1;
@@ -92,6 +96,7 @@ public class PostListAdapter extends BaseAdapter {
     private View getViewForPost(FeedPost post, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = new PostItemView(mContext, post.postType);
+            ((PostItemView)convertView).setLikeChangeListener(this);
         }
         ((PostItemView)convertView).updatePostItemView(post);
 
@@ -110,5 +115,26 @@ public class PostListAdapter extends BaseAdapter {
         } else {
             return mEntries.get(mEntries.size() - 1);
         }
+    }
+
+    @Override
+    public void onLikeChanged(String postId, boolean isLiked) {
+        // Update like count in mEntries
+        Log.d(TAG, "In onLikeChanged for " + postId + ", isLiked=" + isLiked);
+        ImmutableList.Builder<FeedPost> builder = ImmutableList.builder();
+        for (FeedPost post: mEntries) {
+            if (!post.postId.equals(postId)) {
+                builder.add(post);
+            } else {
+                FeedPostBuilder feedPostBuilder = new FeedPostBuilder().from(post);
+                feedPostBuilder.setLikes(post.likes + (isLiked ? 1 : -1));
+                feedPostBuilder.setIsLiked(isLiked);
+                builder.add(feedPostBuilder.build());
+            }
+        }
+
+        mEntries = builder.build();
+
+        notifyDataSetChanged();
     }
 }
