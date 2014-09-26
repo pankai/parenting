@@ -29,7 +29,7 @@ public interface PostService {
     /**
      * Load feed from server
      * @param userId
-     * @param timeMsInsertedSince
+     * @param timeSince
      * @param maxToFetch
      * @param largestInsertTimeAtClient
      * @return feed posts from server sorted by timeMsInserted in DESC order.
@@ -37,7 +37,7 @@ public interface PostService {
     @GET("/api/v1/feed")
     List<FeedPost> getFeed(
             @Query("user_id") String userId,
-            @Query("time_ms_inserted_since") long timeMsInsertedSince,
+            @Query("time_since") long timeSince,
             @Query("max_to_fetch") int maxToFetch,
             @Query("largest_insert_time_at_client") long largestInsertTimeAtClient);
 
@@ -54,14 +54,14 @@ public interface PostService {
     /**
      * Load post comments from server
      * @param postId
-     * @param timeMsCreatedSince
+     * @param timeSince
      * @param maxToFetch
      * @return post comments from server sorted by timeMsCreated in DESC order.
      */
     @GET("/api/v1/post/comments")
     List<PostComment> getPostComments(
             @Query("post_id") String postId,
-            @Query("time_ms_created_since") long timeMsCreatedSince,
+            @Query("time_since") long timeSince,
             @Query("max_to_fetch") int maxToFetch);
 
     /**
@@ -77,13 +77,13 @@ public interface PostService {
     /**
      * Load post likes from server
      * @param postId
-     * @param timeMsLikeSince
+     * @param timeSince
      * @param maxToFetch
      * @return post likes from server sorted by timeMsLike in DESC order.
      */
     @GET("/api/v1/post/likes")
     List<PostLike> getPostLikes(
             @Query("post_id") String postId,
-            @Query("time_ms_like_since") long timeMsLikeSince,
+            @Query("time_since") long timeSince,
             @Query("max_to_fetch") int maxToFetch);
 }
