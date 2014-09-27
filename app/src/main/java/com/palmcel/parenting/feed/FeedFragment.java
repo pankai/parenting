@@ -17,9 +17,9 @@ import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.list.PostListAdapter;
 import com.palmcel.parenting.model.FeedPost;
-import com.palmcel.parenting.model.LoadDataParams;
 import com.palmcel.parenting.model.LoadDataResult;
 import com.palmcel.parenting.model.LoadFeedResultEvent;
+import com.palmcel.parenting.model.LoadDataParams;
 import com.palmcel.parenting.widget.LoadMoreListView;
 
 import de.greenrobot.event.EventBus;

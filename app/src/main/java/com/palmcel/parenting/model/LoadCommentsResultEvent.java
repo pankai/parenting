@@ -4,16 +4,16 @@ package com.palmcel.parenting.model;
  * EventBus events for loading post comments
  */
 public class LoadCommentsResultEvent {
-    private LoadPostDataParams mLoadPostDataParams;
+    private LoadDataParams mLoadDataParams;
     private LoadDataResult<PostComment> mLoadCommentsResult;
 
-    public LoadCommentsResultEvent(LoadPostDataParams params, LoadDataResult<PostComment> result) {
-        mLoadPostDataParams = params;
+    public LoadCommentsResultEvent(LoadDataParams params, LoadDataResult<PostComment> result) {
+        mLoadDataParams = params;
         mLoadCommentsResult = result;
     }
 
-    public LoadPostDataParams getLoadPostDataParams() {
-        return mLoadPostDataParams;
+    public LoadDataParams getLoadPostDataParams() {
+        return mLoadDataParams;
     }
 
     public LoadDataResult<PostComment> getLoadCommentsResult() {
