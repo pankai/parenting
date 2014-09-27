@@ -20,7 +20,7 @@ public class FeedPostBuilder extends PostBuilder {
         setMessage(post.message);
         setPictureUrl(post.pictureUrl);
         setExternalLinkImageUrl(post.externalLinkImageUrl);
-        setExternalLinkUrl(post.externalLinkImageUrl);
+        setExternalLinkUrl(post.externalLinkUrl);
         setExternalLinkCaption(post.externalLinkCaption);
         setExternalLinkSummary(post.externalLinkSummary);
         setProductBarCode(post.productBarCode);
