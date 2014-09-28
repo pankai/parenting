@@ -95,7 +95,7 @@ public class LikesFragment extends Fragment implements LoadMoreListView.OnLoadMo
         mListView.setOnLoadMoreListener(this);
 
         // Load post likes. TODO (kpan): don't need to load feed every time in onResume.
-        LoadLikesManager.getInstance().loadLikes(mPostId);
+        LoadLikesManager.getInstance().loadData(mPostId);
     }
 
     @Override
@@ -179,7 +179,7 @@ public class LikesFragment extends Fragment implements LoadMoreListView.OnLoadMo
             return;
         }
 
-        LoadLikesManager.getInstance().loadLikesMore(mPostId, lastLike.timeMsLike);
+        LoadLikesManager.getInstance().loadMoreData(mPostId, lastLike.timeMsLike);
     }
 
 }

@@ -1,16 +1,10 @@
 package com.palmcel.parenting.comment;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.palmcel.parenting.common.DataFreshnessParam;
 import com.palmcel.parenting.common.DataLoadCause;
-import com.palmcel.parenting.common.DataSource;
-import com.palmcel.parenting.common.ExecutorUtil;
-import com.palmcel.parenting.common.Log;
-import com.palmcel.parenting.common.TriState;
 import com.palmcel.parenting.feed.FeedHandler;
+import com.palmcel.parenting.loadmanager.LoadDataManager;
 import com.palmcel.parenting.model.CommentsServiceFinishEvent;
 import com.palmcel.parenting.model.CommentsServiceStartEvent;
 import com.palmcel.parenting.model.LoadCommentsResultEvent;
@@ -18,14 +12,12 @@ import com.palmcel.parenting.model.LoadDataResult;
 import com.palmcel.parenting.model.LoadDataParams;
 import com.palmcel.parenting.model.PostComment;
 
-import java.util.concurrent.Callable;
-
 import de.greenrobot.event.EventBus;
 
 /**
  * Singleton class that loads comments
  */
-public class LoadCommentsManager {
+public class LoadCommentsManager extends LoadDataManager<PostComment> {
 
     private static final String TAG = "LoadCommentsManager";
     private static final String LOAD_TAG = "Comments";
@@ -33,32 +25,16 @@ public class LoadCommentsManager {
 
     private static LoadCommentsManager INSTANCE = new LoadCommentsManager();
 
-    private ListenableFuture<LoadDataResult<PostComment>> mLoadCommentsFuture;
-
-    private LoadCommentsManager() {}
-
-    public void loadComments(String postId) {
-        loadComments(new LoadDataParams(
-                postId,
-                0,
-                DEFAULT_MAX_FETCH,
-                DataFreshnessParam.CACHE_OK,
-                DataLoadCause.UNKNOWN,
-                LOAD_TAG));
+    private LoadCommentsManager() {
+        super(LOAD_TAG, DEFAULT_MAX_FETCH, CommentsCache.getInstance());
     }
 
-    public void loadComments(String postId, DataFreshnessParam dataFreshnessParam) {
-        loadComments(new LoadDataParams(
-                postId,
-                0,
-                DEFAULT_MAX_FETCH,
-                dataFreshnessParam,
-                DataLoadCause.UNKNOWN,
-                LOAD_TAG));
+    public static LoadCommentsManager getInstance() {
+        return INSTANCE;
     }
 
     public void loadCommentsAfterSubmit(String postId) {
-        loadComments(new LoadDataParams(
+        loadData(new LoadDataParams(
                 postId,
                 0,
                 DEFAULT_MAX_FETCH,
@@ -67,107 +43,32 @@ public class LoadCommentsManager {
                 LOAD_TAG));
     }
 
-    public void loadComments(final LoadDataParams loadDataParams) {
-        if (mLoadCommentsFuture != null) {
-            Log.d(TAG, "loadComments was skipped.");
-            return;
-        } else {
-            Log.d(TAG, "In loadComments, loadDataParams=" + loadDataParams);
-        }
+    // Notify load-comments result to UI for updating UI
+    @Override
+    protected void notifyDataLoadResult(
+            LoadDataParams loadDataParams,
+            LoadDataResult<PostComment> result) {
+        EventBus.getDefault().post(
+                new LoadCommentsResultEvent(loadDataParams, result));
+    }
 
-        ImmutableList<PostComment> cachedComments =
-                CommentsCache.getInstance().getEntitiesIfUpToDate(loadDataParams.postId);
-
-        if (loadDataParams.dataFreshnessParam == DataFreshnessParam.CACHE_OK &&
-                cachedComments != null) {
-            LoadDataResult<PostComment> result = LoadDataResult.successResult(
-                    cachedComments,
-                    DataSource.MEMORY_CACHE);
-            // Update comments listview with memory cache data
-            EventBus.getDefault().post(
-                    new LoadCommentsResultEvent(loadDataParams, result));
-            Log.d(TAG, "To display comments from memory cache");
-            return;
-        }
-
+    @Override
+    protected void notifyServiceStart() {
         EventBus.getDefault().post(new CommentsServiceStartEvent());
-        mLoadCommentsFuture = ExecutorUtil.execute(new Callable<LoadDataResult<PostComment>>() {
-            @Override
-            public LoadDataResult<PostComment> call() throws Exception {
-                // Load from server
-                FeedHandler feedHandler = new FeedHandler();
-                final ImmutableList<PostComment> commentsFromServer =
-                        feedHandler.getPostCommentsFromServer(
-                                loadDataParams.postId,
-                                loadDataParams.timeSince,
-                                loadDataParams.maxToFetch
-                        );
-
-                ImmutableList<PostComment> recentCachedComments;
-                if (loadDataParams.timeSince == 0) {
-                    recentCachedComments =
-                            CommentsCache.getInstance().updateEntitiesCacheFromServer(
-                                loadDataParams.postId,
-                                commentsFromServer);
-                } else {
-                    // Load-more case
-                    recentCachedComments =
-                            CommentsCache.getInstance().updateEntitiesCacheFromServer(
-                                loadDataParams.postId,
-                                loadDataParams.timeSince,
-                                commentsFromServer);
-                }
-
-
-                TriState severHasMoreComments = TriState.FALSE;
-                if (commentsFromServer.size() == loadDataParams.maxToFetch) {
-                    severHasMoreComments = TriState.TRUE;
-                }
-
-                LoadDataResult<PostComment> result = LoadDataResult.successResult(
-                        recentCachedComments,
-                        DataSource.SERVER,
-                        severHasMoreComments);
-
-                Log.d(TAG, "To display comments from server");
-                return result;
-            }
-        });
-
-        Futures.addCallback(mLoadCommentsFuture, new FutureCallback<LoadDataResult<PostComment>>() {
-            @Override
-            public void onSuccess(LoadDataResult<PostComment> result) {
-                Log.d(TAG, "mLoadCommentsFuture succeeded");
-                mLoadCommentsFuture = null;
-                EventBus.getDefault().post(new LoadCommentsResultEvent(loadDataParams, result));
-                EventBus.getDefault().post(new CommentsServiceFinishEvent());
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(TAG, "mLoadCommentsFuture failed", t);
-                mLoadCommentsFuture = null;
-                LoadDataResult result = LoadDataResult.errorResult(t);
-                EventBus.getDefault().post(new LoadCommentsResultEvent(loadDataParams, result));
-                EventBus.getDefault().post(new CommentsServiceFinishEvent());
-            }
-        });
-    }
-    public static LoadCommentsManager getInstance() {
-        return INSTANCE;
     }
 
-    /**
-     * Load more post comments whose create time is equal or less than 'timeMsCreatedSince'
-     * @param timeMsCreatedSince the create time of the last comments in the comments list view
-     */
-    public void loadCommentsMore(String postId, long timeMsCreatedSince) {
-        loadComments(new LoadDataParams(
-                postId,
-                timeMsCreatedSince,
-                DEFAULT_MAX_FETCH,
-                DataFreshnessParam.CHECK_SERVER,
-                DataLoadCause.UNKNOWN,
-                LOAD_TAG));
+    @Override
+    protected void notifyServiceFinish() {
+        EventBus.getDefault().post(new CommentsServiceFinishEvent());
+    }
+
+    @Override
+    protected ImmutableList<PostComment> loadDataFromServer(
+            String postId,
+            long timeSince,
+            int maxToFetch) {
+        // Load from server
+        FeedHandler feedHandler = new FeedHandler();
+        return feedHandler.getPostCommentsFromServer(postId, timeSince, maxToFetch);
     }
 }

@@ -127,7 +127,7 @@ public class CommentFragment extends Fragment {
                 if (latestComment != null) {
                     mHeaderView.setText(getResources().getString(R.string.comments_loading_more));
                     // Load more comments
-                    LoadCommentsManager.getInstance().loadCommentsMore(
+                    LoadCommentsManager.getInstance().loadMoreData(
                             mPostId, latestComment.timeMsCreated);
                 } else {
                     Log.e(TAG, "Empty comment list", new RuntimeException());
@@ -142,7 +142,7 @@ public class CommentFragment extends Fragment {
             }
         });
         // Load post comments. TODO (kpan): don't need to load feed every time in onResume.
-        LoadCommentsManager.getInstance().loadComments(mPostId);
+        LoadCommentsManager.getInstance().loadData(mPostId);
     }
 
     /**
