@@ -90,9 +90,9 @@ public class FeedCache {
     }
 
     /**
-     * @return the largest insert time of post in mCachedFeed or 0 if mCachedFeed is empty.
+     * @return the largest sort time of post in mCachedFeed or 0 if mCachedFeed is empty.
      */
-    public synchronized long getLargestInsertTime() {
+    public synchronized long getLargestSortTime() {
         if (mCachedFeed.isEmpty()) {
             return 0;
         }

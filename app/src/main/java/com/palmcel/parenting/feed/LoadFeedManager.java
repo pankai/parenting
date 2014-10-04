@@ -123,7 +123,7 @@ public class LoadFeedManager {
                                 "pkdebug", // TODO
                                 loadDataParams.timeSince,
                                 loadDataParams.maxToFetch,
-                                FeedCache.getInstance().getLargestInsertTime()
+                                FeedCache.getInstance().getLargestSortTime()
                         );
 
                 ImmutableList<FeedPost> recentCachedFeed;
