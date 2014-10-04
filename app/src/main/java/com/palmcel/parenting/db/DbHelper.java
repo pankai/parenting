@@ -40,7 +40,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 PostEntry.COLUMN_TIME_CREATED + " INTEGER, " +
                 PostEntry.COLUMN_TIME_EDITED + " INTEGER, " +
                 PostEntry.COLUMN_TIME_CHANGE_TO_SURFACE + " INTEGER, " +
-                FeedEntry.COLUMN_TIME_INSERTED + " INTEGER, " +
+                FeedEntry.COLUMN_TIME_SORT + " INTEGER, " +
                 FeedEntry.COLUMN_IS_LIKED + " INTEGER " +
             ")";
 
@@ -49,7 +49,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_FEED_TABLE_INDEX =
             "CREATE INDEX feed_time_idx ON " +
-                    FeedEntry.TABLE_NAME + "(" + FeedEntry.COLUMN_TIME_INSERTED + ")";
+                    FeedEntry.TABLE_NAME + "(" + FeedEntry.COLUMN_TIME_SORT + ")";
 
     private static DbHelper HELPER_INSTANCE;
     private static SQLiteDatabase DB_INSTANCE;

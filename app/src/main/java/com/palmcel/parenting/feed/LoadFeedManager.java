@@ -185,7 +185,7 @@ public class LoadFeedManager {
         String query =
             "SELECT " + selectFields + " " +
             "FROM " + FeedEntry.TABLE_NAME + " " +
-            "ORDER BY " + FeedEntry.COLUMN_TIME_INSERTED + " DESC " +
+            "ORDER BY " + FeedEntry.COLUMN_TIME_SORT + " DESC " +
             "LIMIT " + 100; //TODO
 
         Cursor cursor = db.rawQuery(query, null);
@@ -196,7 +196,7 @@ public class LoadFeedManager {
             FeedPostBuilder feedPostBuilder = new FeedPostBuilder();
 
             feedPostBuilder.setPostId(cursor.getString(0));
-            feedPostBuilder.setTimeMsInserted(cursor.isNull(1) ? 0 : cursor.getLong(1));
+            feedPostBuilder.setTimeToSort(cursor.isNull(1) ? 0 : cursor.getLong(1));
             feedPostBuilder.setIsLiked(
                     cursor.isNull(2) || cursor.getInt(2) == 0 ? false : true);
             feedPostBuilder.setUserId(cursor.getString(3));
@@ -234,12 +234,12 @@ public class LoadFeedManager {
     }
 
     /**
-     * Load more feed post whose insert time is equal or less than 'timeMsInsertedSince'
-     * @param timeMsInsertedSince the insert time of the last post in the feed list view
+     * Load more feed post whose insert time is equal or less than 'timeSince'
+     * @param timeSince the sort time of the last post in the feed list view
      */
-    public void loadFeedMore(long timeMsInsertedSince) {
+    public void loadFeedMore(long timeSince) {
         loadFeed(new LoadDataParams(
-                timeMsInsertedSince,
+                timeSince,
                 DEFAULT_MAX_FETCH,
                 DataFreshnessParam.CHECK_SERVER,
                 DataLoadCause.UNKNOWN,

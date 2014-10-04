@@ -211,7 +211,7 @@ public class FeedFragment extends Fragment
             return;
         }
 
-        LoadFeedManager.getInstance().loadFeedMore(lastPost.timeMsInserted);
+        LoadFeedManager.getInstance().loadFeedMore(lastPost.timeToSort);
     }
 
     /**

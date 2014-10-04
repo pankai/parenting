@@ -73,9 +73,9 @@ public class FeedCache {
         for (FeedPost post: dbFeedPosts) {
             if (hasFoundLast) {
                 builder.add(post);
-            } else if (post.timeMsInserted == lastInMemCache.timeMsInserted) {
+            } else if (post.timeToSort == lastInMemCache.timeToSort) {
                 hasFoundLast = true;
-            } else if (post.timeMsInserted < lastInMemCache.timeMsInserted) {
+            } else if (post.timeToSort < lastInMemCache.timeToSort) {
                 // There is hole between memory cache and dbFeedPosts.
                 Log.w(TAG, "Warning, there is a hole between memory cache and dbFeedPosts.");
                 clearFeedPostTableOnThread();
@@ -97,7 +97,7 @@ public class FeedCache {
             return 0;
         }
 
-        return mCachedFeed.get(0).timeMsInserted;
+        return mCachedFeed.get(0).timeToSort;
     }
 
     /**
@@ -148,9 +148,9 @@ public class FeedCache {
         for (FeedPost post: mCachedFeed) {
             if (hasFoundLast) {
                 builder.add(post);
-            } else if (post.timeMsInserted == lastInServerFeed.timeMsInserted) {
+            } else if (post.timeToSort == lastInServerFeed.timeToSort) {
                 hasFoundLast = true;
-            } else if (post.timeMsInserted < lastInServerFeed.timeMsInserted) {
+            } else if (post.timeToSort < lastInServerFeed.timeToSort) {
                 // There is hole between memory cache and feedFromServer.
                 Log.w(TAG, "Warning, there is a hole between memory cache and feedFromServer.");
                 mLastUpdatedMs = System.currentTimeMillis();
@@ -167,20 +167,20 @@ public class FeedCache {
 
     /**
      * Update mCachedFeed with the load-more feed from server
-     * TODO: timeMsInserted should be unique in a feed. We need to make sure it. Same for comments
+     * TODO: timeToSort should be unique in a feed. We need to make sure it. Same for comments
      * of a post.
-     * @param timeMsInsertedSince, the smallest insert time of the feed at client before
+     * @param timeSince, the smallest sort time of the feed at client before
      *                             loading more
      * @param feedFromServer feed from server. The feed is a result of load more. That is, it
      *                        doesn't start with the latest post in the feed at server.
      * @return updated feed from cache
      */
     public synchronized ImmutableList<FeedPost> updateCacheFromServer(
-            long timeMsInsertedSince,
+            long timeSince,
             ImmutableList<FeedPost> feedFromServer) {
         Log.d(TAG, "In updateCacheFromServer for load-more, mCachedFeed=" + mCachedFeed.size() +
                 ", feedFromServer=" + feedFromServer.size() +
-                ", timeMsInsertedSince=" + timeMsInsertedSince);
+                ", timeSince=" + timeSince);
         if (mCachedFeed.isEmpty()) {
             mCachedFeed = feedFromServer;
             Log.e(TAG, "mCachedFeed became empty after loading more", new RuntimeException());
@@ -194,17 +194,17 @@ public class FeedCache {
         FeedPost lastInMemory = mCachedFeed.get(mCachedFeed.size() - 1);
         FeedPost firstFromServer = feedFromServer.get(0);
 
-        if (timeMsInsertedSince != firstFromServer.timeMsInserted) {
-            Log.e(TAG, "Inconsistent timeMsInsertedSince after loading more, " +
-                    timeMsInsertedSince + " vs " +
-                    firstFromServer.timeMsInserted, new RuntimeException());
+        if (timeSince != firstFromServer.timeToSort) {
+            Log.e(TAG, "Inconsistent timeSince after loading more, " +
+                    timeSince + " vs " +
+                    firstFromServer.timeToSort, new RuntimeException());
             return mCachedFeed;
         }
 
-        if (lastInMemory.timeMsInserted != firstFromServer.timeMsInserted) {
-            Log.e(TAG, "Unmatched timeMsInsertedSince after loading more, " +
-                    lastInMemory.timeMsInserted + " vs " +
-                    firstFromServer.timeMsInserted, new RuntimeException());
+        if (lastInMemory.timeToSort != firstFromServer.timeToSort) {
+            Log.e(TAG, "Unmatched timeSince after loading more, " +
+                    lastInMemory.timeToSort + " vs " +
+                    firstFromServer.timeToSort, new RuntimeException());
             return mCachedFeed;
         }
 

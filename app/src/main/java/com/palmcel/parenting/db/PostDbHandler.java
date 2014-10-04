@@ -40,19 +40,19 @@ public class PostDbHandler {
 
         try {
             // Check whether feed_post table contains lastInServerFeed
-            if (feedPostTableContains(lastInServerFeed.postId, lastInServerFeed.timeMsInserted)) {
+            if (feedPostTableContains(lastInServerFeed.postId, lastInServerFeed.timeToSort)) {
                 Log.d(TAG, "updateFeedPostTable, feed_post table contains post (" +
-                        lastInServerFeed.postId + ", " + lastInServerFeed.timeMsInserted + ")");
+                        lastInServerFeed.postId + ", " + lastInServerFeed.timeToSort + ")");
 
-                // Delete posts before lastInServerFeed.timeMsInserted in feed_post table
+                // Delete posts before lastInServerFeed.timeToSort in feed_post table
                 db.delete(
                         DatabaseContract.FeedEntry.TABLE_NAME,
-                        DatabaseContract.FeedEntry.COLUMN_TIME_INSERTED + " >= ?",
-                        new String[]{Long.toString(lastInServerFeed.timeMsInserted)}
+                        DatabaseContract.FeedEntry.COLUMN_TIME_SORT + " >= ?",
+                        new String[]{Long.toString(lastInServerFeed.timeToSort)}
                 );
             } else {
                 Log.d(TAG, "updateFeedPostTable, feed_post table doesn't contain post (" +
-                        lastInServerFeed.postId + ", " + lastInServerFeed.timeMsInserted + ")");
+                        lastInServerFeed.postId + ", " + lastInServerFeed.timeToSort + ")");
                 // Clear feed_post table
                 db.delete(DatabaseContract.FeedEntry.TABLE_NAME, null, null);
             }
@@ -71,17 +71,17 @@ public class PostDbHandler {
 
     /**
      * Update feed_post table with the load-more feed from server
-     * @param timeMsInsertedSince the load-more feed is loaded from timeMsInsertedSince and older
+     * @param timeSince the load-more feed is loaded from timeSince and older
      *                            than it.
-     * @param feedFromServer feed from server sorted by timeMsInserted in DESC order.
+     * @param feedFromServer feed from server sorted by timeToSort in DESC order.
      *                       The feed is a result of load more. That is, it
      *                       doesn't start with the latest post in the feed at server.
      */
     public void updateFeedPostTable(
-            long timeMsInsertedSince,
+            long timeSince,
             ImmutableList<FeedPost> feedFromServer) {
-        Log.d(TAG, "In updateFeedPostTable for load-more, timeMsInsertedSince=" +
-                timeMsInsertedSince + ", feedFromServer=" + feedFromServer.size());
+        Log.d(TAG, "In updateFeedPostTable for load-more, timeSince=" +
+                timeSince + ", feedFromServer=" + feedFromServer.size());
 
         if (feedFromServer.isEmpty()) {
             Log.d(TAG, "updateFeedPostTable for load-more, empty feed from server");
@@ -90,9 +90,9 @@ public class PostDbHandler {
 
         FeedPost firstInServerFeed = feedFromServer.get(0);
 
-        if (!feedPostTableContains(firstInServerFeed.postId, firstInServerFeed.timeMsInserted)) {
+        if (!feedPostTableContains(firstInServerFeed.postId, firstInServerFeed.timeToSort)) {
             Log.d(TAG, "updateFeedPostTable for load-more, feed_post table doesn't contain " +
-                    firstInServerFeed.timeMsInserted);
+                    firstInServerFeed.timeToSort);
             return;
         }
 
@@ -103,28 +103,28 @@ public class PostDbHandler {
 
         try {
             // Check whether feed_post table contains lastInServerFeed
-            if (feedPostTableContains(lastInServerFeed.postId, lastInServerFeed.timeMsInserted)) {
+            if (feedPostTableContains(lastInServerFeed.postId, lastInServerFeed.timeToSort)) {
                 Log.d(TAG, "updateFeedPostTable for load-more, delete posts from table between " +
-                        firstInServerFeed.timeMsInserted +
-                        " and " + lastInServerFeed.timeMsInserted);
+                        firstInServerFeed.timeToSort +
+                        " and " + lastInServerFeed.timeToSort);
 
-                // Delete posts between firstInServerFeed.timeMsInserted and
-                // lastInServerFeed.timeMsInserted in feed_post table
+                // Delete posts between firstInServerFeed.timeToSort and
+                // lastInServerFeed.timeToSort in feed_post table
                 db.delete(
                         DatabaseContract.FeedEntry.TABLE_NAME,
-                        DatabaseContract.FeedEntry.COLUMN_TIME_INSERTED + " <= ? AND " +
-                                DatabaseContract.FeedEntry.COLUMN_TIME_INSERTED + " >= ?",
-                        new String[]{Long.toString(firstInServerFeed.timeMsInserted),
-                                Long.toString(lastInServerFeed.timeMsInserted)}
+                        DatabaseContract.FeedEntry.COLUMN_TIME_SORT + " <= ? AND " +
+                                DatabaseContract.FeedEntry.COLUMN_TIME_SORT + " >= ?",
+                        new String[]{Long.toString(firstInServerFeed.timeToSort),
+                                Long.toString(lastInServerFeed.timeToSort)}
                 );
             } else {
                 Log.d(TAG, "updateFeedPostTable for load-more, delete posts from table older than "
-                        + firstInServerFeed.timeMsInserted);
-                // Delete posts order than firstInServerFeed.timeMsInserted in feed_post table.
+                        + firstInServerFeed.timeToSort);
+                // Delete posts order than firstInServerFeed.timeToSort in feed_post table.
                 db.delete(
                         DatabaseContract.FeedEntry.TABLE_NAME,
-                        DatabaseContract.FeedEntry.COLUMN_TIME_INSERTED + " <= ? ",
-                        new String[]{Long.toString(firstInServerFeed.timeMsInserted)}
+                        DatabaseContract.FeedEntry.COLUMN_TIME_SORT + " <= ? ",
+                        new String[]{Long.toString(firstInServerFeed.timeToSort)}
                 );
             }
 
@@ -155,7 +155,7 @@ public class PostDbHandler {
 
         for (FeedPost post: feedPosts) {
             insert.bindString(1, post.postId);
-            insert.bindLong(2, post.timeMsInserted);
+            insert.bindLong(2, post.timeToSort);
             insert.bindLong(3, post.isLiked ? 1 : 0);
             insert.bindString(4, post.userId);
             if (post.postType == null) {
@@ -225,18 +225,18 @@ public class PostDbHandler {
 
     /**
      * @param postId feedPost.postId
-     * @param timeMsInserted, feedPost.timeMsInserted
-     * @return whether feed_post table contains a post with postId and timeMsInserted
+     * @param timeToSort, feedPost.timeToSort
+     * @return whether feed_post table contains a post with postId and timeToSort
      */
-    public boolean feedPostTableContains(String postId, long timeMsInserted) {
+    public boolean feedPostTableContains(String postId, long timeToSort) {
         String whereClause =
                 DatabaseContract.PostEntry.COLUMN_POST_ID + "=? AND " +
-                        DatabaseContract.FeedEntry.COLUMN_TIME_INSERTED + "=?";
+                        DatabaseContract.FeedEntry.COLUMN_TIME_SORT + "=?";
         Cursor c = DbHelper.getDb().query(
                 DatabaseContract.FeedEntry.TABLE_NAME,
                 new String[]{DatabaseContract.PostEntry.COLUMN_POST_ID},
                 whereClause,
-                new String[]{postId, Long.toString(timeMsInserted)},
+                new String[]{postId, Long.toString(timeToSort)},
                 null,
                 null,
                 null

@@ -28,7 +28,7 @@ public class PostListAdapter extends BaseAdapter implements PostItemView.LikeCha
     private Context mContext;
     private LayoutInflater mLayoutInflater;
 
-    // FeedPosts are sorted by timeMsInserted in DESC order
+    // FeedPosts are sorted by timeToSort in DESC order
     private ImmutableList<FeedPost> mEntries = ImmutableList.of();
 
     public PostListAdapter(Context context) {

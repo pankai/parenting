@@ -121,7 +121,7 @@ public class EntityCache<T extends SortByTimeEntity> {
 
     /**
      * Update mEntitiesCache with the load-more entities from server
-     * @param sortTimeMsSince, the smallest sort time of the entities at client before
+     * @param sortTimeSince, the smallest sort time of the entities at client before
      *                             loading more
      * @param entitiesFromServer for comments cache. It is comments from server. The comments are
      *                           a result of load more.
@@ -131,12 +131,12 @@ public class EntityCache<T extends SortByTimeEntity> {
      */
     public synchronized ImmutableList<T> updateEntitiesCacheFromServer(
             String cacheKey,
-            long sortTimeMsSince,
+            long sortTimeSince,
             ImmutableList<T> entitiesFromServer) {
         Log.d(TAG, "In updateEntitiesCacheFromServer for load-more " + mEntityTag +
                 ", mEntitiesCache=" + mEntitiesCache.size() +
                 ", entitiesFromServer=" + entitiesFromServer.size() +
-                ", sortTimeMsSince=" + sortTimeMsSince +
+                ", sortTimeSince=" + sortTimeSince +
                 ", cacheKey=" + cacheKey);
 
         EntitiesWithUpdateTime<T> entitiesWithTime = mEntitiesCache.get(cacheKey);
@@ -159,9 +159,9 @@ public class EntityCache<T extends SortByTimeEntity> {
         T lastInMemory = entitiesInCache.get(entitiesInCache.size() - 1);
         T firstFromServer = entitiesFromServer.get(0);
 
-        if (sortTimeMsSince != firstFromServer.getSortTimeMs()) {
-            Log.e(TAG, "Inconsistent sortTimeMsSince after loading more entities, " +
-                    sortTimeMsSince + " vs " +
+        if (sortTimeSince != firstFromServer.getSortTimeMs()) {
+            Log.e(TAG, "Inconsistent sortTimeSince after loading more entities, " +
+                    sortTimeSince + " vs " +
                     firstFromServer.getSortTimeMs() +
                     " for " + mEntityTag, new RuntimeException());
             return entitiesInCache;

@@ -5,7 +5,7 @@ package com.palmcel.parenting.model;
  */
 public class FeedPostBuilder extends PostBuilder {
 
-    private long timeMsInserted;
+    private long timeToSort;
     private boolean isLiked;
 
     public FeedPostBuilder() {
@@ -32,18 +32,18 @@ public class FeedPostBuilder extends PostBuilder {
         setTimeMsCreated(post.timeMsCreated);
         setTimeMsEdited(post.timeMsEdited);
         setTimeMsChangeToSurface(post.timeMsChangeToSurface);
-        setTimeMsInserted(post.timeMsInserted);
+        setTimeToSort(post.timeToSort);
         setIsLiked(post.isLiked);
 
         return this;
     }
 
-    public long getTimeMsInserted() {
-        return timeMsInserted;
+    public long getTimeToSort() {
+        return timeToSort;
     }
 
-    public FeedPostBuilder setTimeMsInserted(long timeMsInserted) {
-        this.timeMsInserted = timeMsInserted;
+    public FeedPostBuilder setTimeToSort(long timeToSort) {
+        this.timeToSort = timeToSort;
         return this;
     }
 

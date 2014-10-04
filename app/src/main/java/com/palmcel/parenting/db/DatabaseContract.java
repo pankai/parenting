@@ -39,13 +39,13 @@ public class DatabaseContract {
     /* Inner class that defines the feed_post table contents in addition to post fields */
     public static abstract class FeedEntry implements BaseColumns {
         public static final String TABLE_NAME = "feed_post";
-        public static final String COLUMN_TIME_INSERTED = "time_ms_inserted";
+        public static final String COLUMN_TIME_SORT = "time_to_sort";
         public static final String COLUMN_IS_LIKED = "is_liked";
     }
 
     public static String FEED_COLUMNS_STRING =
             PostEntry.COLUMN_POST_ID + ", " +
-            FeedEntry.COLUMN_TIME_INSERTED + ", " +
+            FeedEntry.COLUMN_TIME_SORT + ", " +
             FeedEntry.COLUMN_IS_LIKED + ", " +
             PostEntry.COLUMN_USER_ID + ", " +
             PostEntry.COLUMN_POST_TYPE + ", " +

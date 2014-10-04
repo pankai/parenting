@@ -32,7 +32,7 @@ public interface PostService {
      * @param timeSince
      * @param maxToFetch
      * @param largestInsertTimeAtClient
-     * @return feed posts from server sorted by timeMsInserted in DESC order.
+     * @return feed posts from server sorted by timeToSort in DESC order.
      */
     @GET("/api/v1/feed")
     List<FeedPost> getFeed(
