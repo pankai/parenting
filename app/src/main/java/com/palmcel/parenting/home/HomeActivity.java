@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.palmcel.parenting.common.Log;
+import com.palmcel.parenting.feed.CategoryFeedFragment;
 import com.palmcel.parenting.feed.FeedFragment;
 import com.palmcel.parenting.R;
 import com.palmcel.parenting.post.PostActivity;
@@ -30,6 +32,8 @@ import com.palmcel.parenting.post.PostProductActivity;
 * https://github.com/AndroidExamples/SwipeRefreshLayout-ListViewExample
 * */
 public class HomeActivity extends Activity implements ActionBar.TabListener {
+
+    private static final String TAG = "HomeActivity";
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -161,8 +165,11 @@ public class HomeActivity extends Activity implements ActionBar.TabListener {
 
         @Override
         public Fragment getItem(int position) {
+            Log.d(TAG, "position=" + position);
             if (position == 0) {
                 return FeedFragment.newInstance();
+            } else if (position == 1) {
+                return CategoryFeedFragment.newInstance();
             } else {
                 // getItem is called to instantiate the fragment for the given page.
                 // Return a PlaceholderFragment (defined as a static inner class below).

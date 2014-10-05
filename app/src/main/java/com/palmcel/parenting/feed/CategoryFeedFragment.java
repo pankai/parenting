@@ -1,43 +1,41 @@
 package com.palmcel.parenting.feed;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.palmcel.parenting.R;
-
 import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.list.PostListAdapter;
 import com.palmcel.parenting.model.FeedPost;
+import com.palmcel.parenting.model.LoadDataParams;
 import com.palmcel.parenting.model.LoadDataResult;
 import com.palmcel.parenting.model.LoadFeedResultEvent;
-import com.palmcel.parenting.model.LoadDataParams;
 import com.palmcel.parenting.widget.LoadMoreListView;
 
 import de.greenrobot.event.EventBus;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link android.app.Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link FeedFragment.OnFragmentInteractionListener} interface
+ * {@link com.palmcel.parenting.feed.CategoryFeedFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link FeedFragment#newInstance} factory method to
+ * Use the {@link com.palmcel.parenting.feed.CategoryFeedFragment#newInstance} factory method to
  * create an instance of this fragment.
  *
  */
-public class FeedFragment extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener,
-            LoadMoreListView.OnLoadMoreListener {
+public class CategoryFeedFragment extends Fragment {
 
-    private static final String TAG = "FeedFragment";
+    private static final String TAG = "CategoryFeedFragment";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -50,10 +48,8 @@ public class FeedFragment extends Fragment
 
     private OnFragmentInteractionListener mListener;
 
-    private SwipeRefreshLayout mListViewContainer;
-    private SwipeRefreshLayout mEmptyViewContainer;
     private PostListAdapter mAdapter;
-    private LoadMoreListView mFeedListView;
+    private ListView mFeedListView;
 
     private Context mContext;
 
@@ -63,18 +59,18 @@ public class FeedFragment extends Fragment
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment FeedFragment.
+     * @return A new instance of fragment CategoryFeedFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static FeedFragment newInstance(String param1, String param2) {
-        FeedFragment fragment = new FeedFragment();
+    public static CategoryFeedFragment newInstance(String param1, String param2) {
+        CategoryFeedFragment fragment = new CategoryFeedFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public FeedFragment() {
+    public CategoryFeedFragment() {
         // Required empty public constructor
         setRetainInstance(true);
     }
@@ -94,14 +90,11 @@ public class FeedFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.feed_fragment, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(
+                R.layout.category_feed_fragment, container, false);
 
-        // SwipeRefreshLayout
-        mListViewContainer = (SwipeRefreshLayout) rootView.findViewById(
-                R.id.swipeRefreshLayout_listView);
-        mEmptyViewContainer = (SwipeRefreshLayout) rootView.findViewById(
-                R.id.swipeRefreshLayout_emptyView);
-        mFeedListView = (LoadMoreListView) rootView.findViewById(R.id.feedListView);
+        // ListView
+        mFeedListView = (ListView) rootView.findViewById(R.id.feedListView);
 
         return rootView;
     }
@@ -110,33 +103,13 @@ public class FeedFragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Configure SwipeRefreshLayout
-        onCreateSwipeToRefresh(mListViewContainer);
-        onCreateSwipeToRefresh(mEmptyViewContainer);
-
         // Adapter
         mAdapter = new PostListAdapter(mContext);
-        //mAdapter.addAll(new Vector(Arrays.asList(arr)));
 
-        // ListView
-        mFeedListView.setEmptyView(mEmptyViewContainer);
         mFeedListView.setAdapter(mAdapter);
-        mFeedListView.setOnLoadMoreListener(this);
 
         // Load feed from db. TODO (kpan): don't need to load feed every time in onResume.
         LoadFeedManager.getInstance().loadFeed();
-    }
-
-    private void onCreateSwipeToRefresh(SwipeRefreshLayout refreshLayout) {
-
-        refreshLayout.setOnRefreshListener(this);
-
-        refreshLayout.setColorSchemeResources(
-                android.R.color.holo_blue_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_green_light,
-                android.R.color.holo_red_light);
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -183,16 +156,6 @@ public class FeedFragment extends Fragment
         LoadDataParams loadDataParams = event.getLoadDataParams();
         Log.d(TAG, "In onEventMainThread for LoadFeedResultEvent, " + loadDataParams);
 
-        if (loadDataParams.dataLoadCause == DataLoadCause.USER_REQUEST) {
-            mListViewContainer.setRefreshing(false);
-            mEmptyViewContainer.setRefreshing(false);
-        }
-
-        if (loadDataParams.timeSince > 0) {
-            // It is load more operation
-            mFeedListView.onLoadMoreComplete();
-        }
-
         LoadDataResult<FeedPost> result = event.getLoadFeedResult();
 
         if (!result.isSuccess) {
@@ -202,19 +165,6 @@ public class FeedFragment extends Fragment
             // Update feed list view
             mAdapter.updateEntries(result.loadedData);
         }
-    }
-
-    @Override
-    public void onLoadMore() {
-        Log.d(TAG, "In onLoadMore");
-        FeedPost lastPost = mAdapter.getLastFeedPost();
-        if (lastPost == null) {
-            Log.e(TAG, "Error: Got null last post from list view!", new RuntimeException());
-            mFeedListView.onLoadMoreComplete();
-            return;
-        }
-
-        LoadFeedManager.getInstance().loadFeedMore(lastPost.timeToSort);
     }
 
     /**
@@ -233,14 +183,6 @@ public class FeedFragment extends Fragment
     }
 
     public static Fragment newInstance() {
-        return new FeedFragment();
-    }
-
-
-    @Override
-    public void onRefresh() {
-        Log.d(TAG, "In onRefresh");
-
-        LoadFeedManager.getInstance().loadFeedForced();
+        return new CategoryFeedFragment();
     }
 }
