@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +12,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.palmcel.parenting.R;
-import com.palmcel.parenting.common.DataLoadCause;
 import com.palmcel.parenting.common.Log;
 import com.palmcel.parenting.list.PostListAdapter;
 import com.palmcel.parenting.model.FeedPost;
 import com.palmcel.parenting.model.LoadDataParams;
 import com.palmcel.parenting.model.LoadDataResult;
 import com.palmcel.parenting.model.LoadFeedResultEvent;
-import com.palmcel.parenting.widget.LoadMoreListView;
 
 import de.greenrobot.event.EventBus;
 

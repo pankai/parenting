@@ -1,5 +1,7 @@
 package com.palmcel.parenting.common;
 
+import android.support.annotation.Nullable;
+
 /**
  * Util class for date and time
  */
@@ -9,6 +11,7 @@ public class TimeUtil {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
+    @Nullable
     public static String getTimeAgo(long time) {
         if (time < 1000000000000L) {
             // if timestamp given in seconds, convert to millis
@@ -17,7 +20,7 @@ public class TimeUtil {
 
         long now = System.currentTimeMillis();
         if (time > now || time <= 0) {
-            return null;
+            return "just now";
         }
 
         // TODO: localize
