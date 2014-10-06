@@ -34,7 +34,7 @@ public class EntityCache<T extends SortByTimeEntity> {
         }
     }
 
-    // Map<post id, List of entities, e.g. comments, likes sorted by getSortTimeMs in DESC order>
+    // Map<post id, List of entities, e.g. comments, likes sorted by getSortTime in DESC order>
     private LruCache<String, EntitiesWithUpdateTime<T>> mEntitiesCache;
 
     // Used for logging
@@ -101,9 +101,9 @@ public class EntityCache<T extends SortByTimeEntity> {
         for (T entity: entitiesInCache) {
             if (hasFoundLast) {
                 builder.add(entity);
-            } else if (entity.getSortTimeMs() == lastInServer.getSortTimeMs()) {
+            } else if (entity.getSortTime() == lastInServer.getSortTime()) {
                 hasFoundLast = true;
-            } else if (entity.getSortTimeMs() < lastInServer.getSortTimeMs()) {
+            } else if (entity.getSortTime() < lastInServer.getSortTime()) {
                 // There is hole between memory cache and entityFromServer.
                 Log.w(TAG,
                         "Warning, there is a hole between memory cache and entityFromServer for " +
@@ -159,18 +159,18 @@ public class EntityCache<T extends SortByTimeEntity> {
         T lastInMemory = entitiesInCache.get(entitiesInCache.size() - 1);
         T firstFromServer = entitiesFromServer.get(0);
 
-        if (sortTimeSince != firstFromServer.getSortTimeMs()) {
+        if (sortTimeSince != firstFromServer.getSortTime()) {
             Log.e(TAG, "Inconsistent sortTimeSince after loading more entities, " +
                     sortTimeSince + " vs " +
-                    firstFromServer.getSortTimeMs() +
+                    firstFromServer.getSortTime() +
                     " for " + mEntityTag, new RuntimeException());
             return entitiesInCache;
         }
 
-        if (lastInMemory.getSortTimeMs() != firstFromServer.getSortTimeMs()) {
-            Log.e(TAG, "Unmatched getSortTimeMs after loading more comments, " +
-                    lastInMemory.getSortTimeMs() + " vs " +
-                    firstFromServer.getSortTimeMs() +
+        if (lastInMemory.getSortTime() != firstFromServer.getSortTime()) {
+            Log.e(TAG, "Unmatched getSortTime after loading more comments, " +
+                    lastInMemory.getSortTime() + " vs " +
+                    firstFromServer.getSortTime() +
                     " for " + mEntityTag, new RuntimeException());
             return entitiesInCache;
         }

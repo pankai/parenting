@@ -5,5 +5,5 @@ package com.palmcel.parenting.model;
  * an list.
  */
 public interface SortByTimeEntity {
-    public long getSortTimeMs();
+    public long getSortTime();
 }

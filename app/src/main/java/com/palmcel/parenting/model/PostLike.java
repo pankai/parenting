@@ -52,7 +52,7 @@ public class PostLike implements Parcelable, SortByTimeEntity{
     }
 
     @Override
-    public long getSortTimeMs() {
+    public long getSortTime() {
         return timeMsLike;
     }
 }

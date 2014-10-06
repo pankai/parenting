@@ -72,7 +72,7 @@ public class PostComment implements Parcelable, SortByTimeEntity{
     }
 
     @Override
-    public long getSortTimeMs() {
+    public long getSortTime() {
         return timeMsCreated;
     }
 }
